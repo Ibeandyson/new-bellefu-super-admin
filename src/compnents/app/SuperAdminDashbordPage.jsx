@@ -5,7 +5,7 @@ import TotalUsersInfo from "../user/TotalUsersInfo";
 import PostsStatisticsChart from "../user/PostsStatisticsChart";
 import DashBoardNav from "../user/DashBoardNav";
 import WeeklyUsersChart from "../user/WeeklyUsersChart";
-import { Col, Row, Accordion, Card } from "react-bootstrap";
+import { Col, Row, Accordion, Container, Card } from "react-bootstrap";
 import HeaderNav from "../navigations/HeaderNav";
 import { AiOutlineMenu } from "react-icons/ai";
 import { IoMdArrowDropdown } from "react-icons/io";
@@ -30,6 +30,17 @@ export default function UserDashbordPage() {
 						</div>
 						{/* ======FOR MOBILE DASHBOARDNAV====== */}
 						<div className=" d-lg-none  d-xs-block d-sm-block d-md-block ">
+							<Container>
+								<h3
+									style={{
+										marginTop: "30%",
+										opacity: "0.5",
+										fontSize: "20px",
+										marginBottom: "20px",
+									}}>
+									<b>Admin Dashboard</b>
+								</h3>
+							</Container>
 							<Accordion>
 								<Accordion.Toggle
 									as={Card.Header}
@@ -68,7 +79,17 @@ export default function UserDashbordPage() {
 						md={12}
 						lg={9}
 						xl={9}
-						style={{ marginLeft: "22%" }}>
+						style={{ marginLeft: "22%" }} >
+							<div  className="d-none d-lg-block  d-md-none">
+							<h3 
+									style={{
+										marginTop: "10%",
+										opacity: "0.5",
+										fontSize: "15px"
+									}}>
+									<b>Admin Dashboard</b>
+								</h3>
+								</div>
 						<Row>
 							<Col
 								xm={12}
@@ -76,7 +97,7 @@ export default function UserDashbordPage() {
 								md={12}
 								lg={3}
 								xl={3}
-								style={{ marginTop: "10%" }}>
+								style={{ marginTop: "2%" }}>
 								<div className="d-none d-lg-block  d-md-none">
 									<ActiveAdsInfo />
 								</div>
@@ -87,7 +108,7 @@ export default function UserDashbordPage() {
 								md={12}
 								lg={3}
 								xl={3}
-								style={{ marginTop: "10%" }}>
+								style={{ marginTop: "2%" }}>
 								<div className="d-none d-lg-block  d-md-none">
 									<NewAdsInfo />
 								</div>
@@ -98,7 +119,7 @@ export default function UserDashbordPage() {
 								md={12}
 								lg={3}
 								xl={3}
-								style={{ marginTop: "10%" }}>
+								style={{ marginTop: "2%" }}>
 								<div className="d-none d-lg-block  d-md-none">
 									<TotalUsersInfo />
 								</div>
@@ -109,7 +130,7 @@ export default function UserDashbordPage() {
 								md={12}
 								lg={3}
 								xl={3}
-								style={{ marginTop: "10%" }}>
+								style={{ marginTop: "2%" }}>
 								<div className="d-none d-lg-block  d-md-none">
 									<ActiveAdsInfo />
 								</div>
@@ -117,21 +138,27 @@ export default function UserDashbordPage() {
 						</Row>
 					</Col>
 					{/* ======FOR CHART DESKTOP VIEW====== */}
-					<Col xm={12} sm={12} md={12} lg={9} xl={9} style={{ marginLeft: "22%" }}>
-							<Row>
-							<Col xm={12} sm={12} md={12} lg={6} xl={6} >
-							<div className="mt-4 d-none d-lg-block  d-md-none">
-								<PostsStatisticsChart />
-							</div>
+					<Col
+						xm={12}
+						sm={12}
+						md={12}
+						lg={9}
+						xl={9}
+						style={{ marginLeft: "22%" }}>
+						<Row>
+							<Col xm={12} sm={12} md={12} lg={6} xl={6}>
+								<div className="mt-4 d-none d-lg-block  d-md-none">
+									<PostsStatisticsChart />
+								</div>
 							</Col>
-							<Col xm={12} sm={12} md={12} lg={6} xl={6} >
-							<div className="mt-4 d-none d-lg-block  d-md-none">
-								<WeeklyUsersChart />
-							</div>
+							<Col xm={12} sm={12} md={12} lg={6} xl={6}>
+								<div className="mt-4 d-none d-lg-block  d-md-none">
+									<WeeklyUsersChart />
+								</div>
 							</Col>
-							</Row>
-						</Col>
-						
+						</Row>
+					</Col>
+
 					{/* ======FOR MOBILE VIEW======== */}
 					<Col
 						xs={12}
@@ -139,7 +166,7 @@ export default function UserDashbordPage() {
 						md={12}
 						lg={9}
 						xl={9}
-						style={{ marginTop: "-30%", padding: "30px" }}
+						style={{  padding: "30px" }}
 						className=" d-lg-none  d-xs-block d-sm-block d-md-block ">
 						<Row>
 							<Col xm={12} sm={12} md={12} lg={3} xl={3}>
@@ -165,22 +192,27 @@ export default function UserDashbordPage() {
 						</Row>
 					</Col>
 					{/* ======FOR CHART MOBILE VIEW====== */}
-					<Col xm={12} sm={12} md={12} lg={9} xl={9} style={{ padding: "30px" }}
-					className=" d-lg-none  d-xs-block d-sm-block d-md-block "
-					>
-							<Row>
-							<Col xm={12} sm={12} md={12} lg={6} xl={6} >
-							<div >
-								<PostsStatisticsChart />
-							</div>
+					<Col
+						xm={12}
+						sm={12}
+						md={12}
+						lg={9}
+						xl={9}
+						style={{ padding: "30px" }}
+						className=" d-lg-none  d-xs-block d-sm-block d-md-block ">
+						<Row>
+							<Col xm={12} sm={12} md={12} lg={6} xl={6}>
+								<div>
+									<PostsStatisticsChart />
+								</div>
 							</Col>
-							<Col xm={12} sm={12} md={12} lg={6} xl={6} >
-							<div className="mt-3 ">
-								<WeeklyUsersChart />
-							</div>
+							<Col xm={12} sm={12} md={12} lg={6} xl={6}>
+								<div className="mt-3 ">
+									<WeeklyUsersChart />
+								</div>
 							</Col>
-							</Row>
-						</Col>
+						</Row>
+					</Col>
 				</Row>
 			</div>
 		</div>

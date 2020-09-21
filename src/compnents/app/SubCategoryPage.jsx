@@ -1,36 +1,34 @@
 import React from "react";
+import { Col, Row, Accordion, Container, Card } from "react-bootstrap";
 import DashBoardNav from "../user/DashBoardNav";
-import PostAd from "../user/PostAd"
-import { Col, Row, Container, Accordion, Card } from "react-bootstrap";
 import HeaderNav from "../navigations/HeaderNav";
-<<<<<<< HEAD
-=======
-import BottomNav from "../navigations/BottomNav";
->>>>>>> b365d2341c2d5ccafdd4f6cff06e6f3c8d18ce87
 import { AiOutlineMenu } from "react-icons/ai";
 import { IoMdArrowDropdown } from "react-icons/io";
+import SubCategory from "../user/SubCategory";
 
-
-export default function PostAdPage() {
+export default function  SubCategoryPage() {
 	return (
 		<div>
 			<HeaderNav />
-			<Container>
+			<div style={{ overflow: "hidden" }}>
 				<Row>
 					<Col xs={12} sm={12} md={12} lg={3} xl={3}>
-						<div className="d-none d-lg-block  d-md-none">
-							<h3
-								style={{
-									marginTop: "33%",
-									marginBottom: "20px",
-									opacity: "0.5"
-								}}>
-								Post Ad
-							</h3>
+						<div
+							className="d-none d-lg-block  d-md-none"
+							style={{
+								position: "fixed",
+								marginTop: "60px",
+								width: "20%",
+								overflow: "auto",
+								height: "91%"
+							}}>
 							<DashBoardNav />
 						</div>
 						{/* ======FOR MOBILE DASHBOARDNAV====== */}
-						<div className=" d-lg-none  d-xs-block d-sm-block d-md-block ">
+						<div
+							className=" d-lg-none  d-xs-block d-sm-block d-md-block "
+							style={{ marginTop: "100px" }}>
+								<Container>
 							<h3
 								style={{
 									marginTop: "30%",
@@ -38,8 +36,10 @@ export default function PostAdPage() {
 									opacity: "0.5",
 									fontSize: "20px"
 								}}>
-							Post Ad
+						Sub Category
 							</h3>
+							</Container>
+							
 							<Accordion>
 								<Accordion.Toggle
 									as={Card.Header}
@@ -72,17 +72,41 @@ export default function PostAdPage() {
 						</div>
 					</Col>
 
-					<Col xs={12} sm={12} md={12} lg={9} xl={9} style={{ marginTop: "10.7%" }}>	
-						<div className="mt-3">
-						<PostAd/>
-						</div>
+					{/* ======FOR  DESKTOP VIEW====== */}
+					<Col
+						xs={12}
+						sm={12}
+						md={12}
+						lg={9}
+						xl={9}
+						style={{ marginLeft: "22%"}}
+						className="mt-4 d-none d-lg-block  d-md-none">
+							<h3
+							style={{
+								marginTop: "6%",
+								opacity: "0.5",
+								fontSize: "15px"
+							}}>
+							<b>Sub Category</b>
+						</h3>
+							<div 	style={{ marginTop: "2%" }}>
+						<SubCategory/>
+							</div>
+					</Col>
+
+					{/* ======FOR MOBILE VIEW======== */}
+					<Col
+						xs={12}
+						sm={12}
+						md={12}
+						lg={9}
+						xl={9}
+						style={{ padding: "30px" }}
+						className=" d-lg-none  d-xs-block d-sm-block d-md-block ">
+						<SubCategory/>
 					</Col>
 				</Row>
-			</Container>
-<<<<<<< HEAD
-=======
-			<BottomNav />
->>>>>>> b365d2341c2d5ccafdd4f6cff06e6f3c8d18ce87
+			</div>
 		</div>
 	);
 }

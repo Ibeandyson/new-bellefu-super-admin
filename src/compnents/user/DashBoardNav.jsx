@@ -3,22 +3,20 @@ import { Card, Image, } from "react-bootstrap";
 import { GoDashboard } from "react-icons/go";
 import {
 	AiOutlineUser,
-	AiOutlineUsergroupAdd,
 	AiOutlineGift,
-	AiOutlineHeart,
-	AiOutlineEyeInvisible,
 	AiOutlineMessage,
 	AiOutlineAccountBook,
-	AiOutlineSetting
+	AiOutlineSetting,
 } from "react-icons/ai";
 import { IoMdTime, IoIosLogIn } from "react-icons/io";
 import { MdDateRange } from "react-icons/md"
+import { FiUserPlus, FiUsers } from "react-icons/fi"
 import pic from "../images/pic.jpg"
 
 export default function DashBoardNav() {
 	return (
 		<div>
-			<Card className="border-0 shadow-lg">
+			<Card className="border-0 ">
 				<div className="p-2">
 				<div className="text-center pt-3">
                         <Image src={pic} style={styles.avater}  roundedCircle/>
@@ -40,14 +38,7 @@ export default function DashBoardNav() {
 							onMouseOver={listHover}
 							onMouseLeave={listHoverNone}>
 							<AiOutlineUser className="mr-3" style={styles.icon} />
-							Profile public view
-						</li>
-						<li
-							className="pb-3"
-							onMouseOver={listHover}
-							onMouseLeave={listHoverNone}>
-							<AiOutlineUsergroupAdd className="mr-3" style={styles.icon} />
-							Menbership
+							Profile 
 						</li>
 					</ul>
 					<h6 className="p-3" style={styles.head}>
@@ -59,14 +50,7 @@ export default function DashBoardNav() {
 							onMouseOver={listHover}
 							onMouseLeave={listHoverNone}>
 							<AiOutlineGift className="mr-3" style={styles.icon} />
-							My Ads
-						</li>
-						<li
-							className="pb-3"
-							onMouseOver={listHover}
-							onMouseLeave={listHoverNone}>
-							<AiOutlineHeart className="mr-3" style={styles.icon} />
-							Favourite Ads
+							Active Ads
 						</li>
 						<li
 							className="pb-3"
@@ -79,15 +63,46 @@ export default function DashBoardNav() {
 							className="pb-3"
 							onMouseOver={listHover}
 							onMouseLeave={listHoverNone}>
-							<AiOutlineEyeInvisible className="mr-3" style={styles.icon} />
-							Hidden Ads
+							<MdDateRange className="mr-3" style={styles.icon} />
+							Expired Ads
+						</li>
+					</ul>
+					<h6 className="p-3" style={styles.head}>
+				    Menbership
+					</h6>
+					<ul style={styles.list}>
+						<li
+							className="pb-3"
+							onMouseOver={listHover}
+							onMouseLeave={listHoverNone}>
+							<FiUserPlus className="mr-3" style={styles.icon} />
+							Menbership Plan
 						</li>
 						<li
 							className="pb-3"
 							onMouseOver={listHover}
 							onMouseLeave={listHoverNone}>
-							<MdDateRange className="mr-3" style={styles.icon} />
-							Expired Ads
+							<FiUsers className="mr-3" style={styles.icon} />
+							Menbers 
+						</li>
+					</ul>
+					<h6 className="p-3" style={styles.head}>
+				    Category
+					</h6>
+					<ul style={styles.list}>
+						<li
+							className="pb-3"
+							onMouseOver={listHover}
+							onMouseLeave={listHoverNone}>
+							<FiUserPlus className="mr-3" style={styles.icon} />
+							Create Category
+						</li>
+						<li
+							className="pb-3"
+							onMouseOver={listHover}
+							onMouseLeave={listHoverNone}>
+							<FiUsers className="mr-3" style={styles.icon} />
+							Create Sub Category
 						</li>
 					</ul>
 					<h6 className="p-3" style={styles.head}>

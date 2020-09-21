@@ -156,7 +156,7 @@ export default function ProfileForm() {
 								</Card>
 							</Accordion>
 							<Button style={styles.btnUpdate} variant="warning" size="sm" >
-								Update
+								<b>Update</b>
 							</Button>
 						</Card.Body>
 					</Card>

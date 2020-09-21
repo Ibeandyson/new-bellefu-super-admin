@@ -16,8 +16,8 @@ import {
 	AiFillPhone,
 	AiFillEye
 } from "react-icons/ai";
-import { GoLocation } from "react-icons/go";
-import { MdDateRange, MdCancel, MdLocationOn } from "react-icons/md";
+
+import {  MdCancel, MdLocationOn } from "react-icons/md";
 import {
 	IoMdTrash,
 	IoIosArrowDroprightCircle,
@@ -25,12 +25,10 @@ import {
 	IoIosArrowDropleftCircle,
 	IoMdMailOpen
 } from "react-icons/io";
-import { FcCheckmark } from "react-icons/fc";
 import { GiReceiveMoney } from "react-icons/gi";
-import { FaSlackHash } from "react-icons/fa";
+import { FaSlackHash, FaPencilAlt} from "react-icons/fa";
 import pic from "../images/pic.jpg";
 import land from "../images/land.PNG";
-
 
 //THIS IS FOR HOVER TOOLTIP TO SHOW A TEXT (delete)
 const deleteTooltip = (props) => (
@@ -39,6 +37,15 @@ const deleteTooltip = (props) => (
 	</Tooltip>
 );
 
+
+//THIS IS FOR HOVER TOOLTIP TO SHOW A TEXT (edit)
+const editTooltip = (props) => (
+	<Tooltip id="button-tooltip" {...props}>
+		Edit Plan
+	</Tooltip>
+);
+
+
 //THIS IS FOR HOVER TOOLTIP TO SHOW A TEXT (view)
 const viewTooltip = (props) => (
 	<Tooltip id="button-tooltip" {...props}>
@@ -46,84 +53,58 @@ const viewTooltip = (props) => (
 	</Tooltip>
 );
 
-
-export default function ExpiredAdTable() {
+export default function UsersListTable() {
 	return (
 		<div>
 			<Card className="border-0">
 				<Card.Body>
-					<table  class="uk-table uk-table-responsive uk-table-divider">
-						<thead  style={{ backgroundColor: "#76ba1b", color: "white" }}>
+					<table class="uk-table uk-table-responsive uk-table-divider">
+						<thead style={{ backgroundColor: "#76ba1b", color: "white" }}>
 							<tr>
 								<th
 									style={{ color: "white", fontWeight: "bold" }}
 									className="uk-table-expand">
-									Ads
+									avater
 								</th>
-								<th
-									style={{ color: "white", fontWeight: "bold" }}
-									className="uk-width-*">
-									{" "}
+								<th style={{ color: "white", fontWeight: "bold" }}>
+									Name
 								</th>
-								<th style={{ color: "white", fontWeight: "bold" }}>Username</th>
+								<th style={{ color: "white", fontWeight: "bold" }}>Email</th>
+								<th style={{ color: "white", fontWeight: "bold" }}>Sex</th>
 								<th style={{ color: "white", fontWeight: "bold" }}>Status</th>
-								<th className="uk-table-expand" style={{ color: "white", fontWeight: "bold" }}>Action</th>
+								<th style={{ color: "white", fontWeight: "bold" }}>Joined</th>
+								<th
+									className="uk-table-expand"
+									style={{ color: "white", fontWeight: "bold" }}>
+									Action
+								</th>
 							</tr>
 						</thead>
 						<tbody>
 							<tr>
 								<td className="uk-text-center">
-									<Image src={pic} style={styles.image} />
+									<Image src={pic} style={styles.image} roundedCircle/>
 								</td>
 								<td>
 									<p style={styles.titel}>
-										Freshly processed onions for worldwide bulk delivery Freshly
+										Ibe Andyson Andrew
 									</p>
-
-									<Badge variant="danger" className="ml-2">
-										Ugent
-									</Badge>
-									<Badge variant="warning" className="ml-2">
-										Featured
+									</td>
+								<td>Andyson@gmail.com</td>
+								<td>male</td>
+								<td>
+									<Badge variant="primary" className="ml-2">
+										Active
 									</Badge>
 									<Badge variant="success" className="ml-2">
-										Higlighted
+										Verified
 									</Badge>
 
-									<div className="mt-3">
-										<AiOutlineTag style={styles.icon} className="mr-2" />
-										<span style={styles.category} className="ml-2 mt-3">
-											Agricultural Produce
-										</span>
-										<span style={styles.subCategory} className="ml-2 mt-5">
-											Grains
-										</span>
-									</div>
-									<div className="mt-3">
-										<GoLocation style={styles.icon} className="mr-1" />
-										<span style={styles.location} className="ml-1 ">
-											port harcourt
-										</span>
-										<MdDateRange style={styles.icon} className="mr-1 ml-1" />
-										<span style={styles.date} className="ml-1 ">
-											Post Date: 02-May-23
-										</span>
-										<span  className="ml-2" style={styles.price}>$100</span>
-									</div>
 								</td>
-								<td>
-									Andyson
-								</td>
-								<td>
-									<Badge
-										style={{ backgroundColor: "red", color: "white" }}
-										className="ml-2">
-										Expired
-									</Badge>
-								</td>
+								<td>3days ago</td>
 								<td>
 									<div className="btn-group" role="group">
-									<OverlayTrigger
+										<OverlayTrigger
 											placement="bottom"
 											delay={{ show: 50, hide: 100 }}
 											overlay={viewTooltip}>
@@ -137,7 +118,20 @@ export default function ExpiredAdTable() {
 											</Button>
 										</OverlayTrigger>
 
-										
+
+										<OverlayTrigger
+											placement="bottom"
+											delay={{ show: 50, hide: 100 }}
+											overlay={editTooltip}>
+											<Button
+												class="uk-button uk-button-default"
+												type="button"
+												uk-toggle="target: #offcanvas-edit"
+												size="sm"
+												variant="light">
+												<FaPencilAlt style={{ color: "#ffa500" }} />
+											</Button>
+										</OverlayTrigger>
 
 										<OverlayTrigger
 											placement="bottom"
@@ -150,7 +144,6 @@ export default function ExpiredAdTable() {
 									</div>
 								</td>
 							</tr>
-							
 						</tbody>
 					</table>
 				</Card.Body>
@@ -236,9 +229,6 @@ export default function ExpiredAdTable() {
 	);
 }
 
-
-
-//  ====PRODUCT TITLE & TAGS====
 function ProductTitle() {
 	return (
 		<div>
@@ -290,7 +280,6 @@ function ProductTitle() {
 		</div>
 	);
 }
-
 
 // =====Ad Details====
 function AdDetails() {
@@ -399,7 +388,7 @@ function AdDetails() {
 							</Card>
 						</Col>
 						<Col xm={12} sm={12} md={12} lg={6} xl={6} className="mt-4">
-							<UserAdInfo/>
+							<UserAdInfo />
 						</Col>
 					</Row>
 				</Col>
@@ -407,7 +396,6 @@ function AdDetails() {
 		</div>
 	);
 }
-
 
 // ======user info dt own a Ad=====
 function UserAdInfo() {
@@ -494,11 +482,11 @@ function UserAdInfo() {
 
 const styles = {
 	image: {
+		height: "50px"
+	},
+	avater: {
 		height: "100px"
 	},
-	avater:{
-        height: "100px"
-    },
 	iconD: {
 		color: "#ffa500",
 		fontSize: "30px"
@@ -548,7 +536,5 @@ const styles = {
 		padding: "3px"
 	}
 };
-
-
 
 

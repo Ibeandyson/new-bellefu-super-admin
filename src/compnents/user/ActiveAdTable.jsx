@@ -25,12 +25,10 @@ import {
 	IoIosArrowDropleftCircle,
 	IoMdMailOpen
 } from "react-icons/io";
-import { FcCheckmark } from "react-icons/fc";
 import { GiReceiveMoney } from "react-icons/gi";
 import { FaSlackHash } from "react-icons/fa";
 import pic from "../images/pic.jpg";
 import land from "../images/land.PNG";
-
 
 //THIS IS FOR HOVER TOOLTIP TO SHOW A TEXT (delete)
 const deleteTooltip = (props) => (
@@ -46,14 +44,13 @@ const viewTooltip = (props) => (
 	</Tooltip>
 );
 
-
-export default function ExpiredAdTable() {
+export default function ActiveAdTable() {
 	return (
 		<div>
 			<Card className="border-0">
 				<Card.Body>
-					<table  class="uk-table uk-table-responsive uk-table-divider">
-						<thead  style={{ backgroundColor: "#76ba1b", color: "white" }}>
+					<table class="uk-table uk-table-responsive uk-table-divider">
+						<thead style={{ backgroundColor: "#76ba1b", color: "white" }}>
 							<tr>
 								<th
 									style={{ color: "white", fontWeight: "bold" }}
@@ -67,7 +64,11 @@ export default function ExpiredAdTable() {
 								</th>
 								<th style={{ color: "white", fontWeight: "bold" }}>Username</th>
 								<th style={{ color: "white", fontWeight: "bold" }}>Status</th>
-								<th className="uk-table-expand" style={{ color: "white", fontWeight: "bold" }}>Action</th>
+								<th
+									className="uk-table-expand"
+									style={{ color: "white", fontWeight: "bold" }}>
+									Action
+								</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -108,22 +109,22 @@ export default function ExpiredAdTable() {
 										<span style={styles.date} className="ml-1 ">
 											Post Date: 02-May-23
 										</span>
-										<span  className="ml-2" style={styles.price}>$100</span>
+										<span className="ml-2" style={styles.price}>
+											$100
+										</span>
 									</div>
 								</td>
-								<td>
-									Andyson
-								</td>
+								<td>Andyson</td>
 								<td>
 									<Badge
-										style={{ backgroundColor: "red", color: "white" }}
+										style={{ backgroundColor: "green", color: "white" }}
 										className="ml-2">
-										Expired
+										Aproved
 									</Badge>
 								</td>
 								<td>
 									<div className="btn-group" role="group">
-									<OverlayTrigger
+										<OverlayTrigger
 											placement="bottom"
 											delay={{ show: 50, hide: 100 }}
 											overlay={viewTooltip}>
@@ -137,8 +138,6 @@ export default function ExpiredAdTable() {
 											</Button>
 										</OverlayTrigger>
 
-										
-
 										<OverlayTrigger
 											placement="bottom"
 											delay={{ show: 50, hide: 100 }}
@@ -150,7 +149,6 @@ export default function ExpiredAdTable() {
 									</div>
 								</td>
 							</tr>
-							
 						</tbody>
 					</table>
 				</Card.Body>
@@ -236,9 +234,6 @@ export default function ExpiredAdTable() {
 	);
 }
 
-
-
-//  ====PRODUCT TITLE & TAGS====
 function ProductTitle() {
 	return (
 		<div>
@@ -290,7 +285,6 @@ function ProductTitle() {
 		</div>
 	);
 }
-
 
 // =====Ad Details====
 function AdDetails() {
@@ -399,7 +393,7 @@ function AdDetails() {
 							</Card>
 						</Col>
 						<Col xm={12} sm={12} md={12} lg={6} xl={6} className="mt-4">
-							<UserAdInfo/>
+							<UserAdInfo />
 						</Col>
 					</Row>
 				</Col>
@@ -407,7 +401,6 @@ function AdDetails() {
 		</div>
 	);
 }
-
 
 // ======user info dt own a Ad=====
 function UserAdInfo() {
@@ -496,9 +489,9 @@ const styles = {
 	image: {
 		height: "100px"
 	},
-	avater:{
-        height: "100px"
-    },
+	avater: {
+		height: "100px"
+	},
 	iconD: {
 		color: "#ffa500",
 		fontSize: "30px"
@@ -548,7 +541,3 @@ const styles = {
 		padding: "3px"
 	}
 };
-
-
-
-
