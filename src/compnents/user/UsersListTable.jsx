@@ -82,15 +82,19 @@ export default function UsersListTable() {
 						</thead>
 						<tbody>
 							<tr>
-								<td className="uk-text-center">
+								<td >
 									<Image src={pic} style={styles.image} roundedCircle/>
 								</td>
 								<td>
-									<p style={styles.titel}>
+									<p style={styles.name}>
 										Ibe Andyson Andrew
 									</p>
 									</td>
-								<td>Andyson@gmail.com</td>
+								<td>
+								<p style={styles.name}>
+									Andyson@gmail.com
+								</p>
+									</td>
 								<td>male</td>
 								<td>
 									<Badge variant="primary" className="ml-2">
@@ -503,10 +507,10 @@ const styles = {
 		fontSize: "1.9em",
 		color: "#ffa500"
 	},
-	titel: {
+	name: {
 		opacity: "0.9",
 		fontSize: "20px",
-		width: "300px",
+		width: "150px",
 		whiteSpace: "nowrap",
 		overflow: "hidden",
 		textOverflow: "ellipsis"

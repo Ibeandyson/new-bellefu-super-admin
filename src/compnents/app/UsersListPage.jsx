@@ -36,7 +36,7 @@ export default function UsersListPage() {
 									opacity: "0.5",
 									fontSize: "20px"
 								}}>
-								pending Ads
+							Users List
 							</h3>
 							</Container>
 							
@@ -87,7 +87,7 @@ export default function UsersListPage() {
 								opacity: "0.5",
 								fontSize: "15px"
 							}}>
-							<b>Pending Ads</b>
+							<b>Users List</b>
 						</h3>
 							<div 	style={{ marginTop: "2%" }}>
 							<UsersListTable />
