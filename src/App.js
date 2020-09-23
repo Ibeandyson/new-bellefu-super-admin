@@ -11,6 +11,7 @@ import PlanMenbersPage from "./compnents/app/PlanMenbersPage"
 import MainCategoryPage from "./compnents/app/MainCategoryPage"
 import SubCategoryPage from "./compnents/app/SubCategoryPage"
 import UsersListPage  from  './compnents/app/UsersListPage'
+import MessageChatPage from "./compnents/app/MessageChatPage"
 
 
 
@@ -27,7 +28,8 @@ function App() {
 			{/* <PlanMenbersPage/> */}
 			{/* <MainCategoryPage/> */}
 			{/* <SubCategoryPage /> */}
-			<UsersListPage/>
+			{/* <UsersListPage/> */}
+			<MessageChatPage/>
 		</div>
 	);
 }

@@ -8,6 +8,7 @@ import {
 	AiOutlineAccountBook,
 	AiOutlineSetting,
 } from "react-icons/ai";
+import { TiGroupOutline } from "react-icons/ti"
 import { IoMdTime, IoIosLogIn } from "react-icons/io";
 import { MdDateRange } from "react-icons/md"
 import { FiUserPlus, FiUsers } from "react-icons/fi"
@@ -109,6 +110,13 @@ export default function DashBoardNav() {
 					Account
 					</h6>
 					<ul style={styles.list}>
+					<li
+							className="pb-3"
+							onMouseOver={listHover}
+							onMouseLeave={listHoverNone}>
+							<TiGroupOutline className="mr-3" style={styles.icon} />
+							Users
+						</li>
 						<li
 							className="pb-3"
 							onMouseOver={listHover}

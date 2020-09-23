@@ -1,6 +1,7 @@
 import React from "react";
-import { Navbar, Nav, Button, Tooltip, OverlayTrigger } from "react-bootstrap";
+import { Navbar,  Button, Tooltip, OverlayTrigger } from "react-bootstrap";
 import SideNav from "../navigations/SideNav";
+import NotificationSlide from "../navigations/NotificationSlide"
 import logo from "../images/logo.png";
 
 //THIS IS FOR HOVER TOOLTIP TO SHOW A TEXT (CHANGE CONTRY)
@@ -30,7 +31,10 @@ export default function HeaderNav() {
 				</Navbar.Brand>
 
 				<Navbar.Collapse className="justify-content-end">
-
+					
+				<Navbar.Brand styles={styles.language}>
+						<NotificationSlide/>
+					</Navbar.Brand>
 					<Navbar.Brand styles={styles.language}>
 						<Button variant="warning" style={styles.post_free_add_btn}>
 							EN

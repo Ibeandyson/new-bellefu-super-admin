@@ -1,6 +1,7 @@
 import React from "react";
 import { Col, Row, Card, Image } from "react-bootstrap";
 import pic from "../images/pic.jpg";
+
 export default function ProfileInfo() {
 	return (
 		<div>
