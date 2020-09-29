@@ -91,7 +91,7 @@ export default function MessageChatPage() {
 							}}>
 							<b>Chat</b>
 						</h3>
-							<div style={{ marginTop: "2%" }}>
+							<div style={{ marginTop: "2%" ,}}>
 							<MessageChat />
                             <ChatInput />
 							</div>
@@ -117,9 +117,9 @@ export default function MessageChatPage() {
 						md={12}
 						lg={9}
 						xl={9}
-						style={{ padding: "30px" }}
 						className=" d-lg-none  d-xs-block d-sm-block d-md-block ">
 						<MessageChat />
+                        <ChatInput />
 					</Col>
 				</Row>
             

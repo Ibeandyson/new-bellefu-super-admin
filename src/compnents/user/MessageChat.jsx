@@ -2,12 +2,14 @@ import React from "react";
 import { Col, Row,  } from "react-bootstrap";
 import pic from "../images/pic.jpg";
 
+
+// THIS IS CHAT COMPONENT
 export default function MessageChat() {
 	return (
 		<div>
 			<Row>
 				<Col xs={12} sm={12} md={12} lg={12} xl={12}>
-					<ul>
+					<ul className="p-1">
 						<li className="d-flex flex-row  mt-4">
 							<div
 								style={{
@@ -37,7 +39,7 @@ export default function MessageChat() {
 							</div>
 						</li>
 
-						<li className="d-flex flex-row-reverse mt-4">
+						<li className="d-flex flex-row-reverse mt-4 ">
 							<div
 								style={{
 									maxWidth: "80%",
