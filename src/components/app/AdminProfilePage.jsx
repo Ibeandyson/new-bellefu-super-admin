@@ -1,32 +1,34 @@
-import React from 'react'
-import { Col, Row, Container, Accordion, Card } from "react-bootstrap";
-import DashBoardNav from "../user/DashBoardNav"
-import ProfileInfo from "../user/ProfileInfo"
+import React from "react";
+import { Col, Row, Accordion, Container, Card } from "react-bootstrap";
+import DashBoardNav from "../user/DashBoardNav";
 import HeaderNav from "../navigations/HeaderNav";
 import { AiOutlineMenu } from "react-icons/ai";
 import { IoMdArrowDropdown } from "react-icons/io";
+import ProfileInfo from "../user/ProfileInfo";
 
-
-export default function UserProfilePage() {
-    return (
+export default function  AdminProfilePage() {
+	return (
 		<div>
 			<HeaderNav />
-			<Container>
+			<div style={{ overflow: "hidden" }}>
 				<Row>
 					<Col xs={12} sm={12} md={12} lg={3} xl={3}>
-						<div className="d-none d-lg-block  d-md-none">
-							<h3
-								style={{
-									marginTop: "33%",
-									marginBottom: "20px",
-									opacity: "0.5"
-								}}>
-								 Profile
-							</h3>
+						<div
+							className="d-none d-lg-block  d-md-none"
+							style={{
+								position: "fixed",
+								marginTop: "60px",
+								width: "20%",
+								overflow: "auto",
+								height: "91%"
+							}}>
 							<DashBoardNav />
 						</div>
 						{/* ======FOR MOBILE DASHBOARDNAV====== */}
-						<div className=" d-lg-none  d-xs-block d-sm-block d-md-block ">
+						<div
+							className=" d-lg-none  d-xs-block d-sm-block d-md-block "
+							style={{ marginTop: "100px" }}>
+								<Container>
 							<h3
 								style={{
 									marginTop: "30%",
@@ -34,8 +36,10 @@ export default function UserProfilePage() {
 									opacity: "0.5",
 									fontSize: "20px"
 								}}>
-								 Profile
+						Profile Info
 							</h3>
+							</Container>
+							
 							<Accordion>
 								<Accordion.Toggle
 									as={Card.Header}
@@ -68,15 +72,41 @@ export default function UserProfilePage() {
 						</div>
 					</Col>
 
-					<Col xs={12} sm={12} md={12} lg={9} xl={9} style={{ marginTop: "10.7%" }}>
-						<div className="mt-3">
-							<ProfileInfo />
-						</div>
+					{/* ======FOR  DESKTOP VIEW====== */}
+					<Col
+						xs={12}
+						sm={12}
+						md={12}
+						lg={9}
+						xl={9}
+						style={{ marginLeft: "22%"}}
+						className="mt-4 d-none d-lg-block  d-md-none">
+							<h3
+							style={{
+								marginTop: "6%",
+								opacity: "0.5",
+								fontSize: "15px"
+							}}>
+							<b>Profile Info</b>
+						</h3>
+							<div 	style={{ marginTop: "2%" }}>
+						<ProfileInfo/>
+							</div>
+					</Col>
+
+					{/* ======FOR MOBILE VIEW======== */}
+					<Col
+						xs={12}
+						sm={12}
+						md={12}
+						lg={9}
+						xl={9}
+						style={{ padding: "30px" }}
+						className=" d-lg-none  d-xs-block d-sm-block d-md-block ">
+						<ProfileInfo/>
 					</Col>
 				</Row>
-			</Container>
-	
-
-        </div>
-    )
+			</div>
+		</div>
+	);
 }

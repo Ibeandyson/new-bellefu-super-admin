@@ -13,7 +13,7 @@ import { IoMdTime, IoIosLogIn } from "react-icons/io";
 import { MdDateRange } from "react-icons/md"
 import { FiUserPlus, FiUsers } from "react-icons/fi"
 import pic from "../images/pic.jpg"
-
+import { Link } from "react-router-dom";
 export default function DashBoardNav() {
 	return (
 		<div>
@@ -27,6 +27,7 @@ export default function DashBoardNav() {
 				    Admin
 					</h6>
 					<ul style={styles.list}>
+					<Link to="/admin_dashboard" style={{ color: 'inherit', textDecoration: 'inherit'}}>
 						<li
 							className="pb-3"
 							onMouseOver={listHover}
@@ -34,6 +35,8 @@ export default function DashBoardNav() {
 							<GoDashboard className="mr-3" style={styles.icon} />
 							Dasboard
 						</li>
+						</Link>
+						<Link to="/admin_profile" style={{ color: 'inherit', textDecoration: 'inherit'}}>
 						<li
 							className="pb-3"
 							onMouseOver={listHover}
@@ -41,11 +44,13 @@ export default function DashBoardNav() {
 							<AiOutlineUser className="mr-3" style={styles.icon} />
 							Profile 
 						</li>
+						</Link>
 					</ul>
 					<h6 className="p-3" style={styles.head}>
 						Ads
 					</h6>
 					<ul style={styles.list}>
+					<Link to="/active_ads" style={{ color: 'inherit', textDecoration: 'inherit'}}>
 						<li
 							className="pb-3"
 							onMouseOver={listHover}
@@ -53,6 +58,8 @@ export default function DashBoardNav() {
 							<AiOutlineGift className="mr-3" style={styles.icon} />
 							Active Ads
 						</li>
+						</Link>
+						<Link to="/pending_ads" style={{ color: 'inherit', textDecoration: 'inherit'}}>
 						<li
 							className="pb-3"
 							onMouseOver={listHover}
@@ -60,6 +67,8 @@ export default function DashBoardNav() {
 							<IoMdTime className="mr-3" style={styles.icon} />
 							Pending Ads
 						</li>
+						</Link>
+						<Link to="/expired_ads" style={{ color: 'inherit', textDecoration: 'inherit'}}>
 						<li
 							className="pb-3"
 							onMouseOver={listHover}
@@ -67,30 +76,13 @@ export default function DashBoardNav() {
 							<MdDateRange className="mr-3" style={styles.icon} />
 							Expired Ads
 						</li>
-					</ul>
-					<h6 className="p-3" style={styles.head}>
-				    Menbership
-					</h6>
-					<ul style={styles.list}>
-						<li
-							className="pb-3"
-							onMouseOver={listHover}
-							onMouseLeave={listHoverNone}>
-							<FiUserPlus className="mr-3" style={styles.icon} />
-							Menbership Plan
-						</li>
-						<li
-							className="pb-3"
-							onMouseOver={listHover}
-							onMouseLeave={listHoverNone}>
-							<FiUsers className="mr-3" style={styles.icon} />
-							Menbers 
-						</li>
+						</Link>
 					</ul>
 					<h6 className="p-3" style={styles.head}>
 				    Category
 					</h6>
 					<ul style={styles.list}>
+					<Link to="/main_category" style={{ color: 'inherit', textDecoration: 'inherit'}}>
 						<li
 							className="pb-3"
 							onMouseOver={listHover}
@@ -98,6 +90,8 @@ export default function DashBoardNav() {
 							<FiUserPlus className="mr-3" style={styles.icon} />
 							Create Category
 						</li>
+						</Link>
+						<Link to="/sub_category" style={{ color: 'inherit', textDecoration: 'inherit'}}>
 						<li
 							className="pb-3"
 							onMouseOver={listHover}
@@ -105,11 +99,13 @@ export default function DashBoardNav() {
 							<FiUsers className="mr-3" style={styles.icon} />
 							Create Sub Category
 						</li>
+						</Link>
 					</ul>
 					<h6 className="p-3" style={styles.head}>
 					Account
 					</h6>
 					<ul style={styles.list}>
+					<Link to="/user_list" style={{ color: 'inherit', textDecoration: 'inherit'}}>
 					<li
 							className="pb-3"
 							onMouseOver={listHover}
@@ -117,6 +113,8 @@ export default function DashBoardNav() {
 							<TiGroupOutline className="mr-3" style={styles.icon} />
 							Users
 						</li>
+						</Link>
+						
 						<li
 							className="pb-3"
 							onMouseOver={listHover}
