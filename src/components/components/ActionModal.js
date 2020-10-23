@@ -17,14 +17,14 @@ export default function ActionModal(props) {
           <div
             style={{ display: "flex", justifyContent: "center", width: "100%" }}
           >
-            <AiOutlineWarning fontSize={44} color='warning' />
+            <AiOutlineWarning fontSize={44} color="warning" />
           </div>
         ) : (
           header
         )}
       </Modal.Header>
       <Modal.Body>
-        <p>{text}</p>
+        <p style={{ textAlign: "center" }}>{text}</p>
       </Modal.Body>
       <Modal.Footer
         style={{

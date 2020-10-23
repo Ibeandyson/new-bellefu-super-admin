@@ -1,563 +1,848 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
-	Card,
-	Badge,
-	Image,
-	Button,
-	Tooltip,
-	OverlayTrigger,
-	Row,
-	Col,
-	Container
+  Card,
+  Badge,
+  Image,
+  Button,
+  Tooltip,
+  OverlayTrigger,
+  Row,
+  Col,
+  Container,
 } from "react-bootstrap";
 import {
-	AiOutlineTag,
-	AiOutlineEye,
-	AiFillPhone,
-	AiFillEye
+  AiOutlineTag,
+  AiOutlineEye,
+  AiFillPhone,
+  AiFillEye,
 } from "react-icons/ai";
 import { GoLocation } from "react-icons/go";
 import { MdDateRange, MdCancel, MdLocationOn } from "react-icons/md";
 import {
-	IoMdTrash,
-	IoIosArrowDroprightCircle,
-	IoIosTime,
-	IoIosArrowDropleftCircle,
-	IoMdMailOpen
+  IoMdTrash,
+  IoIosArrowDroprightCircle,
+  IoIosTime,
+  IoIosArrowDropleftCircle,
+  IoMdMailOpen,
 } from "react-icons/io";
 import { FcCheckmark } from "react-icons/fc";
 import { GiReceiveMoney } from "react-icons/gi";
 import { FaSlackHash } from "react-icons/fa";
 import pic from "../images/pic.jpg";
 import land from "../images/land.PNG";
+import Axios from "axios";
+import { useSelector } from "react-redux";
+import { format } from "date-fns";
+import InfiniteScroll from "react-infinite-scroll-component";
+import ActionModal from "../components/ActionModal";
+import CustomSpinner from "../Spinner/Spinner";
 
 //THIS IS FOR HOVER TOOLTIP TO SHOW A TEXT (delete)
 const deleteTooltip = (props) => (
-	<Tooltip id="button-tooltip" {...props}>
-		Delete Ad
-	</Tooltip>
+  <Tooltip id="button-tooltip" {...props}>
+    Delete Ad
+  </Tooltip>
 );
 
 //THIS IS FOR HOVER TOOLTIP TO SHOW A TEXT (view)
 const viewTooltip = (props) => (
-	<Tooltip id="button-tooltip" {...props}>
-		View Ad
-	</Tooltip>
+  <Tooltip id="button-tooltip" {...props}>
+    View Ad
+  </Tooltip>
 );
 
 //THIS IS FOR HOVER TOOLTIP TO SHOW A TEXT (Comfirm)
 const editTooltip = (props) => (
-	<Tooltip id="button-tooltip" {...props}>
-		Comfirm Ad
-	</Tooltip>
+  <Tooltip id="button-tooltip" {...props}>
+    Comfirm Ad
+  </Tooltip>
 );
 
 export default function PendingdAdTable() {
-	return (
-		<div>
-			<Card className="border-0">
-				<Card.Body>
-					<table class="uk-table uk-table-responsive uk-table-divider">
-						<thead style={{ backgroundColor: "#76ba1b", color: "white" }}>
-							<tr>
-								<th
-									style={{ color: "white", fontWeight: "bold" }}
-									className="uk-table-expand">
-									Ads
-								</th>
-								<th
-									style={{ color: "white", fontWeight: "bold" }}
-									className="uk-width-*">
-									{" "}
-								</th>
-								<th style={{ color: "white", fontWeight: "bold" }}>Username</th>
-								<th style={{ color: "white", fontWeight: "bold" }}>Status</th>
-								<th
-									className="uk-table-expand"
-									style={{ color: "white", fontWeight: "bold" }}>
-									Action
-								</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr>
-								<td className="uk-text-center">
-									<Image src={pic} style={styles.image} />
-								</td>
-								<td>
-									<p style={styles.titel}>
-										Freshly processed onions for worldwide bulk delivery Freshly
-									</p>
+  const { admin } = useSelector((state) => state.adminSignin);
+  const [load, setLoad] = useState(false);
+  const [ads, setads] = useState([]);
+  const [ad, setad] = useState({
+    name: "",
+    phone: "",
+    description: "",
+    images: [],
+    email: "",
+    name: "",
+    price: "",
+    likeCount: "",
+    created: "",
+    id: "",
+    city: "",
+    country: "",
+    views: 0,
+  });
+  const [action, setAction] = useState({
+    view: false,
+    id: "",
+    message: "",
+    action: () => {},
+  });
+  const [pages, setPages] = useState({
+    current: 0,
+    last: 0,
+  });
+  const [next, setNext] = useState("");
 
-									<Badge variant="danger" className="ml-2">
-										Ugent
-									</Badge>
-									<Badge variant="warning" className="ml-2">
-										Featured
-									</Badge>
-									<Badge variant="success" className="ml-2">
-										Higlighted
-									</Badge>
+  const handleAction = (id, message, action) => {
+    setAction({
+      view: true,
+      id,
+      message,
+      action,
+    });
+  };
 
-									<div className="mt-3">
-										<AiOutlineTag style={styles.icon} className="mr-2" />
-										<span style={styles.category} className="ml-2 mt-3">
-											Agricultural Produce
-										</span>
-										<span style={styles.subCategory} className="ml-2 mt-5">
-											Grains
-										</span>
-									</div>
-									<div className="mt-3">
-										<GoLocation style={styles.icon} className="mr-1" />
-										<span style={styles.location} className="ml-1 ">
-											port harcourt
-										</span>
-										<MdDateRange style={styles.icon} className="mr-1 ml-1" />
-										<span style={styles.date} className="ml-1 ">
-											Post Date: 02-May-23
-										</span>
-										<span className="ml-2" style={styles.price}>
-											$100
-										</span>
-									</div>
-								</td>
-								<td>Andyson</td>
-								<td>
-									<Badge
-										style={{ backgroundColor: "black", color: "white" }}
-										className="ml-2">
-									Pending 
-									</Badge>
-								</td>
-								<td>
-									<div className="btn-group" role="group">
-										<OverlayTrigger
-											placement="bottom"
-											delay={{ show: 50, hide: 100 }}
-											overlay={viewTooltip}>
-											<Button
-												class="uk-button uk-button-default"
-												type="button"
-												uk-toggle="target: #offcanvas-flip"
-												size="sm"
-												variant="light">
-												<AiOutlineEye style={{ color: "#ffa500" }} />
-											</Button>
-										</OverlayTrigger>
+  function fetchAds() {
+    setLoad(true);
+    Axios.get("https://dev.bellefu.com/api/admin/product/list/pending", {
+      headers: {
+        Authorization: `Bearer ${admin.token}`,
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+    })
+      .then((res) => {
+        setLoad(false);
+        setads(res.data.products.data);
+        setNext(res.data.products.next_page_url);
+        setPages({
+          current: res.data.products.current_page,
+          last: res.data.products.last_page,
+        });
+      })
+      .catch(() => {
+        setLoad(false);
+        setads([]);
+        setNext([]);
+        setPages({
+          current: 0,
+          last: 0,
+        });
+      });
+  }
 
-										<OverlayTrigger
-											placement="bottom"
-											delay={{ show: 50, hide: 100 }}
-											overlay={editTooltip}>
-											<Button size="sm" variant="light">
-												<FcCheckmark style={{ color: "green" }} />
-											</Button>
-										</OverlayTrigger>
+  useEffect(() => {
+    fetchAds();
+  }, []);
 
-										<OverlayTrigger
-											placement="bottom"
-											delay={{ show: 50, hide: 100 }}
-											overlay={deleteTooltip}>
-											<Button size="sm" variant="light">
-												<IoMdTrash style={{ color: "red" }} />
-											</Button>
-										</OverlayTrigger>
-									</div>
-								</td>
-							</tr>
-						</tbody>
-					</table>
-				</Card.Body>
-			</Card>
+  const nextData = () => {
+    Axios.get(next, {
+      headers: {
+        Authorization: `Bearer ${admin.token}`,
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+    }).then((res) => {
+      setads(ads.concat(res.data.products.data));
+      setNext(res.data.products.next_page_url);
+      setPages({
+        current: res.data.products.current_page,
+        last: res.data.products.last_page,
+      });
+    });
+  };
 
-			{/* ============OFFCANVA FOR VIEW AD========== */}
-			<div
-				id="offcanvas-flip"
-				uk-offcanvas="flip: true; overlay: true"
-				style={{ marginTop: "4%" }}>
-				<div class="uk-offcanvas-bar" style={{ width: "80%" }}>
-					<MdCancel
-						style={styles.close_icon}
-						className="uk-offcanvas-close"
-						uk-close
-						type="button"
-					/>
-					<Container>
-						<Row>
-							<Col xs={12} sm={12} md={12} lg={12} xl={12}>
-								<Card className="border-0">
-									<Card.Header style={{ backgroundColor: "#76ba1b" }}>
-										<b style={{ color: "white" }}> Ad</b>
-									</Card.Header>
-									<Card.Body>
-										<ProductTitle />
-										<div
-											class="uk-position-relative uk-visible-toggle uk-dark"
-											tabindex="-1"
-											uk-slideshow="animation: pull"
-											uk-slideshow="min-height: 100; max-height: 400">
-											<ul
-												uk-lightbox="animation: slide"
-												class="uk-slideshow-items">
-												<li>
-													<a
-														class="uk-cover-container uk-inline"
-														href={pic}
-														data-caption="Caption 1">
-														<img src={pic} alt="" uk-cover />
-													</a>
-												</li>
-												<li>
-													<a
-														class="uk-cover-container uk-inline"
-														href={land}
-														data-caption="Caption 1">
-														<img src={land} alt="" uk-cover />
-													</a>
-												</li>
-											</ul>
+  const handleDeleteButton = (id, message, action) => {
+    setAction({
+      view: true,
+      id,
+      message,
+      action: action,
+    });
+  };
 
-											<button
-												class="uk-border-pill uk-button uk-button-default uk-button-small uk-position-center-left  "
-												href="#"
-												uk-slidenav-previous
-												uk-slideshow-item="previous">
-												<IoIosArrowDropleftCircle
-													style={{ fontSize: "2em", color: "#ffa500" }}
-												/>
-											</button>
-											<button
-												class="uk-border-pill uk-button uk-border-remove uk-button-default uk-button-small  uk-position-center-right  "
-												href="#"
-												uk-slidenav-next
-												uk-slideshow-item="next">
-												<IoIosArrowDroprightCircle
-													style={{ fontSize: "2em", color: "#ffa500" }}
-												/>
-											</button>
-										</div>
-									</Card.Body>
-								</Card>
-							</Col>
-							<Col xs={12} sm={12} md={12} lg={12} xl={12} className="mt-4">
-								<AdDetails />
-							</Col>
-						</Row>
-					</Container>
-				</div>
-			</div>
-		</div>
-	);
+  const handleConfirmButton = (id, message, action) => {
+    setAction({
+      view: true,
+      id,
+      message,
+      action: action,
+    });
+  };
+
+  const deleteAd = (title) => {
+    Axios.get("https://dev.bellefu.com/api/admin/product/delete/" + title, {
+      headers: {
+        Authorization: `Bearer ${admin.token}`,
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+    })
+      .then(() => {
+        fetchAds();
+      })
+      .catch((err) => {
+        console.log(err.message);
+      });
+  };
+
+  const confirmAd = (title) => {
+    Axios.get("https://dev.bellefu.com/api/admin/product/approve/" + title, {
+      headers: {
+        Authorization: `Bearer ${admin.token}`,
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+    })
+      .then(() => {
+        fetchAds();
+      })
+      .catch((err) => {
+        console.log(err.message);
+      });
+  };
+
+  return (
+    <div>
+      <Card className="border-0">
+        <Card.Body>
+          {load ? (
+            <CustomSpinner />
+          ) : (
+            <InfiniteScroll
+              dataLength={ads.length}
+              next={nextData}
+              hasMore={pages.current !== pages.last ? true : false}
+              loader={<CustomSpinner />}
+              endMessage={<p style={{ textAlign: "center" }}></p>}
+            >
+              <table class="uk-table uk-table-responsive uk-table-divider">
+                <thead style={{ backgroundColor: "#76ba1b", color: "white" }}>
+                  <tr>
+                    <th
+                      style={{ color: "white", fontWeight: "bold" }}
+                      className="uk-table-expand"
+                    >
+                      Ads
+                    </th>
+                    <th
+                      style={{ color: "white", fontWeight: "bold" }}
+                      className="uk-width-*"
+                    >
+                      {" "}
+                    </th>
+                    <th style={{ color: "white", fontWeight: "bold" }}>
+                      Username
+                    </th>
+                    <th style={{ color: "white", fontWeight: "bold" }}>
+                      Status
+                    </th>
+                    <th
+                      className="uk-table-expand"
+                      style={{ color: "white", fontWeight: "bold" }}
+                    >
+                      Action
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {ads.map((item, key) => (
+                    <tr key={key}>
+                      <td className="uk-text-center">
+                        <Image
+                          src={
+                            "https://dev.bellefu.com/api/admin/product/list/pending/" +
+                            item.images[0]
+                          }
+                          style={styles.image}
+                        />
+                      </td>
+                      <td>
+                        <p style={styles.titel}>{item.title}</p>
+
+                        {/* <Badge variant="danger" className="ml-2">
+                      Ugent
+                    </Badge> */}
+                        <Badge
+                          variant="success"
+                          style={{ padding: "5px 10px" }}
+                          className="ml-2"
+                        >
+                          {item.plan}
+                        </Badge>
+
+                        {item.is_user_favourite && (
+                          <Badge
+                            style={{ padding: "5px 10px" }}
+                            variant="info"
+                            className="ml-2"
+                          >
+                            user favourite
+                          </Badge>
+                        )}
+                        <div className="mt-3">
+                          <AiOutlineTag style={styles.icon} className="mr-2" />
+                          <span style={styles.category} className="ml-2 mt-3">
+                            {item.category.name}
+                          </span>
+                          <span
+                            style={styles.subCategory}
+                            className="ml-2 mt-5"
+                          >
+                            {item.subcategory.name}
+                          </span>
+                        </div>
+                        <div className="mt-3">
+                          <GoLocation style={styles.icon} className="mr-1" />
+                          <span style={styles.location} className="ml-1 ">
+                            {item.country.native}
+                          </span>
+                          <MdDateRange
+                            style={styles.icon}
+                            className="mr-1 ml-1"
+                          />
+                          <span style={styles.date} className="ml-1 ">
+                            Post Date:{" "}
+                            {format(new Date(item.created_at), "dd-MMM-yyyy")}
+                          </span>
+                          <span className="ml-2" style={styles.price}></span>
+                        </div>
+                      </td>
+                      <td>{"N/A"}</td>
+                      <td>
+                        <Badge
+                          style={{ backgroundColor: "green", color: "white" }}
+                          className="ml-2"
+                        >
+                          {item.status}
+                        </Badge>
+                      </td>
+                      <td>
+                        <div className="btn-group" role="group">
+                          <OverlayTrigger
+                            placement="bottom"
+                            delay={{ show: 50, hide: 100 }}
+                            overlay={viewTooltip}
+                          >
+                            <Button
+                              class="uk-button uk-button-default"
+                              type="button"
+                              uk-toggle="target: #offcanvas-flip"
+                              size="sm"
+                              variant="light"
+                              onClick={() => {
+                                const obj = ads.find(
+                                  (o, index) => index === key
+                                );
+                                setad({
+                                  name: "",
+                                  price: obj.currency_symbol + obj.price,
+                                  likeCount: obj.favourites_count,
+                                  phone: obj.phone,
+                                  description: obj.description,
+                                  images: obj.images,
+                                  created: format(
+                                    new Date(item.created_at),
+                                    "dd-MMM-yyyy"
+                                  ),
+                                  email: "",
+                                  id: obj.id,
+                                  city: obj.city,
+                                  country: obj.country.native,
+                                  views: obj.inorganic_views,
+                                  isFave: obj.is_user_favourite,
+                                  plan: obj.plan,
+                                  title: obj.title,
+                                });
+                              }}
+                            >
+                              <AiOutlineEye style={{ color: "#ffa500" }} />
+                            </Button>
+                          </OverlayTrigger>
+
+                          <OverlayTrigger
+                            placement="bottom"
+                            delay={{ show: 50, hide: 100 }}
+                            overlay={editTooltip}
+                          >
+                            <Button
+                              size="sm"
+                              onClick={() => {
+                                handleConfirmButton(
+                                  item.slug,
+                                  `Are you sure you want to Confim the product \n ${item.title} ?`,
+                                  confirmAd
+                                );
+                              }}
+                              variant="light"
+                            >
+                              <FcCheckmark style={{ color: "red" }} />
+                            </Button>
+                          </OverlayTrigger>
+
+                          <OverlayTrigger
+                            placement="bottom"
+                            delay={{ show: 50, hide: 100 }}
+                            overlay={deleteTooltip}
+                          >
+                            <Button
+                              size="sm"
+                              onClick={() => {
+                                handleDeleteButton(
+                                  item.slug,
+                                  `Are you sure you want to delete the product \n ${item.title} ?`,
+                                  deleteAd
+                                );
+                              }}
+                              variant="light"
+                            >
+                              <IoMdTrash style={{ color: "red" }} />
+                            </Button>
+                          </OverlayTrigger>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </InfiniteScroll>
+          )}
+        </Card.Body>
+      </Card>
+
+      {/* ============OFFCANVA FOR VIEW AD========== */}
+      <div
+        id="offcanvas-flip"
+        uk-offcanvas="flip: true; overlay: true"
+        style={{ marginTop: "4%" }}
+      >
+        <div class="uk-offcanvas-bar" style={{ width: "80%" }}>
+          <MdCancel
+            style={styles.close_icon}
+            className="uk-offcanvas-close"
+            uk-close
+            type="button"
+          />
+          <Container>
+            <Row>
+              <Col xs={12} sm={12} md={12} lg={12} xl={12}>
+                <Card className="border-0">
+                  <Card.Header style={{ backgroundColor: "#76ba1b" }}>
+                    <b style={{ color: "white" }}> Ad</b>
+                  </Card.Header>
+                  <Card.Body>
+                    <ProductTitle ad={ad} />
+                    <div
+                      class="uk-position-relative uk-visible-toggle uk-dark"
+                      tabindex="-1"
+                      uk-slideshow="animation: pull"
+                      uk-slideshow="min-height: 100; max-height: 400"
+                    >
+                      <ul
+                        uk-lightbox="animation: slide"
+                        class="uk-slideshow-items"
+                      >
+                        {ad.images.map((item, index) => (
+                          <li>
+                            <a
+                              class="uk-cover-container uk-inline"
+                              href={
+                                "https://dev.bellefu.com/images/products/" +
+                                item
+                              }
+                              data-caption={"Caption " + index}
+                            >
+                              <img
+                                src={
+                                  "https://dev.bellefu.com/images/products/" +
+                                  item
+                                }
+                                alt=""
+                                uk-cover
+                              />
+                            </a>
+                          </li>
+                        ))}
+                      </ul>
+
+                      <button
+                        class="uk-border-pill uk-button uk-button-default uk-button-small uk-position-center-left  "
+                        href="#"
+                        uk-slidenav-previous
+                        uk-slideshow-item="previous"
+                      >
+                        <IoIosArrowDropleftCircle
+                          style={{ fontSize: "2em", color: "#ffa500" }}
+                        />
+                      </button>
+                      <button
+                        class="uk-border-pill uk-button uk-border-remove uk-button-default uk-button-small  uk-position-center-right  "
+                        href="#"
+                        uk-slidenav-next
+                        uk-slideshow-item="next"
+                      >
+                        <IoIosArrowDroprightCircle
+                          style={{ fontSize: "2em", color: "#ffa500" }}
+                        />
+                      </button>
+                    </div>
+                  </Card.Body>
+                </Card>
+              </Col>
+              <Col xs={12} sm={12} md={12} lg={12} xl={12} className="mt-4">
+                <AdDetails ad={ad} />
+              </Col>
+            </Row>
+          </Container>
+        </div>
+      </div>
+      <ActionModal
+        show={action.view}
+        text={action.message}
+        handleYes={() => {
+          action.action(action.id);
+          setAction((prev) => ({
+            ...prev,
+            view: false,
+          }));
+        }}
+        handleNo={() => {
+          setAction((prev) => ({
+            ...prev,
+            view: false,
+          }));
+        }}
+      />
+    </div>
+  );
 }
 
-//  ====PRODUCT TITLE & TAGS====
-function ProductTitle() {
-	return (
-		<div>
-			{/* ===FOR DESKTOP VIEW=== */}
-			<div
-				className="d-none d-lg-block  d-md-none"
-				style={{ marginBottom: "15px" }}>
-				<span
-					className="mb-5"
-					style={{
-						fontSize: "15px",
+function ProductTitle({ ad }) {
+  return (
+    <div>
+      {/* ===FOR DESKTOP VIEW=== */}
+      <div
+        className="d-none d-lg-block  d-md-none"
+        style={{ marginBottom: "15px" }}
+      >
+        <span
+          className="mb-5"
+          style={{
+            fontSize: "15px",
 
-						color: "black"
-					}}>
-					<b>Product Title</b>
-				</span>
-				<Badge variant="danger" className="ml-2">
-					Ugent
-				</Badge>
-				<Badge style={{ color: "white" }} variant="warning" className="ml-2">
-					Featured
-				</Badge>
-				<Badge variant="success" className="ml-2">
-					Higlighted
-				</Badge>
-			</div>
+            color: "black",
+          }}
+        >
+          <b>{ad.title}</b>
+        </span>
+        <Badge
+          variant="success"
+          style={{ padding: "5px 10px" }}
+          className="ml-2"
+        >
+          {ad.plan}
+        </Badge>
 
-			{/* ===FOR MOBILE VIEW=== */}
-			<div
-				className=" d-lg-none  d-xs-block d-sm-block d-md-block "
-				style={{ marginBottom: "15px" }}>
-				<span
-					className="mb-5"
-					style={{
-						fontSize: "15px"
-					}}>
-					<b>Product Title</b>
-				</span>
-				<Badge variant="danger" className="ml-2">
-					Ugent
-				</Badge>
-				<Badge style={{ color: "white" }} variant="warning" className="ml-2">
-					Featured
-				</Badge>
-				<Badge variant="success" className="ml-2">
-					Higlighted
-				</Badge>
-			</div>
-		</div>
-	);
+        {ad.isFave && (
+          <Badge
+            style={{ padding: "5px 10px" }}
+            variant="info"
+            className="ml-2"
+          >
+            user favourite
+          </Badge>
+        )}
+      </div>
+
+      {/* ===FOR MOBILE VIEW=== */}
+      <div
+        className=" d-lg-none  d-xs-block d-sm-block d-md-block "
+        style={{ marginBottom: "15px" }}
+      >
+        <span
+          className="mb-5"
+          style={{
+            fontSize: "15px",
+          }}
+        >
+          <b>{ad.title}</b>
+        </span>
+        <Badge
+          variant="success"
+          style={{ padding: "5px 10px" }}
+          className="ml-2"
+        >
+          {ad.plan}
+        </Badge>
+
+        {ad.isFave && (
+          <Badge
+            style={{ padding: "5px 10px" }}
+            variant="info"
+            className="ml-2"
+          >
+            user favourite
+          </Badge>
+        )}
+      </div>
+    </div>
+  );
 }
-
 
 // =====Ad Details====
-function AdDetails() {
-	return (
-		<div>
-			<Row>
-				<Col>
-					<Card className="border-0">
-						<Card.Header
-							className="border-0"
-							style={{ backgroundColor: "#76ba1b" }}>
-							<b style={{ color: "white" }}> Details</b>
-						</Card.Header>
-						<Card.Body>
-							<Row>
-								<Col xm={12} sm={12} md={12} lg={6} xl={6}>
-									<div className="mt-3">
-										<MdLocationOn style={styles.icon} className="mr-3" />{" "}
-										<span style={styles.text}>
-											<b>Location</b>
-										</span>
-									</div>
-									<p className="ml-5" style={styles.text}>
-										Jos, Plateau
-									</p>
-								</Col>
-								<Col xm={12} sm={12} md={12} lg={6} xl={6}>
-									<div className="mt-3">
-										<GiReceiveMoney style={styles.icon} className="mr-3" />{" "}
-										<span style={styles.text}>
-											<b>Price</b>
-										</span>
-									</div>
-									<p className="ml-5 " style={styles.text}>
-										$300
-									</p>
-								</Col>
-								<Col xm={12} sm={12} md={12} lg={6} xl={6}>
-									<div className="mt-3">
-										<IoIosTime style={styles.iconD} className="mr-3" />{" "}
-										<span style={styles.text}>
-											<b>Posted</b>
-										</span>
-									</div>
-									<p className="ml-5" style={styles.text}>
-										2 months ago
-									</p>
-								</Col>
-								<Col xm={12} sm={12} md={12} lg={6} xl={6}>
-									<div className="mt-3">
-										<AiFillPhone style={styles.iconD} className="mr-3" />{" "}
-										<span style={styles.text}>
-											<b>Phone Number</b>
-										</span>
-									</div>
-									<p className="ml-5 " style={styles.text}>
-										09033275449
-									</p>
-								</Col>
-								<Col xm={12} sm={12} md={12} lg={6} xl={6}>
-									<div className="mt-3">
-										<AiFillEye style={styles.iconD} className="mr-3" />{" "}
-										<span style={styles.text}>
-											<b>Ad Views</b>
-										</span>
-									</div>
-									<p className="ml-5" style={styles.text}>
-										123
-									</p>
-								</Col>
-								<Col xm={12} sm={12} md={12} lg={6} xl={6}>
-									<div className="mt-3">
-										<FaSlackHash style={styles.iconD} className="mr-3" />{" "}
-										<span style={styles.text}>
-											<b>Ad ID</b>
-										</span>
-									</div>
-									<p className="ml-5 " style={styles.text}>
-										23
-									</p>
-								</Col>
-							</Row>
-						</Card.Body>
-					</Card>
+function AdDetails({ ad }) {
+  return (
+    <div>
+      <Row>
+        <Col>
+          <Card className="border-0">
+            <Card.Header
+              className="border-0"
+              style={{ backgroundColor: "#76ba1b" }}
+            >
+              <b style={{ color: "white" }}> Details</b>
+            </Card.Header>
+            <Card.Body>
+              <Row>
+                <Col xm={12} sm={12} md={12} lg={6} xl={6}>
+                  <div className="mt-3">
+                    <MdLocationOn style={styles.icon} className="mr-3" />{" "}
+                    <span style={styles.text}>
+                      <b>Location</b>
+                    </span>
+                  </div>
+                  <p className="ml-5" style={styles.text}>
+                    {ad.city} {ad.country}
+                  </p>
+                </Col>
+                <Col xm={12} sm={12} md={12} lg={6} xl={6}>
+                  <div className="mt-3">
+                    <GiReceiveMoney style={styles.icon} className="mr-3" />{" "}
+                    <span style={styles.text}>
+                      <b>Price</b>
+                    </span>
+                  </div>
+                  <p className="ml-5 " style={styles.text}>
+                    {ad.price}
+                  </p>
+                </Col>
+                <Col xm={12} sm={12} md={12} lg={6} xl={6}>
+                  <div className="mt-3">
+                    <IoIosTime style={styles.iconD} className="mr-3" />{" "}
+                    <span style={styles.text}>
+                      <b>Posted</b>
+                    </span>
+                  </div>
+                  <p className="ml-5" style={styles.text}>
+                    {ad.created}
+                  </p>
+                </Col>
+                <Col xm={12} sm={12} md={12} lg={6} xl={6}>
+                  <div className="mt-3">
+                    <AiFillPhone style={styles.iconD} className="mr-3" />{" "}
+                    <span style={styles.text}>
+                      <b>Phone Number</b>
+                    </span>
+                  </div>
+                  <p className="ml-5 " style={styles.text}>
+                    {ad.phone}
+                  </p>
+                </Col>
+                <Col xm={12} sm={12} md={12} lg={6} xl={6}>
+                  <div className="mt-3">
+                    <AiFillEye style={styles.iconD} className="mr-3" />{" "}
+                    <span style={styles.text}>
+                      <b>Ad Views</b>
+                    </span>
+                  </div>
+                  <p className="ml-5" style={styles.text}>
+                    {ad.views}
+                  </p>
+                </Col>
+                <Col xm={12} sm={12} md={12} lg={6} xl={6}>
+                  <div className="mt-3">
+                    <FaSlackHash style={styles.iconD} className="mr-3" />{" "}
+                    <span style={styles.text}>
+                      <b>Ad ID</b>
+                    </span>
+                  </div>
+                  <p className="ml-5 " style={styles.text}>
+                    {ad.id}
+                  </p>
+                </Col>
+              </Row>
+            </Card.Body>
+          </Card>
 
-					<Row>
-						<Col xm={12} sm={12} md={12} lg={6} xl={6}>
-							<Card className="border-0 mt-4">
-								<Card.Header
-									className="border-0"
-									style={{ backgroundColor: "#76ba1b" }}>
-									<b style={{ color: "white" }}>Ad Discription</b>
-								</Card.Header>
-								<Card.Body>
-									<Row>
-										<Col xm={12} sm={12} md={12} lg={12} xl={12}>
-											<span style={styles.text}>
-												Lorem ipsum dolor sit amet consectetur adipisicing elit.
-												Earum cupiditate quos, illo dolorem rerum, magni
-												repellendus eius commodi nemo aperiam ex. Accusamus eum
-												esse qui at aperiam libero inventore modi!
-											</span>
-										</Col>
-									</Row>
-								</Card.Body>
-							</Card>
-						</Col>
-						<Col xm={12} sm={12} md={12} lg={6} xl={6} className="mt-4">
-							<UserAdInfo/>
-						</Col>
-					</Row>
-				</Col>
-			</Row>
-		</div>
-	);
+          <Row>
+            <Col xm={12} sm={12} md={12} lg={6} xl={6}>
+              <Card className="border-0 mt-4">
+                <Card.Header
+                  className="border-0"
+                  style={{ backgroundColor: "#76ba1b" }}
+                >
+                  <b style={{ color: "white" }}>Ad Discription</b>
+                </Card.Header>
+                <Card.Body>
+                  <Row>
+                    <Col xm={12} sm={12} md={12} lg={12} xl={12}>
+                      <span
+                        style={styles.text}
+                        dangerouslySetInnerHTML={{ __html: ad.description }}
+                      ></span>
+                    </Col>
+                  </Row>
+                </Card.Body>
+              </Card>
+            </Col>
+            <Col xm={12} sm={12} md={12} lg={6} xl={6} className="mt-4">
+              <UserAdInfo ad={ad} />
+            </Col>
+          </Row>
+        </Col>
+      </Row>
+    </div>
+  );
 }
 
-
 // ======user info dt own a Ad=====
-function UserAdInfo() {
-	return (
-		<div>
-			<Card className="border-0 ">
-				<Card.Header
-					className="border-0"
-					style={{ backgroundColor: "#76ba1b" }}>
-					<b style={{ color: "white" }}>Advertiser Info</b>
-				</Card.Header>
-				<Card.Body>
-					<Row>
-						<Col
-							xm={12}
-							sm={12}
-							md={12}
-							lg={12}
-							xl={12}
-							className="text-center">
-							<Image src={pic} style={styles.avater} roundedCircle />
-						</Col>
-						<Col
-							xm={12}
-							sm={12}
-							md={12}
-							lg={6}
-							xl={6}
-							className="text-center mt-2">
-							<p style={styles.text}>
-								<b>Ibe Andyson Andrew</b>
-							</p>
-						</Col>
-						<Col
-							xm={12}
-							sm={12}
-							md={12}
-							lg={6}
-							xl={6}
-							className="text-center mt-2">
-							<div>
-								<IoIosTime style={styles.icon} className="mr-3" />{" "}
-								<span style={styles.text}>
-									<b>2 months ago</b>
-								</span>
-							</div>
-						</Col>
-						<Col
-							xm={12}
-							sm={12}
-							md={12}
-							lg={6}
-							xl={6}
-							className="text-center mt-2">
-							<div>
-								<AiFillPhone style={styles.icon} className="mr-3" />{" "}
-								<span style={styles.text}>
-									<b>09033275449</b>
-								</span>
-							</div>
-						</Col>
-						<Col
-							xm={12}
-							sm={12}
-							md={12}
-							lg={6}
-							xl={6}
-							className="text-center mt-2">
-							<div>
-								<IoMdMailOpen style={styles.icon} className="mr-3" />{" "}
-								<a href="mailto:ibeandyson123@gmail.com?subject=subject text">
-									<span style={styles.text}>
-										<b>Reply By Mail</b>
-									</span>
-								</a>
-							</div>
-						</Col>
-					</Row>
-				</Card.Body>
-			</Card>
-		</div>
-	);
+function UserAdInfo({ ad }) {
+  return (
+    <div>
+      <Card className="border-0 ">
+        <Card.Header
+          className="border-0"
+          style={{ backgroundColor: "#76ba1b" }}
+        >
+          <b style={{ color: "white" }}>Advertiser Info</b>
+        </Card.Header>
+        <Card.Body>
+          <Row>
+            <Col
+              xm={12}
+              sm={12}
+              md={12}
+              lg={12}
+              xl={12}
+              className="text-center"
+            >
+              <Image src={pic} style={styles.avater} roundedCircle />
+            </Col>
+            <Col
+              xm={12}
+              sm={12}
+              md={12}
+              lg={6}
+              xl={6}
+              className="text-center mt-2"
+            >
+              <p style={styles.text}>
+                <b>{ad.name}</b>
+              </p>
+            </Col>
+            <Col
+              xm={12}
+              sm={12}
+              md={12}
+              lg={6}
+              xl={6}
+              className="text-center mt-2"
+            >
+              <div>
+                <IoIosTime style={styles.icon} className="mr-3" />{" "}
+                <span style={styles.text}>
+                  <b>{ad.time}</b>
+                </span>
+              </div>
+            </Col>
+            <Col
+              xm={12}
+              sm={12}
+              md={12}
+              lg={6}
+              xl={6}
+              className="text-center mt-2"
+            >
+              <div>
+                <AiFillPhone style={styles.icon} className="mr-3" />{" "}
+                <span style={styles.text}>
+                  <b>{ad.phone}</b>
+                </span>
+              </div>
+            </Col>
+            <Col
+              xm={12}
+              sm={12}
+              md={12}
+              lg={6}
+              xl={6}
+              className="text-center mt-2"
+            >
+              <div>
+                <IoMdMailOpen style={styles.icon} className="mr-3" />{" "}
+                <a href={`mailto:${ad.email}?subject=subject text`}>
+                  <span style={styles.text}>
+                    <b>Reply By Mail</b>
+                  </span>
+                </a>
+              </div>
+            </Col>
+          </Row>
+        </Card.Body>
+      </Card>
+    </div>
+  );
 }
 
 const styles = {
-	image: {
-		height: "100px"
-	},
-	avater:{
-        height: "100px"
-    },
-	iconD: {
-		color: "#ffa500",
-		fontSize: "30px"
-	},
-	text: {
-		fontSize: "15px",
-		color: "black"
-	},
-	icon: {
-		fotsize: "30px",
-		color: "#ffa500"
-	},
-	close_icon: {
-		fontSize: "1.9em",
-		color: "#ffa500"
-	},
-	titel: {
-		opacity: "0.9",
-		fontSize: "20px",
-		width: "300px",
-		whiteSpace: "nowrap",
-		overflow: "hidden",
-		textOverflow: "ellipsis"
-	},
-	category: {
-		fontSize: "0.7em",
-		color: "#ffa500",
-		backgroundColor: "whitesmoke",
-		padding: "3px"
-	},
-	subCategory: {
-		fontSize: "0.7em",
-		color: "#ffa500",
-		backgroundColor: "whitesmoke",
-		padding: "3px"
-	},
-	location: {
-		fontSize: "0.7em"
-	},
-	date: {
-		fontSize: "0.7em"
-	},
-	price: {
-		fontSize: "0.9em",
-		color: "#ffa500",
-		backgroundColor: "whitesmoke",
-		padding: "3px"
-	}
+  image: {
+    height: "100px",
+  },
+  avater: {
+    height: "100px",
+  },
+  iconD: {
+    color: "#ffa500",
+    fontSize: "30px",
+  },
+  text: {
+    fontSize: "15px",
+    color: "black",
+  },
+  icon: {
+    fotsize: "30px",
+    color: "#ffa500",
+  },
+  close_icon: {
+    fontSize: "1.9em",
+    color: "#ffa500",
+  },
+  titel: {
+    opacity: "0.9",
+    fontSize: "20px",
+    width: "300px",
+    whiteSpace: "nowrap",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+  },
+  category: {
+    fontSize: "0.7em",
+    color: "#ffa500",
+    backgroundColor: "whitesmoke",
+    padding: "3px",
+  },
+  subCategory: {
+    fontSize: "0.7em",
+    color: "#ffa500",
+    backgroundColor: "whitesmoke",
+    padding: "3px",
+  },
+  location: {
+    fontSize: "0.7em",
+  },
+  date: {
+    fontSize: "0.7em",
+  },
+  price: {
+    fontSize: "0.9em",
+    color: "#ffa500",
+    backgroundColor: "whitesmoke",
+    padding: "3px",
+  },
 };
