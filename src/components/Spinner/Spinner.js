@@ -1,7 +1,7 @@
 import React from "react";
 import spinner from "../images/spinner.svg";
 
-function CustomSpinner() {
+function CustomSpinner({ small }) {
   return (
     <div
       style={{
@@ -10,7 +10,11 @@ function CustomSpinner() {
         alignItems: "center",
       }}
     >
-      <img src={spinner} width="50px" alt="loader" />
+      <img
+        src={spinner}
+        width={small !== undefined ? "40px" : "50px"}
+        alt="loader"
+      />
     </div>
   );
 }
