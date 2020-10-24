@@ -1,11 +1,11 @@
-import Axios from "axios";
 import React, { useEffect, useState } from "react";
+import Axios from "axios";
 import { Card } from "react-bootstrap";
-import { GiFlowerStar } from "react-icons/gi";
+import { AiOutlineGift } from "react-icons/ai";
 import { useSelector } from "react-redux";
 import CustomSpinner from "../Spinner/Spinner";
 
-export default function NewAdsInfo() {
+export default function PendingAdsInfo() {
   const { admin } = useSelector((state) => state.adminSignin);
   const [data, setData] = useState({
     view: false,
@@ -13,7 +13,7 @@ export default function NewAdsInfo() {
   });
 
   useEffect(() => {
-    Axios.get("https://dev.bellefu.com/api/admin/product/list/new", {
+    Axios.get("https://dev.bellefu.com/api/admin/product/list/pending", {
       headers: {
         Authorization: `Bearer ${admin.token}`,
         "Content-Type": "application/json",
@@ -34,6 +34,7 @@ export default function NewAdsInfo() {
         });
       });
   }, []);
+
   return (
     <div>
       <Card className="border-0">
@@ -41,8 +42,8 @@ export default function NewAdsInfo() {
           className="border-0"
           style={{ backgroundColor: "#76ba1b" }}
         >
-          <GiFlowerStar style={styles.icon} className="mr-4" />
-          <b style={{ color: "white" }}>New Ads</b>
+          <AiOutlineGift style={styles.icon} className="mr-4" />
+          <b style={{ color: "white" }}>Pending Ads</b>
         </Card.Header>
         <Card.Body className="pb-0 pt-1">
           <div className="text-center">
@@ -55,6 +56,7 @@ export default function NewAdsInfo() {
     </div>
   );
 }
+
 const styles = {
   icon: {
     fontSize: "20px",

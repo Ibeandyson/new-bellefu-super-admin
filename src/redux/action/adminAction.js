@@ -1,13 +1,22 @@
 import {
-	ADMIN_SIGNIN_REQUEST,
-	ADMIN_SIGNIN_SUCCESS,
-	ADMIN_SIGNIN_FAIL,
-	ADMIN_SIGNUP_REQUEST,
-	ADMIN_SIGNUP_SUCCESS,
-	ADMIN_SIGNUP_FAIL,
-	ADMIN_UPDATE_REQUEST,
-	ADMIN_UPDATE_SUCCESS,
-	ADMIN_UPDATE_FAIL,
+  ADMIN_SIGNIN_REQUEST,
+  ADMIN_SIGNIN_SUCCESS,
+  ADMIN_SIGNIN_FAIL,
+  ADMIN_SIGNUP_REQUEST,
+  ADMIN_SIGNUP_SUCCESS,
+  ADMIN_SIGNUP_FAIL,
+  ADMIN_UPDATE_REQUEST,
+  ADMIN_UPDATE_SUCCESS,
+  ADMIN_UPDATE_FAIL,
+  ADMIN_BLOCK_USER,
+  ADMIN_BLOCK_USER_SUCCESS,
+  ADMIN_BLOCK_USER_FAILED,
+  ADMIN_UNBLOCK_USER_SUCCESS,
+  ADMIN_UNBLOCK_USER_FAILED,
+  ADMIN_UNBLOCK_USER,
+  ADMIN_DELETE_USER,
+  ADMIN_DELETE_USER_SUCCESS,
+  ADMIN_DELETE_USER_FAILED,
 } from "../types";
 
 import axios from "axios";
@@ -15,26 +24,26 @@ import Cookie from "js-cookie";
 
 //USER SIGNIN ACTION PAYLOAD
 export const signin = (identifier, password) => async (dispatch) => {
-	dispatch({ type: ADMIN_SIGNIN_REQUEST, payload: { identifier, password } });
-	try {
-		const { data } = await axios.post(
-			"https://dev.bellefu.com/api/auth/login/challenge/default",
-			{
-				identifier,
-				password
-			}
-		);
-		const token = data.token;
-		if (token) {
-			dispatch({ type: ADMIN_SIGNIN_SUCCESS, payload: data });
-			Cookie.set("admin", JSON.stringify(data));
-
-		}
-		dispatch({ type: ADMIN_SIGNIN_FAIL, payload: data.errors });
-	} catch (error) {
-		dispatch({ type: ADMIN_SIGNIN_FAIL, payload: error.response.data });
-	}
+  dispatch({ type: ADMIN_SIGNIN_REQUEST, payload: { identifier, password } });
+  try {
+    const { data } = await axios.post(
+      "https://dev.bellefu.com/api/auth/login/challenge/default",
+      {
+        identifier,
+        password,
+      }
+    );
+    const token = data.token;
+    if (token) {
+      dispatch({ type: ADMIN_SIGNIN_SUCCESS, payload: data });
+      Cookie.set("admin", JSON.stringify(data));
+    }
+    dispatch({ type: ADMIN_SIGNIN_FAIL, payload: data.errors });
+  } catch (error) {
+    dispatch({ type: ADMIN_SIGNIN_FAIL, payload: error.response.data });
+  }
 };
+
 
 
 // UPDATE USER ACTION PAYLOAD
@@ -65,4 +74,3 @@ export const signin = (identifier, password) => async (dispatch) => {
 // 		dispatch({ type: USER_UPDATE_FAIL, payload: error.message });
 // 	}
 // };
-
