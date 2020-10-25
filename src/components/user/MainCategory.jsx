@@ -1,5 +1,5 @@
 import Axios from "axios";
-import React, { useState, useEffect } from "react";
+import React, { useState} from "react";
 import {
   Card,
   Button,
@@ -11,7 +11,7 @@ import {
 } from "react-bootstrap";
 import { AiOutlineUpload } from "react-icons/ai";
 import { useSelector } from "react-redux";
-import jsonToFormData from 'json-form-data';
+
 
 export default function MainCategory() {
   const { admin } = useSelector((state) => state.adminSignin);
@@ -66,9 +66,7 @@ export default function MainCategory() {
       });
   }
 
-  useEffect(() => {
-    console.log(cat)
-  }, )
+  
   return (
     <div>
       <Container>
