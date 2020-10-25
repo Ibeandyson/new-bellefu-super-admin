@@ -24,19 +24,25 @@ export default function SubCategory() {
   const [subcat, setsubcat] = useState({
     subcat_name: "",
     cat_id: "",
-    image: "",
+    subcat_icon: "",
   });
+  
+
+  const onChangHandlerImage = e => {
+    setsubcat({...subcat, [e.target.name]: e.target.files[0]});
+};
+
+  
 
   const [category, setCategory] = useState([]);
 
   function handleSubmit(event) {
     event.preventDefault();
-    const body = {
-      subcat_name: subcat.subcat_name,
-      cat_id: Number(subcat.cat_id),
-      image: subcat.image,
-    };
-    Axios.post("https://dev.bellefu.com/api/admin/subcategory/save", body, {
+    let formData = new FormData()
+    formData.append('cat_icon', subcat.subcat_icon)
+    formData.append('subcat_name', subcat.subcat_name)
+    formData.append('cat_id', subcat.cat_id)
+    Axios.post("https://dev.bellefu.com/api/admin/subcategory/save",formData, {
       headers: {
         Authorization: `Bearer ${admin.token}`,
         "Content-Type": "application/json",
@@ -44,7 +50,7 @@ export default function SubCategory() {
       },
     })
       .then((res) => {
-        setsubcat({ subcat_name: "", cat_id: "", image: "" });
+        setsubcat({ subcat_name: "", cat_id: "",  subcat_icon: "" });
         setresponse({ view: true, type: "success", message: res.data.message });
         setTimeout(() => {
           setresponse({ view: false, type: "", message: "" });
@@ -134,16 +140,10 @@ export default function SubCategory() {
                       <input
                         style={{ display: "none" }}
                         type="file"
-                        onChange={(event) => {
-                          const { files } = event.target;
-                          console.log(files[0]);
-                          setsubcat((prev) => ({
-                            ...prev,
-                            image: files[0],
-                          }));
-                        }}
+                        name="subcat_icon"  
+                        onChange={e =>  onChangHandlerImage(e)}
                       />
-                      {subcat.image === "" ? (
+                      {subcat.subcat_icon === "" ? (
                         <>
                           Select an image{" "}
                           <AiOutlineUpload
@@ -151,7 +151,7 @@ export default function SubCategory() {
                           />
                         </>
                       ) : (
-                        subcat.image.name
+                        subcat.subcat_icon.name
                       )}
                     </label>
                   </div>

@@ -1,5 +1,5 @@
 import Axios from "axios";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Card,
   Button,
@@ -11,6 +11,7 @@ import {
 } from "react-bootstrap";
 import { AiOutlineUpload } from "react-icons/ai";
 import { useSelector } from "react-redux";
+import jsonToFormData from 'json-form-data';
 
 export default function MainCategory() {
   const { admin } = useSelector((state) => state.adminSignin);
@@ -21,12 +22,22 @@ export default function MainCategory() {
   });
   const [cat, setcat] = useState({
     cat_name: "",
-    image: "",
+    cat_icon: ""
   });
 
-  function handleSubmit(event) {
+
+  const onChangHandlerImage = e => {
+    setcat({...cat, [e.target.name]: e.target.files[0]});
+};
+   function handleSubmit(event) {
     event.preventDefault();
-    Axios.post("https://dev.bellefu.com/api/admin/category/save", cat, {
+
+    let formData = new FormData()
+     formData.append('cat_icon', cat.cat_icon)
+     formData.append('cat_name', cat.cat_name)
+
+  
+    Axios.post("https://dev.bellefu.com/api/admin/category/save",formData  , {
       headers: {
         Authorization: `Bearer ${admin.token}`,
         "Content-Type": "application/json",
@@ -36,7 +47,7 @@ export default function MainCategory() {
       .then((res) => {
         setcat({
           cat_name: "",
-          image: "",
+          cat_icon: "",
         });
         setresponse({ view: true, type: "success", message: res.data.message });
         setTimeout(() => {
@@ -55,6 +66,9 @@ export default function MainCategory() {
       });
   }
 
+  useEffect(() => {
+    console.log(cat)
+  }, )
   return (
     <div>
       <Container>
@@ -95,16 +109,10 @@ export default function MainCategory() {
                       <input
                         style={{ display: "none" }}
                         type="file"
-                        onChange={(event) => {
-                          const { files } = event.target;
-                          console.log(files[0]);
-                          setcat((prev) => ({
-                            ...prev,
-                            image: files[0],
-                          }));
-                        }}
+                        name="cat_icon"
+                        onChange={e =>  onChangHandlerImage(e)}
                       />
-                      {cat.image === "" ? (
+                      {cat.cat_icon=== ""? (
                         <>
                           Select an image{" "}
                           <AiOutlineUpload
@@ -112,7 +120,7 @@ export default function MainCategory() {
                           />
                         </>
                       ) : (
-                        cat.image.name
+                        cat.cat_icon.name
                       )}
                     </label>
                   </div>

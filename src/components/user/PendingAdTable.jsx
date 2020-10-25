@@ -29,7 +29,6 @@ import { FcCheckmark } from "react-icons/fc";
 import { GiReceiveMoney } from "react-icons/gi";
 import { FaSlackHash } from "react-icons/fa";
 import pic from "../images/pic.jpg";
-import land from "../images/land.PNG";
 import Axios from "axios";
 import { useSelector } from "react-redux";
 import { format } from "date-fns";
