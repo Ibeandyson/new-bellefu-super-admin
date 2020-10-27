@@ -14,7 +14,7 @@ import { useSelector } from "react-redux";
 
 
 export default function MainCategory() {
-  const { admin } = useSelector((state) => state.adminSignin);
+  const { token } = useSelector((state) => state.adminSignin);
   const [response, setresponse] = useState({
     view: false,
     type: "",
@@ -39,7 +39,7 @@ export default function MainCategory() {
   
     Axios.post("https://dev.bellefu.com/api/admin/category/save",formData  , {
       headers: {
-        Authorization: `Bearer ${admin.token}`,
+        Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
         Accept: "application/json",
       },

@@ -52,7 +52,7 @@ const viewTooltip = (props) => (
 );
 
 export default function ActiveAdTable() {
-  const { admin } = useSelector((state) => state.adminSignin);
+  const { token } = useSelector((state) => state.adminSignin);
   const [load, setLoad] = useState(false);
   const [ads, setads] = useState([]);
   const [ad, setad] = useState({
@@ -95,7 +95,7 @@ export default function ActiveAdTable() {
     setLoad(true);
     Axios.get("https://dev.bellefu.com/api/admin/product/list/approved", {
       headers: {
-        Authorization: `Bearer ${admin.token}`,
+        Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
         Accept: "application/json",
       },
@@ -127,7 +127,7 @@ export default function ActiveAdTable() {
   const nextData = () => {
     Axios.get(next, {
       headers: {
-        Authorization: `Bearer ${admin.token}`,
+        Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
         Accept: "application/json",
       },
@@ -153,7 +153,7 @@ export default function ActiveAdTable() {
   const deleteAd = (title) => {
     Axios.get("https://dev.bellefu.com/api/admin/product/delete/" + title, {
       headers: {
-        Authorization: `Bearer ${admin.token}`,
+        Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
         Accept: "application/json",
       },

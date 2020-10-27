@@ -7,7 +7,7 @@ import Cookie from "js-cookie";
 		<Route
 			{...rest}
 			render={(props) =>
-				Cookie.get('admin') ? (
+				Cookie.get("admin") ? (
 					<Component {...props} />
 				) : (
 					<Redirect to={{

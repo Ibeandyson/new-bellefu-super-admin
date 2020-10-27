@@ -14,7 +14,7 @@ import { AiOutlineUpload } from "react-icons/ai";
 import { useSelector } from "react-redux";
 
 export default function SubCategory() {
-  const { admin } = useSelector((state) => state.adminSignin);
+  const { token } = useSelector((state) => state.adminSignin);
 
   const [response, setresponse] = useState({
     view: false,
@@ -44,13 +44,13 @@ export default function SubCategory() {
     formData.append('cat_id', subcat.cat_id)
     Axios.post("https://dev.bellefu.com/api/admin/subcategory/save",formData, {
       headers: {
-        Authorization: `Bearer ${admin.token}`,
+        Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
         Accept: "application/json",
       },
     })
       .then((res) => {
-        setsubcat({ subcat_name: "", cat_id: "",  subcat_icon: "" });
+        setsubcat({ subcat_name: "", cat_id: "", subcat_icon: "" });
         setresponse({ view: true, type: "success", message: res.data.message });
         setTimeout(() => {
           setresponse({ view: false, type: "", message: "" });
