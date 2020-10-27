@@ -6,7 +6,7 @@ import { useSelector } from "react-redux";
 import CustomSpinner from "../Spinner/Spinner";
 
 export default function ActiveAdsInfo() {
-  const { admin } = useSelector((state) => state.adminSignin);
+  const { token } = useSelector((state) => state.adminSignin);
   const [data, setData] = useState({
     view: false,
     count: 0,
@@ -15,7 +15,7 @@ export default function ActiveAdsInfo() {
   useEffect(() => {
     Axios.get("https://dev.bellefu.com/api/admin/product/list/approved", {
       headers: {
-        Authorization: `Bearer ${admin.token}`,
+        Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
         Accept: "application/json",
       },

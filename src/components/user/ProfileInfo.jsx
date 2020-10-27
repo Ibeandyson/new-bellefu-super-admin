@@ -1,21 +1,43 @@
+import Axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Col, Row, Card, Image } from "react-bootstrap";
 import { useSelector } from "react-redux";
 import pic from "../images/pic.jpg";
 
+
 export default function ProfileInfo() {
-  const { user } = useSelector((state) => state.adminSignin.admin);
+  const { token } = useSelector((state) => state.adminSignin);
 
   const [profile, setProfile] = useState({
-    name: user.profile.first_name + " " + user.profile.last_name,
-    username: user.username,
-    phone: user.phone,
-    email: user.email,
-    bio: user.bio,
-    avatar: user.avatar,
+    name: '',
+    username: '',
+    phone: '',
+    email: '',
+    bio:'',
+    avatar: '',
   });
 
-  console.log(user);
+  let url = 'https://dev.bellefu.com/api/user/profile/details'
+
+  useEffect(() => {
+    Axios.get(url, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+        Accept: 'application/json'
+      }
+    }).then((res) => {
+      setProfile({
+        name: res.data.user.profile.first_name + res.data.user.profile.last_name,
+      username: res.data.user.username,
+    phone: res.data.user.phone,
+    email: res.data.user.email,
+    bio: res.data.user.bio,
+    avatar: res.data.user.avatar,
+      })
+    })
+  }, [])
+
 
   return (
     <div>

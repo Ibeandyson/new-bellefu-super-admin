@@ -12,12 +12,12 @@ import {
   unblockUserReducer,
 } from "./reducers/userActions";
 
-const admin = Cookie.getJSON("admin") || null;
+const token = Cookie.getJSON("admin") || null;
 
 // const user = signin
 
 export const initialState = {
-  adminSignin: { admin },
+  adminSignin: { token },
 };
 
 const reducers = combineReducers({

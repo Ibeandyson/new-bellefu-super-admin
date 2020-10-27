@@ -2,21 +2,21 @@ import {
   ADMIN_SIGNIN_REQUEST,
   ADMIN_SIGNIN_SUCCESS,
   ADMIN_SIGNIN_FAIL,
-  ADMIN_SIGNUP_REQUEST,
-  ADMIN_SIGNUP_SUCCESS,
-  ADMIN_SIGNUP_FAIL,
-  ADMIN_UPDATE_REQUEST,
-  ADMIN_UPDATE_SUCCESS,
-  ADMIN_UPDATE_FAIL,
-  ADMIN_BLOCK_USER,
-  ADMIN_BLOCK_USER_SUCCESS,
-  ADMIN_BLOCK_USER_FAILED,
-  ADMIN_UNBLOCK_USER_SUCCESS,
-  ADMIN_UNBLOCK_USER_FAILED,
-  ADMIN_UNBLOCK_USER,
-  ADMIN_DELETE_USER,
-  ADMIN_DELETE_USER_SUCCESS,
-  ADMIN_DELETE_USER_FAILED,
+  // ADMIN_SIGNUP_REQUEST,
+  // ADMIN_SIGNUP_SUCCESS,
+  // ADMIN_SIGNUP_FAIL,
+  // ADMIN_UPDATE_REQUEST,
+  // ADMIN_UPDATE_SUCCESS,
+  // ADMIN_UPDATE_FAIL,
+  // ADMIN_BLOCK_USER,
+  // ADMIN_BLOCK_USER_SUCCESS,
+  // ADMIN_BLOCK_USER_FAILED,
+  // ADMIN_UNBLOCK_USER_SUCCESS,
+  // ADMIN_UNBLOCK_USER_FAILED,
+  // ADMIN_UNBLOCK_USER,
+  // ADMIN_DELETE_USER,
+  // ADMIN_DELETE_USER_SUCCESS,
+  // ADMIN_DELETE_USER_FAILED,
 } from "../types";
 
 import axios from "axios";
@@ -36,7 +36,7 @@ export const signin = (identifier, password) => async (dispatch) => {
     const token = data.token;
     if (token) {
       dispatch({ type: ADMIN_SIGNIN_SUCCESS, payload: data });
-      Cookie.set("admin", JSON.stringify(data));
+      Cookie.set("admin", JSON.stringify(data.token));
     }
     dispatch({ type: ADMIN_SIGNIN_FAIL, payload: data.errors });
   } catch (error) {
@@ -69,7 +69,7 @@ export const signin = (identifier, password) => async (dispatch) => {
 // 			}
 // 		);
 // 		dispatch({ type: USER_UPDATE_SUCCESS, payload: data });
-// 		Cookie.set("user", JSON.stringify(data));
+// 		Cookie.set("admin", JSON.stringify(data));
 // 	} catch (error) {
 // 		dispatch({ type: USER_UPDATE_FAIL, payload: error.message });
 // 	}

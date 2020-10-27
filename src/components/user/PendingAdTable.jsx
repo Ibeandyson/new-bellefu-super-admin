@@ -29,7 +29,6 @@ import { FcCheckmark } from "react-icons/fc";
 import { GiReceiveMoney } from "react-icons/gi";
 import { FaSlackHash } from "react-icons/fa";
 import pic from "../images/pic.jpg";
-import land from "../images/land.PNG";
 import Axios from "axios";
 import { useSelector } from "react-redux";
 import { format } from "date-fns";
@@ -59,7 +58,7 @@ const editTooltip = (props) => (
 );
 
 export default function PendingdAdTable() {
-  const { admin } = useSelector((state) => state.adminSignin);
+  const { token } = useSelector((state) => state.adminSignin);
   const [load, setLoad] = useState(false);
   const [ads, setads] = useState([]);
   const [ad, setad] = useState({
@@ -102,7 +101,7 @@ export default function PendingdAdTable() {
     setLoad(true);
     Axios.get("https://dev.bellefu.com/api/admin/product/list/pending", {
       headers: {
-        Authorization: `Bearer ${admin.token}`,
+        Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
         Accept: "application/json",
       },
@@ -134,7 +133,7 @@ export default function PendingdAdTable() {
   const nextData = () => {
     Axios.get(next, {
       headers: {
-        Authorization: `Bearer ${admin.token}`,
+        Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
         Accept: "application/json",
       },
@@ -169,7 +168,7 @@ export default function PendingdAdTable() {
   const deleteAd = (title) => {
     Axios.get("https://dev.bellefu.com/api/admin/product/delete/" + title, {
       headers: {
-        Authorization: `Bearer ${admin.token}`,
+        Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
         Accept: "application/json",
       },
@@ -185,7 +184,7 @@ export default function PendingdAdTable() {
   const confirmAd = (title) => {
     Axios.get("https://dev.bellefu.com/api/admin/product/approve/" + title, {
       headers: {
-        Authorization: `Bearer ${admin.token}`,
+        Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
         Accept: "application/json",
       },

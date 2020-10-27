@@ -58,7 +58,7 @@ const viewTooltip = (props) => (
 
 export default function UsersListTable() {
   const dispatch = useDispatch();
-  const { admin } = useSelector((state) => state.adminSignin);
+  const { token } = useSelector((state) => state.adminSignin);
   const [url, seturl] = useState("api/admin/customer/list/all");
   const [load, setLoad] = useState(false);
   const [users, setUsers] = useState([]);
@@ -84,15 +84,15 @@ export default function UsersListTable() {
     action: () => {},
   });
   const blockUser = (username) => {
-    dispatch(blockUserAction(admin.token, username));
+    dispatch(blockUserAction(token, username));
   };
 
   const unblockUser = (username) => {
-    dispatch(unblockUserAction(admin.token, username));
+    dispatch(unblockUserAction(token, username));
   };
 
   const deleteUser = (username) => {
-    dispatch(deleteUserAction(admin.token, username));
+    dispatch(deleteUserAction(token, username));
   };
 
   const handleDeleteButton = (id, message, action) => {
@@ -128,7 +128,7 @@ export default function UsersListTable() {
     setLoad(true);
     Axios.get("https://dev.bellefu.com/" + url, {
       headers: {
-        Authorization: `Bearer ${admin.token}`,
+        Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
         Accept: "application/json",
       },
@@ -163,7 +163,7 @@ export default function UsersListTable() {
     setLoad(true);
     Axios.get(next, {
       headers: {
-        Authorization: `Bearer ${admin.token}`,
+        Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
         Accept: "application/json",
       },

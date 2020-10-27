@@ -6,7 +6,7 @@ import { useSelector } from "react-redux";
 import CustomSpinner from "../Spinner/Spinner";
 
 export default function TotalUsersInfo() {
-  const { admin } = useSelector((state) => state.adminSignin);
+  const { token } = useSelector((state) => state.adminSignin);
   const [data, setData] = useState({
     view: false,
     count: 0,
@@ -15,7 +15,7 @@ export default function TotalUsersInfo() {
   useEffect(() => {
     Axios.get("https://dev.bellefu.com/api/admin/customer/list/all", {
       headers: {
-        Authorization: `Bearer ${admin.token}`,
+        Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
         Accept: "application/json",
       },
