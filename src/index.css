@@ -11,3 +11,14 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+
+._sliderTable thead tr th{
+  text-align: center;
+}
+
+._sliderTable .flex{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
