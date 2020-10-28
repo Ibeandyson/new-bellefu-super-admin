@@ -27,6 +27,8 @@ import HomePageSlider from "./components/app/HomePageSlider";
 import Country from "./components/app/Country";
 import MainCategoryList from "./components/app/MainCategoryList";
 import Transactions from "./components/app/Transaction";
+import SubCategoryList from "./components/app/SubCategoryList";
+import ProductUpload from "./components/app/ProductUpload";
 function App() {
   return (
     <Provider store={store}>
@@ -69,12 +71,17 @@ function App() {
             path="/category-list"
             component={MainCategoryList}
           />
-
           <PrivateRoute
             exact
-            path="/transactions"
-            component={Transactions}
+            path="/subcategory-list"
+            component={SubCategoryList}
           />
+          <PrivateRoute
+            exact
+            path="/product-upload"
+            component={ProductUpload}
+          />
+          <PrivateRoute exact path="/transactions" component={Transactions} />
         </Router>
       </div>
     </Provider>

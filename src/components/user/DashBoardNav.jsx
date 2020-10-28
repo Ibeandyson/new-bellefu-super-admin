@@ -115,6 +115,21 @@ export default function DashBoardNav() {
                   Category List
                 </li>
               </Link>
+
+              <Link
+                to="/subcategory-list"
+                style={{ color: "inherit", textDecoration: "inherit" }}
+              >
+                <li
+                  className="pb-3"
+                  onMouseOver={listHover}
+                  onMouseLeave={listHoverNone}
+                >
+                  <FiList className="mr-3" style={styles.icon} />
+                  Subcategory List
+                </li>
+              </Link>
+
               <Link
                 to="/main_category"
                 style={{ color: "inherit", textDecoration: "inherit" }}
@@ -168,14 +183,16 @@ export default function DashBoardNav() {
                 <AiOutlineMessage className="mr-3" style={styles.icon} />
                 Message
               </li>
-              <li
-                className="pb-3"
-                onMouseOver={listHover}
-                onMouseLeave={listHoverNone}
-              >
-                <AiOutlineAccountBook className="mr-3" style={styles.icon} />
-                Transaction
-              </li>
+              <Link to="/transactions">
+                <li
+                  className="pb-3"
+                  onMouseOver={listHover}
+                  onMouseLeave={listHoverNone}
+                >
+                  <AiOutlineAccountBook className="mr-3" style={styles.icon} />
+                  Transaction
+                </li>
+              </Link>
               <li
                 className="pb-3"
                 onMouseOver={listHover}
@@ -200,6 +217,12 @@ export default function DashBoardNav() {
                     </Dropdown.Item>
                     <Dropdown.Item style={{ fontSize: 13 }} href="/country">
                       Country
+                    </Dropdown.Item>
+                    <Dropdown.Item
+                      style={{ fontSize: 13 }}
+                      href="/product-upload"
+                    >
+                      Product Upload
                     </Dropdown.Item>
                   </Dropdown.Menu>
                 </Dropdown>

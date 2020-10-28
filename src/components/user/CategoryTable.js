@@ -38,7 +38,7 @@ const editTooltip = (props) => (
 );
 
 export default function CategoryTable() {
-  const { admin } = useSelector((state) => state.adminSignin);
+  const { token } = useSelector((state) => state.adminSignin);
   const [load, setLoad] = useState(false);
   const [categories, setCategories] = useState([]);
   const [action, setAction] = useState({
@@ -53,6 +53,7 @@ export default function CategoryTable() {
       view: true,
       id,
       message,
+                 
       action,
     });
   };
@@ -61,7 +62,7 @@ export default function CategoryTable() {
     setLoad(true);
     Axios.get("https://dev.bellefu.com/api/category/list", {
       headers: {
-        Authorization: `Bearer ${admin.token}`,
+        Authorization: `Bearer ${ token }`,
         "Content-Type": "application/json",
         Accept: "application/json",
       },
@@ -100,7 +101,7 @@ export default function CategoryTable() {
   const deleteCategory = (title) => {
     Axios.get("https://dev.bellefu.com/api/admin/product/delete/" + title, {
       headers: {
-        Authorization: `Bearer ${admin.token}`,
+        Authorization: `Bearer ${ token }`,
         "Content-Type": "application/json",
         Accept: "application/json",
       },
@@ -116,7 +117,7 @@ export default function CategoryTable() {
   const editCategory = (title) => {
     Axios.get("https://dev.bellefu.com/api/admin/product/approve/" + title, {
       headers: {
-        Authorization: `Bearer ${admin.token}`,
+        Authorization: `Bearer ${ token }`,
         "Content-Type": "application/json",
         Accept: "application/json",
       },

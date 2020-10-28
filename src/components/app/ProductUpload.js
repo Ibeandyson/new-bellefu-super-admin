@@ -1,14 +1,15 @@
 import React from "react";
 import { Col, Row, Accordion, Container, Card } from "react-bootstrap";
 import DashBoardNav from "../user/DashBoardNav";
-import PendingAdTable from "../user/PendingAdTable";
 import HeaderNav from "../navigations/HeaderNav";
 import { AiOutlineMenu } from "react-icons/ai";
 import { IoMdArrowDropdown } from "react-icons/io";
-import SliderTable from "../user/SliderTable";
-import TransactionsTable from "../user/TransactionsTable";
+import MainCategory from "../user/MainCategory";
+import CategoryTable from "../user/CategoryTable";
+import SubCategoryTable from "../user/SubCategory";
+import ProductUploadForm from "../user/ProductUploadForm";
 
-export default function Transactions() {
+export default function ProductUpload() {
   return (
     <div>
       <HeaderNav />
@@ -41,7 +42,7 @@ export default function Transactions() {
                     fontSize: "20px",
                   }}
                 >
-                  Home Page Slider
+                  Category
                 </h3>
               </Container>
 
@@ -95,10 +96,10 @@ export default function Transactions() {
                 fontSize: "15px",
               }}
             >
-              <b>Transactions</b>
+              <b>Product Upload</b>
             </h3>
             <div style={{ marginTop: "2%" }}>
-              <TransactionsTable />
+              <ProductUploadForm />
             </div>
           </Col>
 
@@ -112,7 +113,7 @@ export default function Transactions() {
             style={{ padding: "30px" }}
             className=" d-lg-none  d-xs-block d-sm-block d-md-block "
           >
-            <TransactionsTable />
+            <ProductUploadForm />
           </Col>
         </Row>
       </div>

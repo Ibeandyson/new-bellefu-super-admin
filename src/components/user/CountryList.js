@@ -38,7 +38,7 @@ const editTooltip = (props) => (
 );
 
 export default function CountryList() {
-  const { admin } = useSelector((state) => state.adminSignin);
+  const { token } = useSelector((state) => state.adminSignin);
   const [load, setLoad] = useState(false);
   const [countries, setCountries] = useState([]);
   const [loadCountries, setloadCountries] = useState({
@@ -64,9 +64,9 @@ export default function CountryList() {
 
   function fetchCountry() {
     setLoad(true);
-    Axios.get("https://dev.bellefu.com/api/country/list", {
+    Axios.get("https://dev.bellefu.com/api/admin/country/list", {
       headers: {
-        Authorization: `Bearer ${admin.token}`,
+        Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
         Accept: "application/json",
       },
@@ -137,9 +137,9 @@ export default function CountryList() {
   };
 
   const disableCountry = (title) => {
-    Axios.get("https://dev.bellefu.com/api/admin/product/delete/" + title, {
+    Axios.get("https://dev.bellefu.com/api/admin/country/disable/" + title, {
       headers: {
-        Authorization: `Bearer ${admin.token}`,
+        Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
         Accept: "application/json",
       },
@@ -153,9 +153,9 @@ export default function CountryList() {
   };
 
   const enableCountry = (title) => {
-    Axios.get("https://dev.bellefu.com/api/admin/product/approve/" + title, {
+    Axios.get("https://dev.bellefu.com/api/admin/country/enable/" + title, {
       headers: {
-        Authorization: `Bearer ${admin.token}`,
+        Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
         Accept: "application/json",
       },
@@ -240,7 +240,7 @@ export default function CountryList() {
                               size="sm"
                               onClick={() => {
                                 handleEnableButton(
-                                  "",
+                                  item.slug,
                                   `Are you sure you want to enable ${item.name} ?`,
                                   enableCountry
                                 );
@@ -264,7 +264,7 @@ export default function CountryList() {
                               size="sm"
                               onClick={() => {
                                 handleDisableButton(
-                                  "",
+                                  item.slug,
                                   `Are you sure you want to disable ${item.name} ?`,
                                   disableCountry
                                 );

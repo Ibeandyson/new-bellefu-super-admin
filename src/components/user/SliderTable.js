@@ -5,12 +5,16 @@ import { AiFillDelete, AiOutlineCloudUpload } from "react-icons/ai";
 import { FiSend } from "react-icons/fi";
 import { useSelector } from "react-redux";
 import ActionModal from "../components/ActionModal";
+import ImageUploader from "react-images-upload";
 import CustomAlert from "../components/Alert";
+import jsonToFormData from "json-form-data";
 
 function SliderTable() {
-  const { admin } = useSelector((state) => state.adminSignin);
+  const { token } = useSelector((state) => state.adminSignin);
   const [images, setImages] = useState([]);
-  const [uploadImage, setImageUpload] = useState([]);
+  const [uploadImage, setImageUpload] = useState({
+    slider_images: [],
+  });
   const [uploadLoad, setUploadLoad] = useState(false);
   const [uploadMessage, setUploadMessage] = useState({
     view: false,
@@ -29,14 +33,14 @@ function SliderTable() {
     setLoad(true);
     Axios.get("https://dev.bellefu.com/api/admin/config/home_slider/list", {
       headers: {
-        Authorization: `Bearer ${admin.token}`,
+        Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
         Accept: "application/json",
       },
     })
       .then((res) => {
         setLoad(false);
-        setImages([]);
+        setImages(res.data.home_sliders);
       })
       .catch(() => {
         setLoad(false);
@@ -49,19 +53,22 @@ function SliderTable() {
   }, []);
 
   const deleteImage = (title) => {
-    // Axios.get("https://dev.bellefu.com/api/admin/product/delete/" + title, {
-    //   headers: {
-    //     Authorization: `Bearer ${admin.token}`,
-    //     "Content-Type": "application/json",
-    //     Accept: "application/json",
-    //   },
-    // })
-    //   .then(() => {
-    //     fetchSlider();
-    //   })
-    //   .catch((err) => {
-    //     console.log(err.message);
-    //   });
+    Axios.get(
+      "https://dev.bellefu.com/api/admin/config/home_slider/delete/" + title,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      }
+    )
+      .then(() => {
+        fetchSlider();
+      })
+      .catch((err) => {
+        console.log(err.message);
+      });
   };
 
   const handleDeleteButton = (id, message, action) => {
@@ -75,16 +82,27 @@ function SliderTable() {
 
   const handleImageUpload = () => {
     setUploadLoad(true);
-    const formdata = new FormData();
-    formdata.set("slider_images", uploadImage);
-    console.log(formdata);
-    console.log(uploadImage);
+    // const formdata = new FormData();
+    // formdata.set("home_sliders", [...uploadImage]);
+    let options = {
+      initialFormData: new FormData(),
+      showLeafArrayIndexes: true,
+      includeNullValues: false,
+      mapping: function (value) {
+        if (typeof value === "boolean") {
+          return +value ? "1" : "0";
+        }
+        return value;
+      },
+    };
+    const payload = jsonToFormData(uploadImage, options);
+
     Axios.post(
       "https://dev.bellefu.com/api/admin/config/home_slider/save",
-      formdata,
+      payload,
       {
         headers: {
-          Authorization: `Bearer ${admin.token}`,
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
           Accept: "application/json",
         },
@@ -134,25 +152,18 @@ function SliderTable() {
       <div style={{ display: "flex", alignItems: "center", marginBottom: 20 }}>
         <Button variant="light">
           <label>
-            <input
-              multiple
-              accept="img/*"
-              type="file"
-              name=""
+            <ImageUploader
+              withIcon={true}
+              buttonText="Choose images"
+              onChange={(e) => setImageUpload({ slider_images: e })}
+              imgExtension={[".jpg", ".png", ".jpeg"]}
+              maxFileSize={5242880}
+              withPreview={true}
+              fileSizeError=" file size is too big"
               style={{ display: "none" }}
-              id=""
-              onChange={(e) => {
-                let data = e.target.files;
-                let fileList = [];
-
-                for (let i = 0; i < data.length; i++) {
-                  fileList.push(data[i]);
-                }
-                setImageUpload(fileList);
-              }}
             />
             {uploadImage !== [] ? (
-              uploadImage.length + " files uploaded"
+              uploadImage.slider_images.length + " files uploaded"
             ) : (
               <>
                 Upload New Slider Image
@@ -183,17 +194,30 @@ function SliderTable() {
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>Jacob</td>
-            <td>Thornton</td>
-            <td col={2}>
-              <div className="flex">
-                <Button variant="danger">
-                  <AiFillDelete />
-                </Button>
-              </div>
-            </td>
-          </tr>
+          {images.map((item) => (
+            <tr>
+              <td>
+                <img src={item} alt="" />
+              </td>
+              <td>{item.split(".")[0]}</td>
+              <td col={2}>
+                <div className="flex">
+                  <Button
+                    onClick={() => {
+                      handleDeleteButton(
+                        item,
+                        "Are you sure you want to delete " + item + " ?",
+                        deleteImage
+                      );
+                    }}
+                    variant="danger"
+                  >
+                    <AiFillDelete />
+                  </Button>
+                </div>
+              </td>
+            </tr>
+          ))}
         </tbody>
       </Table>
 
