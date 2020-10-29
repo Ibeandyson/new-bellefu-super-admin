@@ -81,7 +81,7 @@ export default function SubCategory() {
 
   useEffect(() => {
     Axios.get("https://dev.bellefu.com/api/category/list").then((res) => {
-      const data = res.data.categories.data;
+      const data = res.data.categories;
       data.forEach((item) => {
         setCategory((prev) => [...prev, { id: item.id, name: item.name }]);
       });

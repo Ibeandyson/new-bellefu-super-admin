@@ -9,8 +9,15 @@ import {
   Row,
   Col,
   Container,
+  InputGroup,
+  FormControl,
 } from "react-bootstrap";
-import { AiOutlineTag, AiOutlineEye } from "react-icons/ai";
+import {
+  AiOutlineTag,
+  AiOutlineEye,
+  AiFillDelete,
+  AiFillEdit,
+} from "react-icons/ai";
 import { GoLocation } from "react-icons/go";
 import { MdDateRange, MdCancel, MdLocationOn } from "react-icons/md";
 import { IoMdTrash } from "react-icons/io";
@@ -26,14 +33,14 @@ import { TiCancel } from "react-icons/ti";
 //THIS IS FOR HOVER TOOLTIP TO SHOW A TEXT (delete)
 const deleteTooltip = (props) => (
   <Tooltip id="button-tooltip" {...props}>
-    Disable Country
+    Delete Subcategories
   </Tooltip>
 );
 
 //THIS IS FOR HOVER TOOLTIP TO SHOW A TEXT (Comfirm)
 const editTooltip = (props) => (
   <Tooltip id="button-tooltip" {...props}>
-    Enable Coutry
+    Edit Subcategories
   </Tooltip>
 );
 
@@ -47,7 +54,9 @@ export default function SubCategoryTable() {
     message: "",
     action: () => {},
   });
-  
+
+  const [updateVal, setUpdateVal] = useState("");
+
   const [pages, setPages] = useState({
     current: 0,
     last: 0,
@@ -65,7 +74,7 @@ export default function SubCategoryTable() {
 
   function fetchSubcategories() {
     setLoad(true);
-    Axios.get("https://dev.bellefu.com/api/subcategory/list", {
+    Axios.get("https://dev.bellefu.com/api/admin/subcategory/list", {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
@@ -189,6 +198,9 @@ export default function SubCategoryTable() {
                       </th>
 
                       <th style={{ color: "white", fontWeight: "bold" }}>
+                        Icon
+                      </th>
+                      <th style={{ color: "white", fontWeight: "bold" }}>
                         Name
                       </th>
 
@@ -215,6 +227,11 @@ export default function SubCategoryTable() {
                           <p style={styles.titel}>{item.id}</p>
                         </td>
 
+
+                        <td>
+                          <p style={styles.titel}><img src={item.images} alt=""/></p>
+                        </td>
+
                         <td>
                           <p style={styles.titel}>{item.name}</p>
                         </td>
@@ -229,20 +246,34 @@ export default function SubCategoryTable() {
                             >
                               <Button
                                 size="sm"
+                                variant="success"
                                 onClick={() => {
                                   handleEditButton(
-                                    "",
-                                    `Are you sure you want to enable ${item.name} ?`,
+                                    item.slug,
+                                    <>
+                                      <p>
+                                        Editing {item.name}
+                                        <InputGroup>
+                                          <FormControl
+                                            aria-label="Large"
+                                            aria-describedby="inputGroup-sizing-sm"
+                                            placeholder="Subcategory"
+                                            value={updateVal}
+                                            onChange={(e) => {
+                                              setUpdateVal(e.target.value);
+                                            }}
+                                            style={{ marginTop: 20 }}
+                                          />
+                                        </InputGroup>
+                                      </p>
+                                    </>,
                                     editSubcategory
                                   );
                                 }}
-                                variant="light"
                               >
-                                <Button variant="light">
-                                  <FcApproval
-                                    style={{ color: "#fff", fontSize: 24 }}
-                                  />
-                                </Button>
+                                <AiFillEdit
+                                  style={{ color: "#fff", fontSize: 24 }}
+                                />
                               </Button>
                             </OverlayTrigger>
 
@@ -256,20 +287,17 @@ export default function SubCategoryTable() {
                                 onClick={() => {
                                   handleDeleteButton(
                                     "",
-                                    `Are you sure you want to disable ${item.name} ?`,
+                                    `Are you sure you want to delete ${item.name} ?`,
                                     deleteSubcategory
                                   );
                                 }}
                                 variant="light"
+                                style={{ marginLeft: 10 }}
+                                variant="danger"
                               >
-                                <Button
-                                  style={{ marginLeft: 10 }}
-                                  variant="danger"
-                                >
-                                  <TiCancel
-                                    style={{ color: "#fff", fontSize: 24 }}
-                                  />
-                                </Button>
+                                <AiFillDelete
+                                  style={{ color: "#fff", fontSize: 24 }}
+                                />
                               </Button>
                             </OverlayTrigger>
                           </div>
