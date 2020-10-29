@@ -3,8 +3,15 @@ import { Alert } from "react-bootstrap";
 
 function CustomAlert({ children, type }) {
   return (
-    <div style={{ position: "fixed", top: 20, right: "0" }}>
-      <Alert key={0} variant={type}>
+    <div
+      style={{
+        position: "fixed",
+        top: 80,
+        right: 20,
+        minHeight: "max-content",
+      }}
+    >
+      <Alert key={4} variant={type}>
         {children}
       </Alert>
     </div>

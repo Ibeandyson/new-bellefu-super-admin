@@ -111,7 +111,7 @@ export default function HomeSlider() {
             style={{ padding: "30px" }}
             className=" d-lg-none  d-xs-block d-sm-block d-md-block "
           >
-            <PendingAdTable />
+            <SliderTable />
           </Col>
         </Row>
       </div>

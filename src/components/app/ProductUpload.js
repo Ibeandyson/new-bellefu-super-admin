@@ -6,7 +6,6 @@ import { AiOutlineMenu } from "react-icons/ai";
 import { IoMdArrowDropdown } from "react-icons/io";
 import MainCategory from "../user/MainCategory";
 import CategoryTable from "../user/CategoryTable";
-import SubCategoryTable from "../user/SubCategory";
 import ProductUploadForm from "../user/ProductUploadForm";
 
 export default function ProductUpload() {

@@ -8,6 +8,8 @@ import ActionModal from "../components/ActionModal";
 import ImageUploader from "react-images-upload";
 import CustomAlert from "../components/Alert";
 import jsonToFormData from "json-form-data";
+import { GiCancel } from "react-icons/gi";
+import { useRef } from "react";
 
 function SliderTable() {
   const { token } = useSelector((state) => state.adminSignin);
@@ -53,8 +55,8 @@ function SliderTable() {
   }, []);
 
   const deleteImage = (title) => {
-    Axios.get(
-      "https://dev.bellefu.com/api/admin/config/home_slider/delete/" + title,
+    Axios.post(
+      `https://dev.bellefu.com/api/admin/config/home_slider/delete/${title}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -82,8 +84,6 @@ function SliderTable() {
 
   const handleImageUpload = () => {
     setUploadLoad(true);
-    // const formdata = new FormData();
-    // formdata.set("home_sliders", [...uploadImage]);
     let options = {
       initialFormData: new FormData(),
       showLeafArrayIndexes: true,
@@ -109,6 +109,9 @@ function SliderTable() {
       }
     )
       .then((res) => {
+        setImageUpload({
+          slider_images: [],
+        });
         setUploadLoad(false);
         setUploadMessage({
           view: true,
@@ -129,7 +132,7 @@ function SliderTable() {
         setUploadMessage({
           view: true,
           message: "Oops!, an error occured. Try Again!",
-          type: "erroe",
+          type: "error",
         });
 
         setTimeout(() => {
@@ -144,12 +147,20 @@ function SliderTable() {
 
   return (
     <div>
-      {uploadMessage.view && (
-        <CustomAlert type={uploadMessage.type}>
-          {uploadMessage.message}
-        </CustomAlert>
-      )}
       <div style={{ display: "flex", alignItems: "center", marginBottom: 20 }}>
+        {uploadImage.slider_images.length >= 1 && (
+          <Button
+            onClick={() => {
+              setImageUpload({
+                slider_images: [],
+              });
+            }}
+            style={{ marginRight: 20 }}
+            vaiant="secondary"
+          >
+            <GiCancel />
+          </Button>
+        )}
         <Button variant="light">
           <label>
             <ImageUploader
@@ -158,6 +169,7 @@ function SliderTable() {
               onChange={(e) => setImageUpload({ slider_images: e })}
               imgExtension={[".jpg", ".png", ".jpeg"]}
               maxFileSize={5242880}
+              className="uploaderComponent"
               withPreview={true}
               fileSizeError=" file size is too big"
               style={{ display: "none" }}
@@ -174,13 +186,18 @@ function SliderTable() {
         </Button>
         <div style={{ marginLeft: 20 }}>
           <Button
-            disabled={uploadLoad}
+            disabled={uploadLoad || uploadImage.slider_images.length < 1}
             onClick={handleImageUpload}
             variant="warning"
           >
             Submit <FiSend />
           </Button>
         </div>
+        {uploadMessage.view && (
+          <CustomAlert type={uploadMessage.type}>
+            {uploadMessage.message}
+          </CustomAlert>
+        )}
       </div>
 
       <Table className="_sliderTable" striped bordered hover size="sm">
@@ -205,7 +222,7 @@ function SliderTable() {
                   <Button
                     onClick={() => {
                       handleDeleteButton(
-                        item,
+                        item.trim(),
                         "Are you sure you want to delete " + item + " ?",
                         deleteImage
                       );

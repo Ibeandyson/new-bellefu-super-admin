@@ -9,8 +9,15 @@ import {
   Row,
   Col,
   Container,
+  InputGroup,
+  FormControl,
 } from "react-bootstrap";
-import { AiOutlineTag, AiOutlineEye } from "react-icons/ai";
+import {
+  AiOutlineTag,
+  AiOutlineEye,
+  AiFillEdit,
+  AiFillDelete,
+} from "react-icons/ai";
 import { GoLocation } from "react-icons/go";
 import { MdDateRange, MdCancel, MdLocationOn } from "react-icons/md";
 import { IoMdTrash } from "react-icons/io";
@@ -26,20 +33,21 @@ import { TiCancel } from "react-icons/ti";
 //THIS IS FOR HOVER TOOLTIP TO SHOW A TEXT (delete)
 const deleteTooltip = (props) => (
   <Tooltip id="button-tooltip" {...props}>
-    Disable Country
+    Delete Category
   </Tooltip>
 );
 
 //THIS IS FOR HOVER TOOLTIP TO SHOW A TEXT (Comfirm)
 const editTooltip = (props) => (
   <Tooltip id="button-tooltip" {...props}>
-    Enable Coutry
+    Edit category
   </Tooltip>
 );
 
 export default function CategoryTable() {
   const { token } = useSelector((state) => state.adminSignin);
   const [load, setLoad] = useState(false);
+  const [updateVal, setUpdateVal] = useState("");
   const [categories, setCategories] = useState([]);
   const [action, setAction] = useState({
     view: false,
@@ -53,7 +61,7 @@ export default function CategoryTable() {
       view: true,
       id,
       message,
-                 
+
       action,
     });
   };
@@ -62,7 +70,7 @@ export default function CategoryTable() {
     setLoad(true);
     Axios.get("https://dev.bellefu.com/api/category/list", {
       headers: {
-        Authorization: `Bearer ${ token }`,
+        Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
         Accept: "application/json",
       },
@@ -101,7 +109,7 @@ export default function CategoryTable() {
   const deleteCategory = (title) => {
     Axios.get("https://dev.bellefu.com/api/admin/product/delete/" + title, {
       headers: {
-        Authorization: `Bearer ${ token }`,
+        Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
         Accept: "application/json",
       },
@@ -117,7 +125,7 @@ export default function CategoryTable() {
   const editCategory = (title) => {
     Axios.get("https://dev.bellefu.com/api/admin/product/approve/" + title, {
       headers: {
-        Authorization: `Bearer ${ token }`,
+        Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
         Accept: "application/json",
       },
@@ -231,18 +239,33 @@ export default function CategoryTable() {
                               size="sm"
                               onClick={() => {
                                 handleEditButton(
-                                  "",
-                                  `Are you sure you want to enable ${item.name} ?`,
+                                  item.slug,
+                                  <>
+                                    <p>
+                                      Edit {item.name} ?
+                                      <InputGroup>
+                                        <FormControl
+                                          style={{ marginTop: 20 }}
+                                          aria-label="Large"
+                                          aria-describedby="inputGroup-sizing-sm"
+                                          placeholder="Subcategory"
+                                          value={updateVal}
+                                          onChange={(e) => {
+                                            setUpdateVal(e.target.value);
+                                          }}
+                                        />
+                                      </InputGroup>
+                                    </p>
+                                  </>,
                                   editCategory
                                 );
                               }}
-                              variant="light"
+                              variant="success"
+                              style={{ marginRight: 10 }}
                             >
-                              <Button variant="light">
-                                <FcApproval
-                                  style={{ color: "#fff", fontSize: 24 }}
-                                />
-                              </Button>
+                              <AiFillEdit
+                                style={{ color: "#fff", fontSize: 24 }}
+                              />
                             </Button>
                           </OverlayTrigger>
 
@@ -256,20 +279,15 @@ export default function CategoryTable() {
                               onClick={() => {
                                 handleDeleteButton(
                                   "",
-                                  `Are you sure you want to disable ${item.name} ?`,
+                                  `Are you sure you want to delete ${item.name} ?`,
                                   deleteCategory
                                 );
                               }}
-                              variant="light"
+                              variant="danger"
                             >
-                              <Button
-                                style={{ marginLeft: 10 }}
-                                variant="danger"
-                              >
-                                <TiCancel
-                                  style={{ color: "#fff", fontSize: 24 }}
-                                />
-                              </Button>
+                              <AiFillDelete
+                                style={{ color: "#fff", fontSize: 24 }}
+                              />
                             </Button>
                           </OverlayTrigger>
                         </div>

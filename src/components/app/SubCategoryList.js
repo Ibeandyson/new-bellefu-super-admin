@@ -6,7 +6,7 @@ import { AiOutlineMenu } from "react-icons/ai";
 import { IoMdArrowDropdown } from "react-icons/io";
 import MainCategory from "../user/MainCategory";
 import CategoryTable from "../user/CategoryTable";
-import SubCategoryTable from "../user/SubCategory";
+import SubCategoryTable from "../user/SubCategoryTable";
 
 export default function SubCategoryList() {
   return (
