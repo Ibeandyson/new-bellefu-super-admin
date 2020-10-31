@@ -1,15 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  Card,
-  Badge,
-  Image,
-  Button,
-  Tooltip,
-  OverlayTrigger,
-  Row,
-  Col,
-  Container,
-} from "react-bootstrap";
+import { Card, Badge, Image, Button, Tooltip, OverlayTrigger, Row, Col, Container } from "react-bootstrap";
 import { AiOutlineEye } from "react-icons/ai";
 import { MdCancel } from "react-icons/md";
 import { IoMdTrash } from "react-icons/io";
@@ -17,11 +7,7 @@ import { IoMdTrash } from "react-icons/io";
 import { FaLockOpen, FaLock } from "react-icons/fa";
 import pic from "../images/pic.jpg";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  blockUserAction,
-  deleteUserAction,
-  unblockUserAction,
-} from "../../redux/action/userActions";
+import { blockUserAction, deleteUserAction, unblockUserAction } from "../../redux/action/userActions";
 import ActionModal from "../components/ActionModal";
 import Axios from "axios";
 import InfiniteScroll from "react-infinite-scroll-component";
@@ -192,243 +178,168 @@ export default function UsersListTable() {
               seturl(e.target.value);
             }}
           >
-            <option value="api/admin/customer/list/all">
-              All Customer List
-            </option>
-            <option value="api/admin/customer/list/blocked">
-              Blocked Customer List
-            </option>
-            <option value="api/admin/customer/list/phone/verified">
-              Phone Verified Customer List
-            </option>
-            <option value="api/admin/customer/list/id/verified">
-              ID Verified Customer List
-            </option>
-            <option value="api/admin/customer/list/kyc/verified">
-              KYC Verified Customer List
-            </option>
+            <option value="api/admin/customer/list/all">All Customer List</option>
+            <option value="api/admin/customer/list/blocked">Blocked Customer List</option>
+            <option value="api/admin/customer/list/phone/verified">Phone Verified Customer List</option>
+            <option value="api/admin/customer/list/id/verified">ID Verified Customer List</option>
+            <option value="api/admin/customer/list/kyc/verified">KYC Verified Customer List</option>
           </select>
         </Card.Header>
         <Card.Body>
           {load ? (
             <Spinner />
           ) : (
-            <table class="uk-table uk-table-responsive uk-table-divider">
-              <thead style={{ backgroundColor: "#76ba1b", color: "white" }}>
-                <tr>
-                  <th
-                    style={{ color: "white", fontWeight: "bold" }}
-                    className="uk-table-expand"
-                  >
-                    avater
-                  </th>
-                  <th style={{ color: "white", fontWeight: "bold" }}>Name</th>
-                  <th style={{ color: "white", fontWeight: "bold" }}>Email</th>
-                  <th style={{ color: "white", fontWeight: "bold" }}>Sex</th>
-                  <th style={{ color: "white", fontWeight: "bold" }}>Status</th>
-                  <th style={{ color: "white", fontWeight: "bold" }}>Joined</th>
-                  <th
-                    className="uk-table-expand"
-                    style={{ color: "white", fontWeight: "bold" }}
-                  >
-                    Action
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {users.map((item, key) => (
-                  <tr key={key}>
-                    <td>
-                      <Image
-                        src={user.avatar === null ? pic : user.avatar}
-                        style={styles.image}
-                        roundedCircle
-                      />
-                    </td>
-                    <td>
-                      <p style={styles.name}>
-                        {item.profile.first_name + " " + item.profile.last_name}
-                      </p>
-                    </td>
-                    <td>
-                      <p style={styles.name}>{item.email} </p>
-                    </td>
-                    <td>{item.profile.gender === "M" ? "Male" : "Female"}</td>
-                    <td>
-                      {item.status.toLowerCase() === "active" ? (
-                        <Badge variant="primary" className="ml-2">
-                          {item.status}
-                        </Badge>
-                      ) : (
-                        <Badge variant="danger" className="ml-2">
-                          {item.status}
-                        </Badge>
-                      )}
-                      {item.verification_level !== "none" ? (
-                        <Badge variant="success" className="ml-2">
-                          Verified
-                        </Badge>
-                      ) : (
-                        <Badge variant="danger" className="ml-2">
-                          Unverified
-                        </Badge>
-                      )}
-                    </td>
-                    <td>
-                      {differenceInCalendarDays(
-                        new Date(),
-                        new Date(item.profile.created_at)
-                      )}{" "}
-                      days
-                    </td>
-                    <td>
-                      <div className="btn-group" role="group">
-                        <OverlayTrigger
-                          placement="bottom"
-                          delay={{ show: 50, hide: 100 }}
-                          overlay={viewTooltip}
-                        >
-                          <Button
-                            onClick={() => {
-                              const obj = users.find(
-                                (o, index) => index === key
-                              );
-                              setUser({
-                                name:
-                                  obj.profile.first_name +
-                                  " " +
-                                  obj.profile.last_name,
-                                avatar: obj.avatar,
-                                email: obj.email,
-                                phone: obj.phone,
-                                bio: obj.bio,
-                                time: differenceInCalendarDays(
-                                  new Date(),
-                                  new Date(obj.profile.created_at)
-                                ),
-                                gender: obj.profile.gender,
-                                username: obj.username,
-                              });
-                            }}
-                            class="uk-button uk-button-default"
-                            type="button"
-                            uk-toggle="target: #offcanvas-flip"
-                            size="sm"
-                            variant="light"
-                          >
-                            <AiOutlineEye style={{ color: "#ffa500" }} />
-                          </Button>
-                        </OverlayTrigger>
-
-                        <OverlayTrigger
-                          placement="bottom"
-                          delay={{ show: 50, hide: 100 }}
-                          overlay={blockTooltip}
-                        >
-                          <Button
-                            class="uk-button uk-button-default"
-                            type="button"
-                            size="sm"
-                            variant="light"
-                            onClick={() => {
-                              handleBlockButton(
-                                item.username,
-                                `Are you sure you want to block ${
-                                  item.profile.first_name +
-                                  " " +
-                                  item.profile.last_name
-                                }`,
-                                blockUser
-                              );
-                            }}
-                          >
-                            <FaLock style={{ color: "black" }} />
-                          </Button>
-                        </OverlayTrigger>
-
-                        <OverlayTrigger
-                          placement="bottom"
-                          delay={{ show: 50, hide: 100 }}
-                          overlay={unblockTooltip}
-                        >
-                          <Button
-                            onClick={() => {
-                              handleUnblockButton(
-                                item.username,
-                                `Are you sure you want to unblock ${
-                                  item.profile.first_name +
-                                  " " +
-                                  item.profile.last_name
-                                }`,
-                                unblockUser
-                              );
-                            }}
-                            class="uk-button uk-button-default"
-                            type="button"
-                            size="sm"
-                            variant="light"
-                          >
-                            <FaLockOpen style={{ color: "green" }} />
-                          </Button>
-                        </OverlayTrigger>
-
-                        <OverlayTrigger
-                          placement="bottom"
-                          delay={{ show: 50, hide: 100 }}
-                          overlay={deleteTooltip}
-                        >
-                          <Button
-                            onClick={() => {
-                              handleDeleteButton(
-                                item.username,
-                                `Are you sure you want to delete ${
-                                  item.profile.first_name +
-                                  " " +
-                                  item.profile.last_name
-                                }`,
-                                deleteUser
-                              );
-                            }}
-                            size="sm"
-                            variant="light"
-                          >
-                            <IoMdTrash style={{ color: "red" }} />
-                          </Button>
-                        </OverlayTrigger>
-                      </div>
-                    </td>
+            <InfiniteScroll
+              dataLength={users.length}
+              next={nextData}
+              hasMore={pages.current !== pages.last ? true : false}
+              loader={<h4 style={{ textAlign: "center", color: "gray" }}>Loading...</h4>}
+              endMessage={<p style={{ textAlign: "center" }}></p>}
+            >
+              <table class="uk-table uk-table-responsive uk-table-divider">
+                <thead style={{ backgroundColor: "#76ba1b", color: "white" }}>
+                  <tr>
+                    <th style={{ color: "white", fontWeight: "bold" }} className="uk-table-expand">
+                      avater
+                    </th>
+                    <th style={{ color: "white", fontWeight: "bold" }}>Name</th>
+                    <th style={{ color: "white", fontWeight: "bold" }}>Email</th>
+                    <th style={{ color: "white", fontWeight: "bold" }}>Sex</th>
+                    <th style={{ color: "white", fontWeight: "bold" }}>Status</th>
+                    <th style={{ color: "white", fontWeight: "bold" }}>Joined</th>
+                    <th className="uk-table-expand" style={{ color: "white", fontWeight: "bold" }}>
+                      Action
+                    </th>
                   </tr>
-                ))}
-                <InfiniteScroll
-                  dataLength={users.length}
-                  next={nextData}
-                  hasMore={pages.current !== pages.last ? true : false}
-                  loader={
-                    <h4 style={{ textAlign: "center", color: "gray" }}>
-                      Loading...
-                    </h4>
-                  }
-                  endMessage={<p style={{ textAlign: "center" }}></p>}
-                ></InfiniteScroll>
-              </tbody>
-            </table>
+                </thead>
+
+                <tbody>
+                  {users.map((item, key) => (
+                    <tr key={key}>
+                      <td>
+                        <Image src={item.avatar === null ? pic : "https://dev.bellefu.com/images/users/" + item.avatar} style={styles.image} roundedCircle />
+                      </td>
+                      <td>
+                        <p style={styles.name}>{item.profile.first_name + " " + item.profile.last_name}</p>
+                      </td>
+                      <td>
+                        <p style={styles.name}>{item.email} </p>
+                      </td>
+                      <td>{item.profile.gender === "M" ? "Male" : "Female"}</td>
+                      <td>
+                        {item.status.toLowerCase() === "active" ? (
+                          <Badge variant="primary" className="ml-2">
+                            {item.status}
+                          </Badge>
+                        ) : (
+                          <Badge variant="danger" className="ml-2">
+                            {item.status}
+                          </Badge>
+                        )}
+                        {item.verification_level !== "none" ? (
+                          <Badge variant="success" className="ml-2">
+                            Verified
+                          </Badge>
+                        ) : (
+                          <Badge variant="danger" className="ml-2">
+                            Unverified
+                          </Badge>
+                        )}
+                      </td>
+                      <td>{differenceInCalendarDays(new Date(), new Date(item.profile.created_at))} days</td>
+                      <td>
+                        <div className="btn-group" role="group">
+                          <OverlayTrigger placement="bottom" delay={{ show: 50, hide: 100 }} overlay={viewTooltip}>
+                            <Button
+                              onClick={() => {
+                                const obj = users.find((o, index) => index === key);
+                                setUser({
+                                  name: obj.profile.first_name + " " + obj.profile.last_name,
+                                  avatar: obj.avatar,
+                                  email: obj.email,
+                                  phone: obj.phone,
+                                  bio: obj.bio,
+                                  time: differenceInCalendarDays(new Date(), new Date(obj.profile.created_at)),
+                                  gender: obj.profile.gender,
+                                  username: obj.username,
+                                });
+                              }}
+                              class="uk-button uk-button-default"
+                              type="button"
+                              uk-toggle="target: #offcanvas-flip"
+                              size="sm"
+                              variant="light"
+                            >
+                              <AiOutlineEye style={{ color: "#ffa500" }} />
+                            </Button>
+                          </OverlayTrigger>
+
+                          <OverlayTrigger placement="bottom" delay={{ show: 50, hide: 100 }} overlay={blockTooltip}>
+                            <Button
+                              class="uk-button uk-button-default"
+                              type="button"
+                              size="sm"
+                              variant="light"
+                              onClick={() => {
+                                handleBlockButton(
+                                  item.username,
+                                  `Are you sure you want to block ${item.profile.first_name + " " + item.profile.last_name}`,
+                                  blockUser
+                                );
+                              }}
+                            >
+                              <FaLock style={{ color: "black" }} />
+                            </Button>
+                          </OverlayTrigger>
+
+                          <OverlayTrigger placement="bottom" delay={{ show: 50, hide: 100 }} overlay={unblockTooltip}>
+                            <Button
+                              onClick={() => {
+                                handleUnblockButton(
+                                  item.username,
+                                  `Are you sure you want to unblock ${item.profile.first_name + " " + item.profile.last_name}`,
+                                  unblockUser
+                                );
+                              }}
+                              class="uk-button uk-button-default"
+                              type="button"
+                              size="sm"
+                              variant="light"
+                            >
+                              <FaLockOpen style={{ color: "green" }} />
+                            </Button>
+                          </OverlayTrigger>
+
+                          <OverlayTrigger placement="bottom" delay={{ show: 50, hide: 100 }} overlay={deleteTooltip}>
+                            <Button
+                              onClick={() => {
+                                handleDeleteButton(
+                                  item.username,
+                                  `Are you sure you want to delete ${item.profile.first_name + " " + item.profile.last_name}`,
+                                  deleteUser
+                                );
+                              }}
+                              size="sm"
+                              variant="light"
+                            >
+                              <IoMdTrash style={{ color: "red" }} />
+                            </Button>
+                          </OverlayTrigger>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </InfiniteScroll>
           )}
         </Card.Body>
       </Card>
 
       {/* ============OFFCANVA FOR VIEW USER========== */}
-      <div
-        id="offcanvas-flip"
-        uk-offcanvas="flip: true; overlay: true"
-        style={{ marginTop: "4%" }}
-      >
+      <div id="offcanvas-flip" uk-offcanvas="flip: true; overlay: true" style={{ marginTop: "4%" }}>
         <div class="uk-offcanvas-bar" style={{ width: "80%" }}>
-          <MdCancel
-            style={styles.close_icon}
-            className="uk-offcanvas-close"
-            uk-close
-            type="button"
-          />
+          <MdCancel style={styles.close_icon} className="uk-offcanvas-close" uk-close type="button" />
           <Container>
             <Row>
               <Col xs={12} sm={12} md={12} lg={12} xl={12}>
@@ -441,14 +352,7 @@ export default function UsersListTable() {
                   </Card.Body>
                 </Card>
               </Col>
-              <Col
-                xs={12}
-                sm={12}
-                md={12}
-                lg={12}
-                xl={12}
-                className="mt-4"
-              ></Col>
+              <Col xs={12} sm={12} md={12} lg={12} xl={12} className="mt-4"></Col>
             </Row>
           </Container>
         </div>
@@ -483,18 +387,8 @@ function ProfileInfo({ user }) {
       <Card className="border-0">
         <Card.Body>
           <Row>
-            <Col
-              xs={12}
-              sm={12}
-              md={12}
-              lg={12}
-              xl={12}
-              className="text-center"
-            >
-              <Image
-                src={user.avatar === null ? pic : user.avatar}
-                style={styles.proPic}
-              />
+            <Col xs={12} sm={12} md={12} lg={12} xl={12} className="text-center">
+              <Image src={user.avatar === null ? pic : user.avatar} style={styles.proPic} />
             </Col>
             <Col xs={12} sm={12} md={12} lg={12} xl={12}>
               <Card.Header className="bg-light pb-0 mt-3">

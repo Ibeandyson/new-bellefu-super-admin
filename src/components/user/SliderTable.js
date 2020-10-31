@@ -55,7 +55,7 @@ function SliderTable() {
   }, []);
 
   const deleteImage = (title) => {
-    Axios.post(
+    Axios.delete(
       `https://dev.bellefu.com/api/admin/config/home_slider/delete/${title}`,
       {
         headers: {
@@ -151,6 +151,7 @@ function SliderTable() {
         {uploadImage.slider_images.length >= 1 && (
           <Button
             onClick={() => {
+              document.getElementById("uploaderInput").value = "";
               setImageUpload({
                 slider_images: [],
               });
@@ -163,15 +164,14 @@ function SliderTable() {
         )}
         <Button variant="light">
           <label>
-            <ImageUploader
-              withIcon={true}
-              buttonText="Choose images"
-              onChange={(e) => setImageUpload({ slider_images: e })}
-              imgExtension={[".jpg", ".png", ".jpeg"]}
-              maxFileSize={5242880}
-              className="uploaderComponent"
-              withPreview={true}
-              fileSizeError=" file size is too big"
+            <input
+              multiple={true}
+              type="file"
+              id="uploaderInput"
+              onChange={(e) =>
+                setImageUpload({ slider_images: e.target.files })
+              }
+              accept="img/*"
               style={{ display: "none" }}
             />
             {uploadImage !== [] ? (
@@ -221,11 +221,12 @@ function SliderTable() {
                 <div className="flex">
                   <Button
                     onClick={() => {
-                      handleDeleteButton(
-                        item.trim(),
-                        "Are you sure you want to delete " + item + " ?",
-                        deleteImage
-                      );
+                      // handleDeleteButton(
+                      //   item.trim(),
+                      //   "Are you sure you want to delete " + item + " ?",
+                      //   deleteImage
+                      // );
+                      deleteImage(item);
                     }}
                     variant="danger"
                   >

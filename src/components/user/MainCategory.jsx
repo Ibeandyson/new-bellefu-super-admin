@@ -1,17 +1,8 @@
 import Axios from "axios";
-import React, { useState} from "react";
-import {
-  Card,
-  Button,
-  Row,
-  Col,
-  Container,
-  Form,
-  Alert,
-} from "react-bootstrap";
+import React, { useState } from "react";
+import { Card, Button, Row, Col, Container, Form, Alert } from "react-bootstrap";
 import { AiOutlineUpload } from "react-icons/ai";
 import { useSelector } from "react-redux";
-
 
 export default function MainCategory() {
   const { token } = useSelector((state) => state.adminSignin);
@@ -22,22 +13,20 @@ export default function MainCategory() {
   });
   const [cat, setcat] = useState({
     cat_name: "",
-    cat_icon: ""
+    cat_icon: "",
   });
 
-
-  const onChangHandlerImage = e => {
-    setcat({...cat, [e.target.name]: e.target.files[0]});
-};
-   function handleSubmit(event) {
+  const onChangHandlerImage = (e) => {
+    setcat({ ...cat, [e.target.name]: e.target.files[0] });
+  };
+  function handleSubmit(event) {
     event.preventDefault();
 
-    let formData = new FormData()
-     formData.append('cat_icon', cat.cat_icon)
-     formData.append('cat_name', cat.cat_name)
+    let formData = new FormData();
+    formData.append("cat_icon", cat.cat_icon);
+    formData.append("cat_name", cat.cat_name);
 
-  
-    Axios.post("https://dev.bellefu.com/api/admin/category/save",formData  , {
+    Axios.post("https://dev.bellefu.com/api/admin/category/save", formData, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
@@ -66,15 +55,11 @@ export default function MainCategory() {
       });
   }
 
-  
   return (
     <div>
       <Container>
         <Card className="border-0">
-          <Card.Header
-            className="border-0"
-            style={{ backgroundColor: "#76ba1b" }}
-          >
+          <Card.Header className="border-0" style={{ backgroundColor: "#76ba1b" }}>
             <b style={{ color: "white" }}>Create Category</b>
           </Card.Header>
           <Card.Body>
@@ -99,23 +84,12 @@ export default function MainCategory() {
                 <Col xm={12} sm={12} md={12} lg={6} xl={6}>
                   <Form.Label style={styles.label}>Category Icon *</Form.Label>
                   <br />
-                  <div
-                    uk-form-custom="target: true"
-                    style={{ height: "50px", boxShadow: "none", width: "100%" }}
-                  >
+                  <div uk-form-custom="target: true" style={{ height: "50px", boxShadow: "none", width: "100%" }}>
                     <label style={styles.upload}>
-                      <input
-                        style={{ display: "none" }}
-                        type="file"
-                        name="cat_icon"
-                        onChange={e =>  onChangHandlerImage(e)}
-                      />
-                      {cat.cat_icon=== ""? (
+                      <input style={{ display: "none" }} type="file" name="cat_icon" onChange={(e) => onChangHandlerImage(e)} />
+                      {cat.cat_icon === "" ? (
                         <>
-                          Select an image{" "}
-                          <AiOutlineUpload
-                            style={{ fontSize: 24, marginLeft: 10 }}
-                          />
+                          Select an image <AiOutlineUpload style={{ fontSize: 24, marginLeft: 10 }} />
                         </>
                       ) : (
                         cat.cat_icon.name
@@ -124,13 +98,7 @@ export default function MainCategory() {
                   </div>
                 </Col>
                 <Col xm={12} sm={12} md={12} lg={12} xl={12} className="mt-4">
-                  <Button
-                    disabled={cat.cat_name === "" && true}
-                    style={styles.btnCreate}
-                    variant="warning"
-                    size="sm"
-                    type="submit"
-                  >
+                  <Button disabled={cat.cat_name === "" && true} style={styles.btnCreate} variant="warning" size="sm" type="submit">
                     <b>Create</b>
                   </Button>
                 </Col>

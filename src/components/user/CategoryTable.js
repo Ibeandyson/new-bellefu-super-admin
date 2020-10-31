@@ -1,23 +1,6 @@
 import React, { useEffect, useState } from "react";
-import {
-  Card,
-  Badge,
-  Image,
-  Button,
-  Tooltip,
-  OverlayTrigger,
-  Row,
-  Col,
-  Container,
-  InputGroup,
-  FormControl,
-} from "react-bootstrap";
-import {
-  AiOutlineTag,
-  AiOutlineEye,
-  AiFillEdit,
-  AiFillDelete,
-} from "react-icons/ai";
+import { Card, Badge, Image, Button, Tooltip, OverlayTrigger, Row, Col, Container, InputGroup, FormControl } from "react-bootstrap";
+import { AiOutlineTag, AiOutlineEye, AiFillEdit, AiFillDelete, AiOutlineUpload } from "react-icons/ai";
 import { GoLocation } from "react-icons/go";
 import { MdDateRange, MdCancel, MdLocationOn } from "react-icons/md";
 import { IoMdTrash } from "react-icons/io";
@@ -47,7 +30,11 @@ const editTooltip = (props) => (
 export default function CategoryTable() {
   const { token } = useSelector((state) => state.adminSignin);
   const [load, setLoad] = useState(false);
-  const [updateVal, setUpdateVal] = useState("");
+  const [updateVal, setUpdateVal] = useState({
+    name: "",
+    icon: "",
+    error: "",
+  });
   const [categories, setCategories] = useState([]);
   const [action, setAction] = useState({
     view: false,
@@ -64,6 +51,107 @@ export default function CategoryTable() {
 
       action,
     });
+  };
+
+  const EditInput = ({ action, setAction, fetchCategories }) => {
+    const { token } = useSelector((state) => state.adminSignin);
+    const [updateData, setUpdateData] = useState({
+      icon: "",
+      name: "",
+      error: "",
+    });
+
+    const handleNameChange = (event) => {
+      const { value, files, name } = event.target;
+
+      if (name === "name") {
+        setUpdateData({ ...updateData, [name]: value });
+      }
+      if (name === "icon") {
+        setUpdateData((prev) => ({ ...prev, [name]: files[0] }));
+      }
+    };
+    const editCategory = (_id) => {
+      const payload = new FormData();
+      if (updateData.icon === "") {
+        payload.set("cat_name", updateData.name);
+      } else if (updateData.name === "") {
+        payload.set("cat_icon", updateData.icon);
+      } else {
+        payload.append("cat_name", updateData.name);
+        payload.append("cat_icon", updateData.icon);
+      }
+      Axios.post("https://dev.bellefu.com/api/admin/category/update/" + _id, payload, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      })
+        .then(() => {
+          fetchCategories();
+          setAction((prev) => ({
+            ...prev,
+            view: false,
+          }));
+        })
+        .catch((err) => {
+          setUpdateData((prev) => ({
+            ...prev,
+            error: "Opps, looks like there was an error!",
+          }));
+        });
+    };
+    return (
+      <ActionModal
+        show={action.view}
+        handleYes={() => {
+          editCategory(action.id);
+        }}
+        handleNo={() => {
+          setAction((prev) => ({
+            ...prev,
+            view: false,
+          }));
+        }}
+      >
+        <p>Edit {action.id} ?</p>
+        <InputGroup>
+          <FormControl
+            style={{ marginTop: 20 }}
+            aria-label="Large"
+            aria-describedby="inputGroup-sizing-sm"
+            placeholder="Subcategory"
+            name="name"
+            value={updateData.name}
+            onChange={handleNameChange}
+          />
+        </InputGroup>
+        <label
+          style={{
+            marginTop: 20,
+            padding: "5px 10px",
+            backgroundColor: "#eee",
+            border: "1px solid #666",
+            borderRadius: "4px",
+            height: "100%",
+            display: "flex",
+            alignItems: "center",
+            cursor: "pointer",
+          }}
+        >
+          <input style={{ display: "none" }} type="file" name="icon" onChange={handleNameChange} />
+          {updateData.icon === "" ? (
+            <>
+              Select an image <AiOutlineUpload style={{ fontSize: 24, marginLeft: 10 }} />
+            </>
+          ) : (
+            updateData.icon.name
+          )}
+        </label>
+        <small className="text-danger">{updateData.error}</small>
+      </ActionModal>
+    );
   };
 
   function fetchCategories() {
@@ -107,7 +195,7 @@ export default function CategoryTable() {
   };
 
   const deleteCategory = (title) => {
-    Axios.get("https://dev.bellefu.com/api/admin/product/delete/" + title, {
+    Axios.get("https://dev.bellefu.com/api/admin/category/delete/" + title, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
@@ -116,25 +204,17 @@ export default function CategoryTable() {
     })
       .then(() => {
         fetchCategories();
+        setAction((prev) => ({
+          ...prev,
+          view: false,
+        }));
       })
       .catch((err) => {
         console.log(err.message);
-      });
-  };
-
-  const editCategory = (title) => {
-    Axios.get("https://dev.bellefu.com/api/admin/product/approve/" + title, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-    })
-      .then(() => {
-        fetchCategories();
-      })
-      .catch((err) => {
-        console.log(err.message);
+        setAction((prev) => ({
+          ...prev,
+          view: false,
+        }));
       });
   };
 
@@ -160,10 +240,7 @@ export default function CategoryTable() {
               <table class="uk-table uk-table-responsive uk-table-divider">
                 <thead style={{ backgroundColor: "#76ba1b", color: "white" }}>
                   <tr>
-                    <th
-                      style={{ color: "white", fontWeight: "bold", width: 60 }}
-                      className="uk-table-expand"
-                    >
+                    <th style={{ color: "white", fontWeight: "bold", width: 60 }} className="uk-table-expand">
                       #ID
                     </th>
                     <th
@@ -185,9 +262,7 @@ export default function CategoryTable() {
                     >
                       Subcategories
                     </th>
-                    <th style={{ color: "white", fontWeight: "bold" }}>
-                      Product Count
-                    </th>
+                    <th style={{ color: "white", fontWeight: "bold" }}>Product Count</th>
                     <th
                       //   className="uk-table-expand"
 
@@ -209,11 +284,7 @@ export default function CategoryTable() {
                       </td>
                       <td>
                         <p style={styles.titel}>
-                          <img
-                            src={item.image}
-                            style={{ width: "100%" }}
-                            alt=""
-                          />
+                          <img src={"https://dev.bellefu.com/images/categories/"+item.image} style={{ width: "100%" }} alt="" />
                         </p>
                       </td>
 
@@ -222,72 +293,34 @@ export default function CategoryTable() {
                       </td>
 
                       <td style={{ display: "flex", flexWrap: "wrap" }}>
-                        <small>
-                          {item.subcategories.map((item) => item.name + ", ")}
-                        </small>
+                        <small>{item.subcategories.map((item) => item.name + ", ")}</small>
                       </td>
 
                       <td>{item.products_count}</td>
                       <td>
                         <div className="btn-group" role="group">
-                          <OverlayTrigger
-                            placement="bottom"
-                            delay={{ show: 50, hide: 100 }}
-                            overlay={editTooltip}
-                          >
+                          <OverlayTrigger placement="bottom" delay={{ show: 50, hide: 100 }} overlay={editTooltip}>
                             <Button
                               size="sm"
                               onClick={() => {
-                                handleEditButton(
-                                  item.slug,
-                                  <>
-                                    <p>
-                                      Edit {item.name} ?
-                                      <InputGroup>
-                                        <FormControl
-                                          style={{ marginTop: 20 }}
-                                          aria-label="Large"
-                                          aria-describedby="inputGroup-sizing-sm"
-                                          placeholder="Subcategory"
-                                          value={updateVal}
-                                          onChange={(e) => {
-                                            setUpdateVal(e.target.value);
-                                          }}
-                                        />
-                                      </InputGroup>
-                                    </p>
-                                  </>,
-                                  editCategory
-                                );
+                                handleEditButton(item.slug, "EDIT");
                               }}
                               variant="success"
                               style={{ marginRight: 10 }}
                             >
-                              <AiFillEdit
-                                style={{ color: "#fff", fontSize: 24 }}
-                              />
+                              <AiFillEdit style={{ color: "#fff", fontSize: 24 }} />
                             </Button>
                           </OverlayTrigger>
 
-                          <OverlayTrigger
-                            placement="bottom"
-                            delay={{ show: 50, hide: 100 }}
-                            overlay={deleteTooltip}
-                          >
+                          <OverlayTrigger placement="bottom" delay={{ show: 50, hide: 100 }} overlay={deleteTooltip}>
                             <Button
                               size="sm"
                               onClick={() => {
-                                handleDeleteButton(
-                                  "",
-                                  `Are you sure you want to delete ${item.name} ?`,
-                                  deleteCategory
-                                );
+                                handleDeleteButton(item.slug, `Are you sure you want to delete ${item.name} ?`, deleteCategory);
                               }}
                               variant="danger"
                             >
-                              <AiFillDelete
-                                style={{ color: "#fff", fontSize: 24 }}
-                              />
+                              <AiFillDelete style={{ color: "#fff", fontSize: 24 }} />
                             </Button>
                           </OverlayTrigger>
                         </div>
@@ -302,23 +335,23 @@ export default function CategoryTable() {
         </Card.Body>
       </Card>
 
-      <ActionModal
-        show={action.view}
-        text={action.message}
-        handleYes={() => {
-          action.action(action.id);
-          setAction((prev) => ({
-            ...prev,
-            view: false,
-          }));
-        }}
-        handleNo={() => {
-          setAction((prev) => ({
-            ...prev,
-            view: false,
-          }));
-        }}
-      />
+      {action.message === "EDIT" ? (
+        <EditInput action={action} setAction={setAction} fetchCategories={fetchCategories} />
+      ) : (
+        <ActionModal
+          show={action.view}
+          text={action.message}
+          handleYes={() => {
+            action.action(action.id);
+          }}
+          handleNo={() => {
+            setAction((prev) => ({
+              ...prev,
+              view: false,
+            }));
+          }}
+        />
+      )}
     </div>
   );
 }
