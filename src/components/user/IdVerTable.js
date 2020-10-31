@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { Card, Badge, Image, Button, Tooltip, OverlayTrigger, Row, Col, Container, InputGroup, FormControl } from "react-bootstrap";
-import { AiOutlineTag, AiOutlineEye, AiFillDelete, AiFillEdit, AiOutlineUpload } from "react-icons/ai";
+import { AiOutlineTag, AiOutlineEye, AiFillDelete, AiFillEdit, AiOutlineUpload, AiFillCloseCircle, AiOutlineCheck } from "react-icons/ai";
 import { GoLocation } from "react-icons/go";
 import { MdDateRange, MdCancel, MdLocationOn } from "react-icons/md";
 import { IoMdTrash } from "react-icons/io";
@@ -12,50 +12,41 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import ActionModal from "../components/ActionModal";
 import CustomSpinner from "../Spinner/Spinner";
 import { TiCancel } from "react-icons/ti";
+import ImageModal from "../components/ImageModal";
 
 //THIS IS FOR HOVER TOOLTIP TO SHOW A TEXT (delete)
 const deleteTooltip = (props) => (
   <Tooltip id="button-tooltip" {...props}>
-    Delete Subcategories
+    Confirm Id verification
   </Tooltip>
 );
 
 //THIS IS FOR HOVER TOOLTIP TO SHOW A TEXT (Comfirm)
 const editTooltip = (props) => (
   <Tooltip id="button-tooltip" {...props}>
-    Edit Subcategories
+    Decline Id verification
   </Tooltip>
 );
 
-const EditInput = ({ action, setAction, fetchSubcategories  }) => {
+const EditInput = ({ action, setAction, fetchData }) => {
   const { token } = useSelector((state) => state.adminSignin);
   const [updateData, setUpdateData] = useState({
-    icon: "",
-    name: "",
+    message: "",
     error: "",
   });
 
   const handleNameChange = (event) => {
-    const { value, files, name } = event.target;
+    const { value, name } = event.target;
 
-    if (name === "name") {
-      setUpdateData({ ...updateData, [name]: value });
-    }
-    if (name === "icon") {
-      setUpdateData((prev) => ({ ...prev, [name]: files[0] }));
-    }
+    setUpdateData({ ...updateData, [name]: value });
   };
   const editSubcategory = (_id) => {
     const payload = new FormData();
-    if (updateData.icon === "") {
-      payload.set("subcat_name", updateData.name);
-    } else if (updateData.name === "") {
-      payload.set("subcat_icon", updateData.icon);
-    } else {
-      payload.append("subcat_name", updateData.name);
-      payload.append("subcat_icon", updateData.icon);
-    }
-    Axios.post("https://dev.bellefu.com/api/admin/subcategory/update/" + _id, payload, {
+
+    payload.append("verification_id", action.id);
+    payload.append("decline_reason", updateData.message);
+
+    Axios.post("https://dev.bellefu.com/api/admin/verification/decline/id", payload, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
@@ -63,7 +54,7 @@ const EditInput = ({ action, setAction, fetchSubcategories  }) => {
       },
     })
       .then(() => {
-        fetchSubcategories();
+        fetchData();
         setAction((prev) => ({
           ...prev,
           view: false,
@@ -89,50 +80,29 @@ const EditInput = ({ action, setAction, fetchSubcategories  }) => {
         }));
       }}
     >
-      <p>Edit {action.id} ?</p>
+      <p className="text-center">Are you sure you want to decline the verification with id {action.id} ?</p>
       <InputGroup>
-        <FormControl
-          style={{ marginTop: 20 }}
+        <textarea
+          style={{ marginTop: 5, width: "100%", padding: "10px" }}
+          rows={4}
           aria-label="Large"
           aria-describedby="inputGroup-sizing-sm"
-          placeholder="Subcategory"
-          name="name"
-          value={updateData.name}
+          placeholder="Enter reason ..."
+          name="message"
+          value={updateData.message}
           onChange={handleNameChange}
-        />
+        ></textarea>
       </InputGroup>
-      <label
-        style={{
-          marginTop: 20,
-          padding: "5px 10px",
-          backgroundColor: "#eee",
-          border: "1px solid #666",
-          borderRadius: "4px",
-          height: "100%",
-          display: "flex",
-          alignItems: "center",
-          cursor: "pointer",
-        }}
-      >
-        <input style={{ display: "none" }} type="file" name="icon" onChange={handleNameChange} />
-        {updateData.icon === "" ? (
-          <>
-            Select an image <AiOutlineUpload style={{ fontSize: 24, marginLeft: 10 }} />
-          </>
-        ) : (
-          updateData.icon.name
-        )}
-      </label>
       <small className="text-danger">{updateData.error}</small>
     </ActionModal>
   );
 };
 
-export default function SubCategoryTable() {
+export default function IdVerTable() {
   const { token } = useSelector((state) => state.adminSignin);
   const [load, setLoad] = useState(false);
 
-  const [categories, setCategories] = useState([]);
+  const [data, setData] = useState([]);
   const [action, setAction] = useState({
     view: false,
     id: "",
@@ -154,9 +124,9 @@ export default function SubCategoryTable() {
     });
   };
 
-  function fetchSubcategories() {
+  function fetchData() {
     setLoad(true);
-    Axios.get("https://dev.bellefu.com/api/admin/subcategory/list", {
+    Axios.get("https://dev.bellefu.com/api/admin/verification/list/id", {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
@@ -165,11 +135,11 @@ export default function SubCategoryTable() {
     })
       .then((res) => {
         setLoad(false);
-        setCategories(res.data.subcategories.data);
-        setNext(res.data.subcategories.next_page_url);
+        setData(res.data.verifications.data);
+        setNext(res.data.verifications.next_page_url);
         setPages({
-          current: res.data.subcategories.current_page,
-          last: res.data.subcategories.last_page,
+          current: res.data.verifications.current_page,
+          last: res.data.verifications.last_page,
         });
       })
       .catch(() => {
@@ -178,10 +148,10 @@ export default function SubCategoryTable() {
   }
 
   useEffect(() => {
-    fetchSubcategories();
+    fetchData();
   }, []);
 
-  const handleDeleteButton = (id, message, action) => {
+  const handleApproveButton = (id, message, action) => {
     setAction({
       view: true,
       id,
@@ -190,7 +160,7 @@ export default function SubCategoryTable() {
     });
   };
 
-  const handleEditButton = (id, message, action) => {
+  const handleDeclineButton = (id, message, action) => {
     setAction({
       view: true,
       id,
@@ -207,17 +177,17 @@ export default function SubCategoryTable() {
         Accept: "application/json",
       },
     }).then((res) => {
-      setCategories(categories.concat(res.data.subcategories.data));
-      setNext(res.data.subcategories.next_page_url);
+      setData(data.concat(res.data.verifications.data));
+      setNext(res.data.verifications.next_page_url);
       setPages({
-        current: res.data.subcategories.current_page,
-        last: res.data.subcategories.last_page,
+        current: res.data.verifications.current_page,
+        last: res.data.verifications.last_page,
       });
     });
   };
 
-  const deleteSubcategory = (title) => {
-    Axios.get("https://dev.bellefu.com/api/admin/subcategory/delete/" + title, {
+  const approveId = (_id) => {
+    Axios.get("https://dev.bellefu.com/api/admin/verification/approve/id/" + _id, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
@@ -225,7 +195,11 @@ export default function SubCategoryTable() {
       },
     })
       .then(() => {
-        fetchSubcategories();
+        fetchData();
+        setAction((prev) => ({
+          ...prev,
+          view: false,
+        }));
       })
       .catch((err) => {
         console.log(err.message);
@@ -240,7 +214,7 @@ export default function SubCategoryTable() {
             <CustomSpinner />
           ) : (
             <InfiniteScroll
-              dataLength={categories.length}
+              dataLength={data.length}
               next={nextData}
               hasMore={pages.current === pages.last ? false : true}
               loader={<CustomSpinner />}
@@ -255,19 +229,18 @@ export default function SubCategoryTable() {
                           color: "white",
                           fontWeight: "bold",
                           width: 60,
+                          maxWidth: 10,
                         }}
                         className="uk-table-expand"
                       >
                         #ID
                       </th>
-
-                      <th style={{ color: "white", fontWeight: "bold" }}>Icon</th>
-                      <th style={{ color: "white", fontWeight: "bold" }}>Name</th>
-
-                      <th style={{ color: "white", fontWeight: "bold" }}>Product Count</th>
+                      <th style={{ color: "white", fontWeight: "bold" }}>Date</th>
+                      <th style={{ color: "white", fontWeight: "bold" }}>Username</th>
+                      <th style={{ color: "white", fontWeight: "bold" }}>User Email</th>
+                      <th style={{ color: "white", fontWeight: "bold" }}>Status</th>
                       <th
-                        //   className="uk-table-expand"
-
+                        className="uk-table-expand"
                         style={{
                           color: "white",
                           fontWeight: "bold",
@@ -279,54 +252,71 @@ export default function SubCategoryTable() {
                     </tr>
                   </thead>
                   <tbody>
-                    {categories.map((item, key) => (
-                      <tr>
-                        <td>
-                          <p style={styles.titel}>{item.id}</p>
-                        </td>
+                    {data.map((item, key) => (
+                      <Fragment key={key}>
+                        <tr>
+                          <td>
+                            <p style={styles.titel}>{item.id}</p>
+                          </td>
+                          <td>
+                            <p style={styles.titel}>{format(new Date(item.created_at), "dd-MMM-yyyy hh:mm")}</p>
+                          </td>
 
-                        <td>
-                          <p style={styles.titel}>
-                            <img style={{ maxWidth: 100 }} src={"https://dev.bellefu.com/images/categories/" + item.images} alt="" />
-                          </p>
-                        </td>
+                          <td>
+                            <p style={styles.titel}>{item.user.username}</p>
+                          </td>
 
-                        <td>
-                          <p style={styles.titel}>{item.name}</p>
-                        </td>
+                          <td>{item.user.email}</td>
+                          <td>
+                            {item.status === "declined" ? (
+                              <Badge variant="danger">{item.status}</Badge>
+                            ) : item.status === "completed" ? (
+                              <Badge variant="success">{item.status}</Badge>
+                            ) : (
+                              <Badge variant="info">{item.status}</Badge>
+                            )}
+                          </td>
+                          <td>
+                            <div className="btn-group" role="group">
+                              <OverlayTrigger placement="bottom" delay={{ show: 50, hide: 100 }} overlay={deleteTooltip}>
+                                <Button
+                                  size="sm"
+                                  onClick={() => {
+                                    handleApproveButton(item.id, `Are you sure you want to verify verification with id #${item.id} ?`, approveId);
+                                  }}
+                                  disabled={item.status !== "pending"}
+                                  style={{ marginRight: 10 }}
+                                  variant="success"
+                                >
+                                  <AiOutlineCheck style={{ color: "#fff", fontSize: 24 }} />
+                                </Button>
+                              </OverlayTrigger>
 
-                        <td>{item.products_count}</td>
-                        <td>
-                          <div className="btn-group" role="group">
-                            <OverlayTrigger placement="bottom" delay={{ show: 50, hide: 100 }} overlay={editTooltip}>
-                              <Button
-                                size="sm"
-                                variant="success"
-                                onClick={() => {
-                                  handleEditButton(item.slug, "EDIT");
-                                  // setUpdateData((prev) => ({ ...prev, name: item.name }));
-                                }}
-                              >
-                                <AiFillEdit style={{ color: "#fff", fontSize: 24 }} />
-                              </Button>
-                            </OverlayTrigger>
-
-                            <OverlayTrigger placement="bottom" delay={{ show: 50, hide: 100 }} overlay={deleteTooltip}>
-                              <Button
-                                size="sm"
-                                onClick={() => {
-                                  handleDeleteButton(item.slug, `Are you sure you want to delete ${item.name} ?`, deleteSubcategory);
-                                }}
-                                variant="light"
-                                style={{ marginLeft: 10 }}
-                                variant="danger"
-                              >
-                                <AiFillDelete style={{ color: "#fff", fontSize: 24 }} />
-                              </Button>
-                            </OverlayTrigger>
-                          </div>
-                        </td>
-                      </tr>
+                              <OverlayTrigger placement="bottom" delay={{ show: 50, hide: 100 }} overlay={editTooltip}>
+                                <Button
+                                  size="sm"
+                                  variant="danger"
+                                  onClick={() => {
+                                    handleDeclineButton(item.id, "EDIT");
+                                  }}
+                                  disabled={item.status !== "pending"}
+                                >
+                                  <AiFillCloseCircle style={{ color: "#fff", fontSize: 24 }} />
+                                </Button>
+                              </OverlayTrigger>
+                            </div>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <div style={{ display: "flex", flexWrap: "wrap" }}>
+                              {item.value.map((pic, key) => (
+                                <ImageModal key={key} src={`https://dev.bellefu.com/images/verifications/${item.user.username}/${pic}`} alt={item.title} />
+                              ))}
+                            </div>
+                          </td>
+                        </tr>
+                      </Fragment>
                     ))}
                   </tbody>
                 </table>
@@ -350,7 +340,7 @@ export default function SubCategoryTable() {
           }}
         />
       )}
-      {action.message === "EDIT" && <EditInput action={action} setAction={setAction} fetchSubcategories={fetchSubcategories} />}
+      {action.message === "EDIT" && <EditInput action={action} setAction={setAction} fetchData={fetchData} />}
     </div>
   );
 }

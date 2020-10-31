@@ -5,35 +5,7 @@ import { AiOutlineGift } from "react-icons/ai";
 import { useSelector } from "react-redux";
 import CustomSpinner from "../Spinner/Spinner";
 
-export default function PendingAdsInfo() {
-  const { token } = useSelector((state) => state.adminSignin);
-  const [data, setData] = useState({
-    view: false,
-    count: 0,
-  });
-
-  useEffect(() => {
-    Axios.get("https://dev.bellefu.com/api/admin/product/list/pending", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-    })
-      .then((res) => {
-        const count = res.data.products.total;
-        setData({
-          view: true,
-          count,
-        });
-      })
-      .catch(() => {
-        setData({
-          view: true,
-          count: "N/A",
-        });
-      });
-  }, []);
+export default function PendingAdsInfo({data}) {
 
   return (
     <div>
@@ -48,7 +20,7 @@ export default function PendingAdsInfo() {
         <Card.Body className="pb-0 pt-1">
           <div className="text-center">
             <label style={styles.text}>
-              <b>{data.view ? data.count : <CustomSpinner small />}</b>
+              <b>{data}</b>
             </label>
           </div>
         </Card.Body>

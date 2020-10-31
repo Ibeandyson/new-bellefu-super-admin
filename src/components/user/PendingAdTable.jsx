@@ -35,6 +35,7 @@ import { format } from "date-fns";
 import InfiniteScroll from "react-infinite-scroll-component";
 import ActionModal from "../components/ActionModal";
 import CustomSpinner from "../Spinner/Spinner";
+import { nullCheck } from "../../Utils";
 
 //THIS IS FOR HOVER TOOLTIP TO SHOW A TEXT (delete)
 const deleteTooltip = (props) => (
@@ -75,6 +76,7 @@ export default function PendingdAdTable() {
     city: "",
     country: "",
     views: 0,
+    slug: ""
   });
   const [action, setAction] = useState({
     view: false,
@@ -246,7 +248,7 @@ export default function PendingdAdTable() {
                       <td className="uk-text-center">
                         <Image
                           src={
-                            "https://dev.bellefu.com/api/admin/product/list/pending/" +
+                            `https://dev.bellefu.com/images/product/${item.slug}/` +
                             item.images[0]
                           }
                           style={styles.image}
@@ -278,19 +280,19 @@ export default function PendingdAdTable() {
                         <div className="mt-3">
                           <AiOutlineTag style={styles.icon} className="mr-2" />
                           <span style={styles.category} className="ml-2 mt-3">
-                            {item.category.name}
+                            {nullCheck(item.category).name}
                           </span>
                           <span
                             style={styles.subCategory}
                             className="ml-2 mt-5"
                           >
-                            {item.subcategory.name}
+                            {nullCheck(item.subcategory).name}
                           </span>
                         </div>
                         <div className="mt-3">
                           <GoLocation style={styles.icon} className="mr-1" />
                           <span style={styles.location} className="ml-1 ">
-                            {item.country.native}
+                            {nullCheck(item.country).native}
                           </span>
                           <MdDateRange
                             style={styles.icon}
@@ -347,6 +349,7 @@ export default function PendingdAdTable() {
                                   views: obj.inorganic_views,
                                   isFave: obj.is_user_favourite,
                                   plan: obj.plan,
+                                  slug: obj.slug,
                                   title: obj.title,
                                 });
                               }}
@@ -442,14 +445,14 @@ export default function PendingdAdTable() {
                             <a
                               class="uk-cover-container uk-inline"
                               href={
-                                "https://dev.bellefu.com/images/products/" +
+                                `https://dev.bellefu.com/images/product/${ad.slug}/` +
                                 item
                               }
                               data-caption={"Caption " + index}
                             >
                               <img
                                 src={
-                                  "https://dev.bellefu.com/images/products/" +
+                                  `https://dev.bellefu.com/images/product/${ad.slug}/` +
                                   item
                                 }
                                 alt=""

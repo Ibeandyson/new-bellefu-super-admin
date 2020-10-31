@@ -1,31 +1,9 @@
 import React, { useEffect, useState } from "react";
-import {
-  Card,
-  Badge,
-  Image,
-  Button,
-  Tooltip,
-  OverlayTrigger,
-  Row,
-  Col,
-  Container,
-  Spinner,
-} from "react-bootstrap";
-import {
-  AiOutlineTag,
-  AiOutlineEye,
-  AiFillPhone,
-  AiFillEye,
-} from "react-icons/ai";
+import { Card, Badge, Image, Button, Tooltip, OverlayTrigger, Row, Col, Container, Spinner } from "react-bootstrap";
+import { AiOutlineTag, AiOutlineEye, AiFillPhone, AiFillEye } from "react-icons/ai";
 import { GoLocation } from "react-icons/go";
 import { MdDateRange, MdCancel, MdLocationOn } from "react-icons/md";
-import {
-  IoMdTrash,
-  IoIosArrowDroprightCircle,
-  IoIosTime,
-  IoIosArrowDropleftCircle,
-  IoMdMailOpen,
-} from "react-icons/io";
+import { IoMdTrash, IoIosArrowDroprightCircle, IoIosTime, IoIosArrowDropleftCircle, IoMdMailOpen } from "react-icons/io";
 import { GiReceiveMoney } from "react-icons/gi";
 import { FaSlackHash } from "react-icons/fa";
 import pic from "../images/pic.jpg";
@@ -36,6 +14,7 @@ import { format } from "date-fns";
 import InfiniteScroll from "react-infinite-scroll-component";
 import ActionModal from "../components/ActionModal";
 import CustomSpinner from "../Spinner/Spinner";
+import { nullCheck } from "../../Utils";
 
 //THIS IS FOR HOVER TOOLTIP TO SHOW A TEXT (delete)
 const deleteTooltip = (props) => (
@@ -69,6 +48,7 @@ export default function ExpiredAdTable() {
     city: "",
     country: "",
     views: 0,
+    slug: "",
   });
   const [action, setAction] = useState({
     view: false,
@@ -183,28 +163,15 @@ export default function ExpiredAdTable() {
               <table class="uk-table uk-table-responsive uk-table-divider">
                 <thead style={{ backgroundColor: "#76ba1b", color: "white" }}>
                   <tr>
-                    <th
-                      style={{ color: "white", fontWeight: "bold" }}
-                      className="uk-table-expand"
-                    >
+                    <th style={{ color: "white", fontWeight: "bold" }} className="uk-table-expand">
                       Ads
                     </th>
-                    <th
-                      style={{ color: "white", fontWeight: "bold" }}
-                      className="uk-width-*"
-                    >
+                    <th style={{ color: "white", fontWeight: "bold" }} className="uk-width-*">
                       {" "}
                     </th>
-                    <th style={{ color: "white", fontWeight: "bold" }}>
-                      Username
-                    </th>
-                    <th style={{ color: "white", fontWeight: "bold" }}>
-                      Status
-                    </th>
-                    <th
-                      className="uk-table-expand"
-                      style={{ color: "white", fontWeight: "bold" }}
-                    >
+                    <th style={{ color: "white", fontWeight: "bold" }}>Username</th>
+                    <th style={{ color: "white", fontWeight: "bold" }}>Status</th>
+                    <th className="uk-table-expand" style={{ color: "white", fontWeight: "bold" }}>
                       Action
                     </th>
                   </tr>
@@ -213,13 +180,7 @@ export default function ExpiredAdTable() {
                   {ads.map((item, key) => (
                     <tr key={key}>
                       <td className="uk-text-center">
-                        <Image
-                          src={
-                            "https://dev.bellefu.com/api/admin/product/list/pending/" +
-                            item.images[0]
-                          }
-                          style={styles.image}
-                        />
+                        <Image src={`https://dev.bellefu.com/images/product/${item.slug}/` + item.images[0]} style={styles.image} />
                       </td>
                       <td>
                         <p style={styles.titel}>{item.title}</p>
@@ -227,67 +188,45 @@ export default function ExpiredAdTable() {
                         {/* <Badge variant="danger" className="ml-2">
                       Ugent
                     </Badge> */}
-                        <Badge
-                          variant="success"
-                          style={{ padding: "5px 10px" }}
-                          className="ml-2"
-                        >
+                        <Badge variant="success" style={{ padding: "5px 10px" }} className="ml-2">
                           {item.plan}
                         </Badge>
 
                         {item.is_user_favourite && (
-                          <Badge
-                            style={{ padding: "5px 10px" }}
-                            variant="info"
-                            className="ml-2"
-                          >
+                          <Badge style={{ padding: "5px 10px" }} variant="info" className="ml-2">
                             user favourite
                           </Badge>
                         )}
                         <div className="mt-3">
                           <AiOutlineTag style={styles.icon} className="mr-2" />
                           <span style={styles.category} className="ml-2 mt-3">
-                            {item.category.name}
+                            {nullCheck(item.category).name}
                           </span>
-                          <span
-                            style={styles.subCategory}
-                            className="ml-2 mt-5"
-                          >
-                            {item.subcategory.name}
+                          <span style={styles.subCategory} className="ml-2 mt-5">
+                            {nullCheck(item.subcategory).name}
                           </span>
                         </div>
                         <div className="mt-3">
                           <GoLocation style={styles.icon} className="mr-1" />
                           <span style={styles.location} className="ml-1 ">
-                            {item.country.native}
+                            {nullCheck(item.country).native}
                           </span>
-                          <MdDateRange
-                            style={styles.icon}
-                            className="mr-1 ml-1"
-                          />
+                          <MdDateRange style={styles.icon} className="mr-1 ml-1" />
                           <span style={styles.date} className="ml-1 ">
-                            Post Date:{" "}
-                            {format(new Date(item.created_at), "dd-MMM-yyyy")}
+                            Post Date: {format(new Date(item.created_at), "dd-MMM-yyyy")}
                           </span>
                           <span className="ml-2" style={styles.price}></span>
                         </div>
                       </td>
-                      <td>{item.user.username}</td>
+                      <td>{nullCheck(item.user).username}</td>
                       <td>
-                        <Badge
-                          style={{ backgroundColor: "green", color: "white" }}
-                          className="ml-2"
-                        >
+                        <Badge style={{ backgroundColor: "green", color: "white" }} className="ml-2">
                           {item.status}
                         </Badge>
                       </td>
                       <td>
                         <div className="btn-group" role="group">
-                          <OverlayTrigger
-                            placement="bottom"
-                            delay={{ show: 50, hide: 100 }}
-                            overlay={viewTooltip}
-                          >
+                          <OverlayTrigger placement="bottom" delay={{ show: 50, hide: 100 }} overlay={viewTooltip}>
                             <Button
                               class="uk-button uk-button-default"
                               type="button"
@@ -295,9 +234,7 @@ export default function ExpiredAdTable() {
                               size="sm"
                               variant="light"
                               onClick={() => {
-                                const obj = ads.find(
-                                  (o, index) => index === key
-                                );
+                                const obj = ads.find((o, index) => index === key);
                                 setad({
                                   name: obj.user.username,
                                   price: obj.currency_symbol + obj.price,
@@ -305,10 +242,7 @@ export default function ExpiredAdTable() {
                                   phone: obj.phone,
                                   description: obj.description,
                                   images: obj.images,
-                                  created: format(
-                                    new Date(item.created_at),
-                                    "dd-MMM-yyyy"
-                                  ),
+                                  created: format(new Date(item.created_at), "dd-MMM-yyyy"),
                                   email: obj.user.email,
                                   id: obj.id,
                                   city: obj.city,
@@ -316,6 +250,7 @@ export default function ExpiredAdTable() {
                                   views: obj.inorganic_views,
                                   isFave: obj.is_user_favourite,
                                   plan: obj.plan,
+                                  slug: obj.slug,
                                   title: obj.title,
                                 });
                               }}
@@ -324,19 +259,11 @@ export default function ExpiredAdTable() {
                             </Button>
                           </OverlayTrigger>
 
-                          <OverlayTrigger
-                            placement="bottom"
-                            delay={{ show: 50, hide: 100 }}
-                            overlay={deleteTooltip}
-                          >
+                          <OverlayTrigger placement="bottom" delay={{ show: 50, hide: 100 }} overlay={deleteTooltip}>
                             <Button
                               size="sm"
                               onClick={() => {
-                                handleDeleteButton(
-                                  item.slug,
-                                  `Are you sure you want to delete the product ${item.title}`,
-                                  deleteAd
-                                );
+                                handleDeleteButton(item.slug, `Are you sure you want to delete the product ${item.title}`, deleteAd);
                               }}
                               variant="light"
                             >
@@ -355,18 +282,9 @@ export default function ExpiredAdTable() {
       </Card>
 
       {/* ============OFFCANVA FOR VIEW AD========== */}
-      <div
-        id="offcanvas-flip"
-        uk-offcanvas="flip: true; overlay: true"
-        style={{ marginTop: "4%" }}
-      >
+      <div id="offcanvas-flip" uk-offcanvas="flip: true; overlay: true" style={{ marginTop: "4%" }}>
         <div class="uk-offcanvas-bar" style={{ width: "80%" }}>
-          <MdCancel
-            style={styles.close_icon}
-            className="uk-offcanvas-close"
-            uk-close
-            type="button"
-          />
+          <MdCancel style={styles.close_icon} className="uk-offcanvas-close" uk-close type="button" />
           <Container>
             <Row>
               <Col xs={12} sm={12} md={12} lg={12} xl={12}>
@@ -382,28 +300,15 @@ export default function ExpiredAdTable() {
                       uk-slideshow="animation: pull"
                       uk-slideshow="min-height: 100; max-height: 400"
                     >
-                      <ul
-                        uk-lightbox="animation: slide"
-                        class="uk-slideshow-items"
-                      >
+                      <ul uk-lightbox="animation: slide" class="uk-slideshow-items">
                         {ad.images.map((item, index) => (
                           <li>
                             <a
                               class="uk-cover-container uk-inline"
-                              href={
-                                "https://dev.bellefu.com/images/products/" +
-                                item
-                              }
+                              href={`https://dev.bellefu.com/images/products/${ad.slug}/` + item}
                               data-caption={"Caption " + index}
                             >
-                              <img
-                                src={
-                                  "https://dev.bellefu.com/images/products/" +
-                                  item
-                                }
-                                alt=""
-                                uk-cover
-                              />
+                              <img src={`https://dev.bellefu.com/images/products/${ad.slug}/` + item} alt="" uk-cover />
                             </a>
                           </li>
                         ))}
@@ -415,9 +320,7 @@ export default function ExpiredAdTable() {
                         uk-slidenav-previous
                         uk-slideshow-item="previous"
                       >
-                        <IoIosArrowDropleftCircle
-                          style={{ fontSize: "2em", color: "#ffa500" }}
-                        />
+                        <IoIosArrowDropleftCircle style={{ fontSize: "2em", color: "#ffa500" }} />
                       </button>
                       <button
                         class="uk-border-pill uk-button uk-border-remove uk-button-default uk-button-small  uk-position-center-right  "
@@ -425,9 +328,7 @@ export default function ExpiredAdTable() {
                         uk-slidenav-next
                         uk-slideshow-item="next"
                       >
-                        <IoIosArrowDroprightCircle
-                          style={{ fontSize: "2em", color: "#ffa500" }}
-                        />
+                        <IoIosArrowDroprightCircle style={{ fontSize: "2em", color: "#ffa500" }} />
                       </button>
                     </div>
                   </Card.Body>
@@ -445,7 +346,6 @@ export default function ExpiredAdTable() {
         text={action.message}
         handleYes={() => {
           action.action(action.id);
-          
         }}
         handleNo={() => {
           setAction((prev) => ({
@@ -462,10 +362,7 @@ function ProductTitle({ ad }) {
   return (
     <div>
       {/* ===FOR DESKTOP VIEW=== */}
-      <div
-        className="d-none d-lg-block  d-md-none"
-        style={{ marginBottom: "15px" }}
-      >
+      <div className="d-none d-lg-block  d-md-none" style={{ marginBottom: "15px" }}>
         <span
           className="mb-5"
           style={{
@@ -476,30 +373,19 @@ function ProductTitle({ ad }) {
         >
           <b>{ad.title}</b>
         </span>
-        <Badge
-          variant="success"
-          style={{ padding: "5px 10px" }}
-          className="ml-2"
-        >
+        <Badge variant="success" style={{ padding: "5px 10px" }} className="ml-2">
           {ad.plan}
         </Badge>
 
         {ad.isFave && (
-          <Badge
-            style={{ padding: "5px 10px" }}
-            variant="info"
-            className="ml-2"
-          >
+          <Badge style={{ padding: "5px 10px" }} variant="info" className="ml-2">
             user favourite
           </Badge>
         )}
       </div>
 
       {/* ===FOR MOBILE VIEW=== */}
-      <div
-        className=" d-lg-none  d-xs-block d-sm-block d-md-block "
-        style={{ marginBottom: "15px" }}
-      >
+      <div className=" d-lg-none  d-xs-block d-sm-block d-md-block " style={{ marginBottom: "15px" }}>
         <span
           className="mb-5"
           style={{
@@ -508,20 +394,12 @@ function ProductTitle({ ad }) {
         >
           <b>{ad.title}</b>
         </span>
-        <Badge
-          variant="success"
-          style={{ padding: "5px 10px" }}
-          className="ml-2"
-        >
+        <Badge variant="success" style={{ padding: "5px 10px" }} className="ml-2">
           {ad.plan}
         </Badge>
 
         {ad.isFave && (
-          <Badge
-            style={{ padding: "5px 10px" }}
-            variant="info"
-            className="ml-2"
-          >
+          <Badge style={{ padding: "5px 10px" }} variant="info" className="ml-2">
             user favourite
           </Badge>
         )}
@@ -537,10 +415,7 @@ function AdDetails({ ad }) {
       <Row>
         <Col>
           <Card className="border-0">
-            <Card.Header
-              className="border-0"
-              style={{ backgroundColor: "#76ba1b" }}
-            >
+            <Card.Header className="border-0" style={{ backgroundColor: "#76ba1b" }}>
               <b style={{ color: "white" }}> Details</b>
             </Card.Header>
             <Card.Body>
@@ -618,19 +493,13 @@ function AdDetails({ ad }) {
           <Row>
             <Col xm={12} sm={12} md={12} lg={6} xl={6}>
               <Card className="border-0 mt-4">
-                <Card.Header
-                  className="border-0"
-                  style={{ backgroundColor: "#76ba1b" }}
-                >
+                <Card.Header className="border-0" style={{ backgroundColor: "#76ba1b" }}>
                   <b style={{ color: "white" }}>Ad Discription</b>
                 </Card.Header>
                 <Card.Body>
                   <Row>
                     <Col xm={12} sm={12} md={12} lg={12} xl={12}>
-                      <span
-                        style={styles.text}
-                        dangerouslySetInnerHTML={{ __html: ad.description }}
-                      ></span>
+                      <span style={styles.text} dangerouslySetInnerHTML={{ __html: ad.description }}></span>
                     </Col>
                   </Row>
                 </Card.Body>
@@ -651,44 +520,20 @@ function UserAdInfo({ ad }) {
   return (
     <div>
       <Card className="border-0 ">
-        <Card.Header
-          className="border-0"
-          style={{ backgroundColor: "#76ba1b" }}
-        >
+        <Card.Header className="border-0" style={{ backgroundColor: "#76ba1b" }}>
           <b style={{ color: "white" }}>Advertiser Info</b>
         </Card.Header>
         <Card.Body>
           <Row>
-            <Col
-              xm={12}
-              sm={12}
-              md={12}
-              lg={12}
-              xl={12}
-              className="text-center"
-            >
+            <Col xm={12} sm={12} md={12} lg={12} xl={12} className="text-center">
               <Image src={pic} style={styles.avater} roundedCircle />
             </Col>
-            <Col
-              xm={12}
-              sm={12}
-              md={12}
-              lg={6}
-              xl={6}
-              className="text-center mt-2"
-            >
+            <Col xm={12} sm={12} md={12} lg={6} xl={6} className="text-center mt-2">
               <p style={styles.text}>
                 <b>{ad.name}</b>
               </p>
             </Col>
-            <Col
-              xm={12}
-              sm={12}
-              md={12}
-              lg={6}
-              xl={6}
-              className="text-center mt-2"
-            >
+            <Col xm={12} sm={12} md={12} lg={6} xl={6} className="text-center mt-2">
               <div>
                 <IoIosTime style={styles.icon} className="mr-3" />{" "}
                 <span style={styles.text}>
@@ -696,14 +541,7 @@ function UserAdInfo({ ad }) {
                 </span>
               </div>
             </Col>
-            <Col
-              xm={12}
-              sm={12}
-              md={12}
-              lg={6}
-              xl={6}
-              className="text-center mt-2"
-            >
+            <Col xm={12} sm={12} md={12} lg={6} xl={6} className="text-center mt-2">
               <div>
                 <AiFillPhone style={styles.icon} className="mr-3" />{" "}
                 <span style={styles.text}>
@@ -711,14 +549,7 @@ function UserAdInfo({ ad }) {
                 </span>
               </div>
             </Col>
-            <Col
-              xm={12}
-              sm={12}
-              md={12}
-              lg={6}
-              xl={6}
-              className="text-center mt-2"
-            >
+            <Col xm={12} sm={12} md={12} lg={6} xl={6} className="text-center mt-2">
               <div>
                 <IoMdMailOpen style={styles.icon} className="mr-3" />{" "}
                 <a href={`mailto:${ad.email}?subject=subject text`}>
