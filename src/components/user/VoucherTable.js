@@ -68,7 +68,7 @@ export default function VoucherTable() {
   });
 
   const resolveReview = (_id) => {
-    Axios.get("https://dev.bellefu.com/api/admin/review/resolve/" + _id, {
+    Axios.get("https://bellefu.com/api/admin/review/resolve/" + _id, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
@@ -108,7 +108,7 @@ export default function VoucherTable() {
   };
 
   const probeReview = (_id) => {
-    Axios.get("https://dev.bellefu.com/api/admin/review/probe/" + _id, {
+    Axios.get("https://bellefu.com/api/admin/review/probe/" + _id, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
@@ -148,7 +148,7 @@ export default function VoucherTable() {
   };
 
   const deleteUser = (_id) => {
-    Axios.get("https://dev.bellefu.com/api/admin/review/delete/" + _id, {
+    Axios.get("https://bellefu.com/api/admin/review/delete/" + _id, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
@@ -218,7 +218,7 @@ export default function VoucherTable() {
 
   function fetchVouchers() {
     setLoad(true);
-    Axios.get("https://dev.bellefu.com/api/admin/voucher/list", {
+    Axios.get("https://bellefu.com/api/admin/voucher/list", {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",

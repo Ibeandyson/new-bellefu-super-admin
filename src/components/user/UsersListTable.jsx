@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Card, Badge, Image, Button, Tooltip, OverlayTrigger, Row, Col, Container } from "react-bootstrap";
+import { Card, Badge, Image, Button, Tooltip, OverlayTrigger, Row, Col, Container, FormControl, InputGroup } from "react-bootstrap";
 import { AiOutlineEye } from "react-icons/ai";
 import { MdCancel } from "react-icons/md";
 import { IoMdTrash } from "react-icons/io";
@@ -13,6 +13,7 @@ import Axios from "axios";
 import InfiniteScroll from "react-infinite-scroll-component";
 import differenceInCalendarDays from "date-fns/differenceInCalendarDays";
 import Spinner from "../Spinner/Spinner";
+import { nullCheck } from "../../Utils";
 
 //THIS IS FOR HOVER TOOLTIP TO SHOW A TEXT (delete)
 const deleteTooltip = (props) => (
@@ -46,6 +47,10 @@ export default function UsersListTable() {
   const dispatch = useDispatch();
   const { token } = useSelector((state) => state.adminSignin);
   const [url, seturl] = useState("api/admin/customer/list/all");
+  const [country, setCountry] = useState("");
+  const [state, setState] = useState("");
+  const [countryList, setCountryList] = useState([]);
+  const [stateList, setStateList] = useState([]);
   const [load, setLoad] = useState(false);
   const [users, setUsers] = useState([]);
   const [user, setUser] = useState({
@@ -112,7 +117,8 @@ export default function UsersListTable() {
 
   function fetchUserList() {
     setLoad(true);
-    Axios.get("https://dev.bellefu.com/" + url, {
+    let reqUrl = url + country + state;
+    Axios.get("https://bellefu.com/" + reqUrl, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
@@ -141,12 +147,39 @@ export default function UsersListTable() {
 
   useEffect(() => {
     fetchUserList();
-  }, [url]);
+  }, [url, country, state]);
+
+
+  useEffect(() => {
+    Axios.get("https://bellefu.com/api/country/list", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+    }).then((res) => {
+      setCountryList(res.data.countries);
+    });
+  }, []);
+
+  useEffect(() => {
+    Axios.get(`https://bellefu.com/api/${country.split("=")[1]}/state/list`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+    }).then((res) => {
+      setStateList(res.data.states);
+    });
+  }, [country]);
+
 
   //   HANDLES NEXT DATA
 
   const nextData = () => {
-    setLoad(true);
+    setCountry("")
+    setState("")
     Axios.get(next, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -154,8 +187,7 @@ export default function UsersListTable() {
         Accept: "application/json",
       },
     }).then((res) => {
-      setLoad(false);
-      setUsers((prev) => [...prev, res.data.users.data]);
+      setUsers(users.concat(res.data.users.data));
       setNext(res.data.users.next_page_url);
       setPages({
         current: res.data.users.current_page,
@@ -168,12 +200,12 @@ export default function UsersListTable() {
     <div>
       <Card className="border-0">
         <Card.Header>
-          <label htmlFor="url">Filter USER</label>
+          <label htmlFor="url">Filter Users</label>
           <select
             name="url"
             id="url"
             className="custom-select"
-            style={{ width: "100%" }}
+            style={{ width: "100%", marginTop: 5 }}
             onChange={(e) => {
               seturl(e.target.value);
             }}
@@ -183,6 +215,47 @@ export default function UsersListTable() {
             <option value="api/admin/customer/list/phone/verified">Phone Verified Customer List</option>
             <option value="api/admin/customer/list/id/verified">ID Verified Customer List</option>
             <option value="api/admin/customer/list/kyc/verified">KYC Verified Customer List</option>
+          </select>
+
+
+          <label style={{ width: "100%", marginTop: 12 }} htmlFor="country">
+            Filter Country
+          </label>
+          <select
+            name="country"
+            id="country"
+            className="custom-select"
+            style={{ width: "100%", marginTop: 5 }}
+            onChange={(e) => {
+              setCountry(e.target.value);
+              setState("");
+            }}
+            value={country}
+          >
+            <option value="">All</option>
+            {countryList.map((item, key) => (
+              <option value={"?country=" + item.iso2}>{item.name}</option>
+            ))}
+          </select>
+
+          <label style={{ width: "100%", marginTop: 12 }} htmlFor="state">
+            Filter State
+          </label>
+          <select
+            name="state"
+            id="state"
+            disabled={country === ""}
+            className="custom-select"
+            style={{ width: "100%", marginTop: 5 }}
+            onChange={(e) => {
+              setState(e.target.value);
+            }}
+            value={state}
+          >
+            <option value="">All</option>
+            {stateList.map((item, key) => (
+              <option value={"&state=" + item.code}>{item.name}</option>
+            ))}
           </select>
         </Card.Header>
         <Card.Body>
@@ -205,6 +278,7 @@ export default function UsersListTable() {
                     <th style={{ color: "white", fontWeight: "bold" }}>Name</th>
                     <th style={{ color: "white", fontWeight: "bold" }}>Email</th>
                     <th style={{ color: "white", fontWeight: "bold" }}>Sex</th>
+                    <th style={{ color: "white", fontWeight: "bold" }}>Country</th>
                     <th style={{ color: "white", fontWeight: "bold" }}>Status</th>
                     <th style={{ color: "white", fontWeight: "bold" }}>Joined</th>
                     <th className="uk-table-expand" style={{ color: "white", fontWeight: "bold" }}>
@@ -217,17 +291,20 @@ export default function UsersListTable() {
                   {users.map((item, key) => (
                     <tr key={key}>
                       <td>
-                        <Image src={item.avatar === null ? pic : "https://dev.bellefu.com/images/users/" + item.avatar} style={styles.image} roundedCircle />
+                        <Image src={item.avatar === null ? pic : "https://bellefu.com/images/users/" + item.avatar} style={styles.image} roundedCircle />
                       </td>
                       <td>
-                        <p style={styles.name}>{item.profile.first_name + " " + item.profile.last_name}</p>
+                        <p style={styles.name}>{nullCheck(item.profile).first_name + " " + nullCheck(item.profile).last_name}</p>
                       </td>
                       <td>
                         <p style={styles.name}>{item.email} </p>
                       </td>
-                      <td>{item.profile.gender === "M" ? "Male" : "Female"}</td>
+                      <td>{nullCheck(item.profile).gender === "M" ? "Male" : "Female"}</td>
                       <td>
-                        {item.status.toLowerCase() === "active" ? (
+                        <p style={styles.name}>{item.country_code} </p>
+                      </td>
+                      <td>
+                        {item.status === "active" ? (
                           <Badge variant="primary" className="ml-2">
                             {item.status}
                           </Badge>

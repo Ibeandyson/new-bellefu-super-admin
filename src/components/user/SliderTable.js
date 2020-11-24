@@ -33,7 +33,7 @@ function SliderTable() {
 
   function fetchSlider() {
     setLoad(true);
-    Axios.get("https://dev.bellefu.com/api/admin/config/home_slider/list", {
+    Axios.get("https://bellefu.com/api/admin/config/home_slider/list", {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
@@ -56,7 +56,7 @@ function SliderTable() {
 
   const deleteImage = (title) => {
     Axios.delete(
-      `https://dev.bellefu.com/api/admin/config/home_slider/delete/${title}`,
+      `https://bellefu.com/api/admin/config/home_slider/delete/${title}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -98,7 +98,7 @@ function SliderTable() {
     const payload = jsonToFormData(uploadImage, options);
 
     Axios.post(
-      "https://dev.bellefu.com/api/admin/config/home_slider/save",
+      "https://bellefu.com/api/admin/config/home_slider/save",
       payload,
       {
         headers: {

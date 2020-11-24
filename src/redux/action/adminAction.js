@@ -27,7 +27,7 @@ export const signin = (identifier, password) => async (dispatch) => {
   dispatch({ type: ADMIN_SIGNIN_REQUEST, payload: { identifier, password } });
   try {
     const { data } = await axios.post(
-      "https://dev.bellefu.com/api/auth/login/challenge/default",
+      "https://bellefu.com/api/auth/login/challenge/default",
       {
         identifier,
         password,

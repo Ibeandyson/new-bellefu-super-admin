@@ -1,6 +1,6 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { Card, Badge, Image, Button, Tooltip, OverlayTrigger, Row, Col, Container, InputGroup, FormControl } from "react-bootstrap";
-import { AiOutlineTag, AiOutlineEye, AiFillDelete, AiFillEdit, AiOutlineUpload, AiFillCloseCircle, AiOutlineCheck } from "react-icons/ai";
+import { AiOutlineTag, AiOutlineEye, AiFillDelete, AiFillEdit, AiOutlineUpload, AiFillCloseCircle, AiOutlineCheck, AiFillEye } from "react-icons/ai";
 import { GoLocation } from "react-icons/go";
 import { MdDateRange, MdCancel, MdLocationOn } from "react-icons/md";
 import { IoMdTrash } from "react-icons/io";
@@ -46,7 +46,7 @@ const EditInput = ({ action, setAction, fetchData }) => {
     payload.append("verification_id", action.id);
     payload.append("decline_reason", updateData.message);
 
-    Axios.post("https://dev.bellefu.com/api/admin/verification/decline/id", payload, {
+    Axios.post("https://bellefu.com/api/admin/verification/decline/id", payload, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
@@ -101,7 +101,11 @@ const EditInput = ({ action, setAction, fetchData }) => {
 export default function IdVerTable() {
   const { token } = useSelector((state) => state.adminSignin);
   const [load, setLoad] = useState(false);
-
+  const [idPreview, setIdPreview] = useState({
+    view: false,
+    url: "",
+    data: "",
+  });
   const [data, setData] = useState([]);
   const [action, setAction] = useState({
     view: false,
@@ -126,7 +130,7 @@ export default function IdVerTable() {
 
   function fetchData() {
     setLoad(true);
-    Axios.get("https://dev.bellefu.com/api/admin/verification/list/id", {
+    Axios.get("https://bellefu.com/api/admin/verification/list/id", {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
@@ -187,7 +191,7 @@ export default function IdVerTable() {
   };
 
   const approveId = (_id) => {
-    Axios.get("https://dev.bellefu.com/api/admin/verification/approve/id/" + _id, {
+    Axios.get("https://bellefu.com/api/admin/verification/approve/id/" + _id, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
@@ -304,15 +308,18 @@ export default function IdVerTable() {
                                   <AiFillCloseCircle style={{ color: "#fff", fontSize: 24 }} />
                                 </Button>
                               </OverlayTrigger>
-                            </div>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <div style={{ display: "flex", flexWrap: "wrap" }}>
-                              {item.value.map((pic, key) => (
-                                <ImageModal key={key} src={`https://dev.bellefu.com/images/verifications/${item.user.username}/${pic}`} alt={item.title} />
-                              ))}
+
+                              <Button
+                                size="sm"
+                                variant="info"
+                                className="ml-2"
+                                onClick={() => {
+                                  const obj = data.find((o, indx) => key === indx);
+                                  setIdPreview({ view: true, url: `https://bellefu.com/images/verifications/${obj.user.username}/`, data: obj.value });
+                                }}
+                              >
+                                <AiFillEye style={{ color: "#fff", fontSize: 24 }} />
+                              </Button>
                             </div>
                           </td>
                         </tr>
@@ -325,6 +332,18 @@ export default function IdVerTable() {
           )}
         </Card.Body>
       </Card>
+      {idPreview.view && (
+        <ImageModal
+          id="img-modal"
+          url={idPreview.url}
+          data={idPreview.data}
+          close={() => {
+            setIdPreview((prev) => ({ ...prev, view: false }));
+          }}
+          // src={`https://bellefu.com/images/verifications/${item.user.username}/${pic}`}
+          // alt={item.title}
+        />
+      )}
       {action.message !== "EDIT" && (
         <ActionModal
           show={action.view}
@@ -371,7 +390,6 @@ const styles = {
   titel: {
     opacity: "0.9",
     fontSize: "20px",
-    width: "300px",
     whiteSpace: "nowrap",
     overflow: "hidden",
     textOverflow: "ellipsis",

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Card, Badge, Image, Button, Tooltip, OverlayTrigger, Row, Col, Container, Spinner } from "react-bootstrap";
-import { AiOutlineTag, AiOutlineEye, AiFillPhone, AiFillEye } from "react-icons/ai";
+import { AiOutlineTag, AiOutlineEye, AiFillPhone, AiFillEye, AiFillEdit } from "react-icons/ai";
 import { GoLocation } from "react-icons/go";
 import { MdDateRange, MdCancel, MdLocationOn } from "react-icons/md";
 import { IoMdTrash, IoIosArrowDroprightCircle, IoIosTime, IoIosArrowDropleftCircle, IoMdMailOpen } from "react-icons/io";
@@ -15,6 +15,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import ActionModal from "../components/ActionModal";
 import CustomSpinner from "../Spinner/Spinner";
 import { nullCheck } from "../../Utils";
+import UpdateModal from "../components/UpdateModal";
 
 //THIS IS FOR HOVER TOOLTIP TO SHOW A TEXT (delete)
 const deleteTooltip = (props) => (
@@ -30,8 +31,29 @@ const viewTooltip = (props) => (
   </Tooltip>
 );
 
+// /THIS IS FOR HOVER TOOLTIP TO SHOW A TEXT (Update)
+const updateTooltip = (props) => (
+  <Tooltip id="button-tooltip" {...props}>
+    Update Ad
+  </Tooltip>
+);
+
 export default function ActiveAdTable() {
   const { token } = useSelector((state) => state.adminSignin);
+  const [updateData, setUpdateData] = useState({
+    view: false,
+    id: "",
+    data: {
+      title: "",
+      category: "",
+      subcategory: "",
+      address: "",
+    },
+    preLoad: {
+      categories: [],
+      subcategories: [],
+    },
+  });
   const [load, setLoad] = useState(false);
   const [ads, setads] = useState([]);
   const [ad, setad] = useState({
@@ -73,7 +95,7 @@ export default function ActiveAdTable() {
 
   function fetchAds() {
     setLoad(true);
-    Axios.get("https://dev.bellefu.com/api/admin/product/list/approved", {
+    Axios.get("https://bellefu.com/api/admin/product/list/approved", {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
@@ -104,6 +126,32 @@ export default function ActiveAdTable() {
     fetchAds();
   }, []);
 
+  useEffect(() => {
+    Axios.get("https://bellefu.com/api/category/list", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+    }).then((res) => {
+      const data = res.data.categories;
+      setUpdateData((prev) => ({ ...prev, preLoad: { subcategories: [], categories: data } }));
+    });
+  }, []);
+
+  useEffect(() => {
+    Axios.get("https://bellefu.com/api/admin/subcategory/listfor/" + updateData.data.category, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+    }).then((res) => {
+      const data = res.data.subcategories;
+      setUpdateData((prev) => ({ ...prev, preLoad: { ...updateData.preLoad, subcategories: data } }));
+    });
+  }, [updateData.data.category]);
+
   const nextData = () => {
     Axios.get(next, {
       headers: {
@@ -131,7 +179,7 @@ export default function ActiveAdTable() {
   };
 
   const deleteAd = (title) => {
-    Axios.get("https://dev.bellefu.com/api/admin/product/delete/" + title, {
+    Axios.get("https://bellefu.com/api/admin/product/delete/" + title, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
@@ -144,6 +192,30 @@ export default function ActiveAdTable() {
       .catch((err) => {
         console.log(err.message);
       });
+  };
+
+  const handleDataUpdate = () => {
+    Axios.post("https://bellefu.com/api/admin/product/update/" + updateData.id, updateData.data, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+    }).then(() => {
+      fetchAds();
+      setUpdateData((prev) => ({ ...prev, view: false }));
+    });
+  };
+
+  const handleUpdateChange = (event) => {
+    const { value, name } = event.target;
+    setUpdateData((prev) => ({
+      ...prev,
+      data: {
+        ...updateData.data,
+        [name]: value,
+      },
+    }));
   };
 
   return (
@@ -180,7 +252,7 @@ export default function ActiveAdTable() {
                   {ads.map((item, key) => (
                     <tr key={key}>
                       <td className="uk-text-center">
-                        <Image src={`https://dev.bellefu.com/images/products/${item.slug}/` + item.images[0]} style={styles.image} />
+                        <Image src={`https://bellefu.com/images/products/${item.slug}/` + item.images[0]} style={styles.image} />
                       </td>
                       <td>
                         <p style={styles.titel}>{item.title}</p>
@@ -258,7 +330,28 @@ export default function ActiveAdTable() {
                               <AiOutlineEye style={{ color: "#ffa500" }} />
                             </Button>
                           </OverlayTrigger>
-
+                          <OverlayTrigger placement="bottom" delay={{ show: 50, hide: 100 }} overlay={updateTooltip}>
+                            <Button
+                              size="sm"
+                              onClick={() => {
+                                const obj = ads.find((o, index) => index === key);
+                                setUpdateData((prev) => ({
+                                  ...prev,
+                                  id: obj.slug,
+                                  view: true,
+                                  data: {
+                                    title: obj.title,
+                                    category: nullCheck(item.category).slug,
+                                    subcategory: nullCheck(item.subcategory).slug,
+                                    address: obj.address,
+                                  },
+                                }));
+                              }}
+                              variant="light"
+                            >
+                              <AiFillEdit style={{ color: "purple" }} />
+                            </Button>
+                          </OverlayTrigger>
                           <OverlayTrigger placement="bottom" delay={{ show: 50, hide: 100 }} overlay={deleteTooltip}>
                             <Button
                               size="sm"
@@ -303,8 +396,8 @@ export default function ActiveAdTable() {
                       <ul uk-lightbox="animation: slide" class="uk-slideshow-items">
                         {ad.images.map((item, index) => (
                           <li>
-                            <a class="uk-cover-container uk-inline" href={"https://dev.bellefu.com/images/products/" + item} data-caption={"Caption " + index}>
-                              <img src={"https://dev.bellefu.com/images/product/" + ad.slug + "/" + item} alt="" uk-cover />
+                            <a class="uk-cover-container uk-inline" href={"https://bellefu.com/images/products/" + item} data-caption={"Caption " + index}>
+                              <img src={"https://bellefu.com/images/product/" + ad.slug + "/" + item} alt="" uk-cover />
                             </a>
                           </li>
                         ))}
@@ -354,6 +447,60 @@ export default function ActiveAdTable() {
           }));
         }}
       />
+
+      <UpdateModal
+        show={updateData.view}
+        text={`Update ${updateData.data.title}`}
+        handleClose={() => {
+          setUpdateData((prev) => ({ ...prev, view: false }));
+        }}
+        handleUpdate={handleDataUpdate}
+      >
+        <div>
+          <label style={{ width: "100%", marginTop: 12 }}>Title</label>
+          <input
+            name="title"
+            type="text"
+            className="form-control"
+            style={{ width: "100%", marginTop: 5 }}
+            onChange={handleUpdateChange}
+            value={updateData.data.title}
+          />
+          <label style={{ width: "100%", marginTop: 12 }}>Address</label>
+          <input
+            name="address"
+            type="text"
+            className="form-control"
+            style={{ width: "100%", marginTop: 5 }}
+            onChange={handleUpdateChange}
+            value={updateData.data.address}
+          />
+
+          <label style={{ width: "100%", marginTop: 12 }}>Categories</label>
+          <select
+            name="category"
+            className="custom-select"
+            style={{ width: "100%", marginTop: 5 }}
+            onChange={handleUpdateChange}
+            value={updateData.data.category}
+          >
+            {updateData.preLoad.categories !== undefined && updateData.preLoad.categories.map((item, key) => <option value={item.slug}>{item.name}</option>)}
+          </select>
+
+          <label style={{ width: "100%", marginTop: 12 }}>Subtegories</label>
+          <select
+            name="subcategory"
+            className="custom-select"
+            style={{ width: "100%", marginTop: 5 }}
+            onChange={handleUpdateChange}
+            value={updateData.data.subcategory}
+          >
+            {updateData.preLoad.subcategories.map((item, key) => (
+              <option value={item.slug}>{item.name}</option>
+            ))}
+          </select>
+        </div>
+      </UpdateModal>
     </div>
   );
 }

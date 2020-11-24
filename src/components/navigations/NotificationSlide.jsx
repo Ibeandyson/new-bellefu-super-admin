@@ -2,26 +2,29 @@ import React, { useEffect, useState } from "react";
 import { Button, Card, Row, Col } from "react-bootstrap";
 
 import { MdCancel } from "react-icons/md";
-import { AiFillBell, AiOutlineArrowUp } from "react-icons/ai";
+import { AiFillBell, AiFillDelete, AiOutlineArrowUp } from "react-icons/ai";
 import { useSelector } from "react-redux";
 import Axios from "axios";
 import CustomSpinner from "../Spinner/Spinner";
 import InfiniteScroll from "react-infinite-scroll-component";
+import img from "../images/notifSpinner.svg";
 import { Link } from "react-router-dom";
 
 export default function NotificationSlide({ notif, setNotif, setCount }) {
   const { token } = useSelector((state) => state.adminSignin);
   const [load, setLoad] = useState(false);
   const [data, setData] = useState([]);
+  const [del, setdel] = useState([]);
   const [pages, setPages] = useState({
     current: 0,
     last: 0,
   });
   const [next, setNext] = useState("");
 
-  useEffect(() => {
+  function fetchNotif() {
     setLoad(true);
-    Axios.get("https://dev.bellefu.com/api/user/notification/list", {
+    setdel([]);
+    Axios.get("https://bellefu.com/api/user/notification/list", {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
@@ -37,6 +40,9 @@ export default function NotificationSlide({ notif, setNotif, setCount }) {
           current: res.data.notifications.current_page,
           last: res.data.notifications.last_page,
         });
+        res.data.notifications.data.map(() => {
+          setdel((prev) => [...prev, <AiFillDelete style={{ color: "#fff", fontSize: 24 }} />]);
+        });
       })
       .catch((err) => {
         setLoad(false);
@@ -47,6 +53,10 @@ export default function NotificationSlide({ notif, setNotif, setCount }) {
           last: 0,
         });
       });
+  }
+
+  useEffect(() => {
+    fetchNotif();
   }, []);
 
   const nextData = () => {
@@ -68,6 +78,29 @@ export default function NotificationSlide({ notif, setNotif, setCount }) {
     });
   };
 
+  const handleReadOne = (id) => {
+    Axios.get("https://bellefu.com/api/user/notification/read/" + id, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+    }).then(() => {
+      fetchNotif();
+    });
+  };
+
+  const handleReadAll = () => {
+    Axios.get("https://bellefu.com/api/user/notification/read/all", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+    }).then(() => {
+      fetchNotif();
+    });
+  };
   return (
     <div
       id="n-parent"
@@ -91,7 +124,7 @@ export default function NotificationSlide({ notif, setNotif, setCount }) {
           overflowY: "scroll",
           overflowX: "hidden",
           zIndex: 5000,
-          cursor: "unset"
+          cursor: "unset",
         }}
       >
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
@@ -103,22 +136,42 @@ export default function NotificationSlide({ notif, setNotif, setCount }) {
           >
             <MdCancel style={styles.close_icon} />
           </Button>
-          <p style={{ color: "#fff", fontWeight: "bold" }}>Notifications</p>
+          <div>
+            <p style={{ color: "#fff", fontWeight: "bold" }}>Notifications</p>
+            <Button onClick={handleReadAll} variant="transparent" style={{ marginLeft: "auto", color: "#ffa500", padding: 0 }}>
+              Mark all as read
+            </Button>
+          </div>
         </div>
         <Row className="mt-2" style={{ minWidth: "100%", marginBottom: 10 }}>
           {data.map((item, key) => (
-            <Col xs={12} className="mt-2">
+            <Col key={key} xs={12} className="mt-2">
               <Card className="border-0" style={styles.card}>
-                <Card.Header style={{ backgroundColor: item.data.color }} className="">
-                  <Link style={{ textDecoration: "none" }} to={item.data.action}>
-                    <p className="_notification-title">{item.data.title}</p>
-                  </Link>
+                <Card.Header style={{ backgroundColor: item.data.color, display: "flex", alignItems: "center", justifyContent: "center" }} className="">
+                  <p className="_notification-title">{item.data.title}</p>
+                  <Button
+                    onClick={(e) => {
+                      handleReadOne(item.id);
+                    }}
+                    variant="transparent"
+                    style={{ marginLeft: "auto", color: "#ffa500", padding: 0, textDecoration: "underline" }}
+                  >
+                    Mark as read
+                  </Button>
                 </Card.Header>
-                <Card.Body>
-                  <Link style={{ textDecoration: "none" }} to={item.data.action}>
-                    <p className="_notification-message">{item.data.message}</p>
-                  </Link>
-                </Card.Body>
+                <Link
+                  onClick={(e) => {
+                    handleReadOne(item.id);
+                  }}
+                  style={{ textDecoration: "none" }}
+                  to={item.data.action}
+                >
+                  <Card.Body>
+                    <Link style={{ textDecoration: "none" }} to={item.data.action}>
+                      <p className="_notification-message">{item.data.message}</p>
+                    </Link>
+                  </Card.Body>
+                </Link>
               </Card>
             </Col>
           ))}

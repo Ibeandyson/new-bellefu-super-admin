@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Card, Badge, Image, Button, Tooltip, OverlayTrigger, Row, Col, Container, Spinner } from "react-bootstrap";
+import { Card, Badge, Image, Button, Tooltip, OverlayTrigger, Row, Col, Container, Spinner, InputGroup, FormControl } from "react-bootstrap";
 import { AiOutlineTag, AiOutlineEye, AiFillPhone, AiFillEye } from "react-icons/ai";
 import { GoLocation } from "react-icons/go";
 import { MdDateRange, MdCancel, MdLocationOn } from "react-icons/md";
@@ -30,10 +30,15 @@ const viewTooltip = (props) => (
   </Tooltip>
 );
 
-export default function ExpiredAdTable() {
+export default function AdViewTable() {
   const { token } = useSelector((state) => state.adminSignin);
   const [load, setLoad] = useState(false);
+  const [url, setUrl] = useState("api/admin/product/list/all");
   const [ads, setads] = useState([]);
+  const [country, setCountry] = useState("");
+  const [state, setState] = useState("");
+  const [countryList, setCountryList] = useState([]);
+  const [stateList, setStateList] = useState([]);
   const [ad, setad] = useState({
     name: "",
     phone: "",
@@ -62,18 +67,10 @@ export default function ExpiredAdTable() {
   });
   const [next, setNext] = useState("");
 
-  const handleAction = (id, message, action) => {
-    setAction({
-      view: true,
-      id,
-      message,
-      action,
-    });
-  };
-
   function fetchAds() {
     setLoad(true);
-    Axios.get("https://bellefu.com/api/admin/product/list/closed", {
+    let reqUrl = url + country + state;
+    Axios.get("https://bellefu.com/" + reqUrl, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
@@ -102,9 +99,35 @@ export default function ExpiredAdTable() {
 
   useEffect(() => {
     fetchAds();
+  }, [url, country, state]);
+
+  useEffect(() => {
+    Axios.get("https://bellefu.com/api/country/list", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+    }).then((res) => {
+      setCountryList(res.data.countries);
+    });
   }, []);
 
+  useEffect(() => {
+    Axios.get(`https://bellefu.com/api/${country.split("=")[1]}/state/list`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+    }).then((res) => {
+      setStateList(res.data.states);
+    });
+  }, [country]);
+
   const nextData = () => {
+    setCountry("")
+    setState("")
     Axios.get(next, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -121,34 +144,71 @@ export default function ExpiredAdTable() {
     });
   };
 
-  const handleDeleteButton = (id, message, action) => {
-    setAction({
-      view: true,
-      id,
-      message,
-      action: action,
-    });
-  };
-
-  const deleteAd = (title) => {
-    Axios.get("https://bellefu.com/api/admin/product/delete/" + title, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-    })
-      .then(() => {
-        fetchAds();
-      })
-      .catch((err) => {
-        console.log(err.message);
-      });
-  };
-
   return (
     <div>
       <Card className="border-0">
+        <Card.Header>
+          <label style={{ width: "100%" }} htmlFor="url">
+            Filter Products Status
+          </label>
+          <select
+            name="url"
+            id="url"
+            className="custom-select"
+            style={{ width: "100%", marginTop: 5 }}
+            onChange={(e) => {
+              setUrl(e.target.value);
+            }}
+            value={url}
+          >
+            <option value="api/admin/product/list/all">All Product List</option>
+            <option value="api/admin/product/list/approved">Approved Product List</option>
+            <option value="api/admin/product/list/pending">Pending Product List</option>
+            <option value="api/admin/product/list/blocked">Blocked Product List</option>
+            <option value="api/admin/product/list/declined">Declined Product List</option>
+            <option value="api/admin/product/list/closed">Closed Product List</option>
+          </select>
+
+          <label style={{ width: "100%", marginTop: 12 }} htmlFor="country">
+            Filter Country
+          </label>
+          <select
+            name="country"
+            id="country"
+            className="custom-select"
+            style={{ width: "100%", marginTop: 5 }}
+            onChange={(e) => {
+              setCountry(e.target.value);
+              setState("");
+            }}
+            value={country}
+          >
+            <option value="">All</option>
+            {countryList.map((item, key) => (
+              <option value={"?country=" + item.iso2}>{item.name}</option>
+            ))}
+          </select>
+
+          <label style={{ width: "100%", marginTop: 12 }} htmlFor="state">
+            Filter State
+          </label>
+          <select
+            name="state"
+            id="state"
+            disabled={country === ""}
+            className="custom-select"
+            style={{ width: "100%", marginTop: 5 }}
+            onChange={(e) => {
+              setState(e.target.value);
+            }}
+            value={state}
+          >
+            <option value="">All</option>
+            {stateList.map((item, key) => (
+              <option value={"&state=" + item.code}>{item.name}</option>
+            ))}
+          </select>
+        </Card.Header>
         <Card.Body>
           {load ? (
             <CustomSpinner />
@@ -180,7 +240,7 @@ export default function ExpiredAdTable() {
                   {ads.map((item, key) => (
                     <tr key={key}>
                       <td className="uk-text-center">
-                        <Image src={`https://bellefu.com/images/product/${item.slug}/` + item.images[0]} style={styles.image} />
+                        <Image src={`https://bellefu.com/images/products/${item.slug}/` + item.images[0]} style={styles.image} />
                       </td>
                       <td>
                         <p style={styles.titel}>{item.title}</p>
@@ -250,24 +310,12 @@ export default function ExpiredAdTable() {
                                   views: obj.inorganic_views,
                                   isFave: obj.is_user_favourite,
                                   plan: obj.plan,
-                                  slug: obj.slug,
                                   title: obj.title,
+                                  slug: obj.slug,
                                 });
                               }}
                             >
                               <AiOutlineEye style={{ color: "#ffa500" }} />
-                            </Button>
-                          </OverlayTrigger>
-
-                          <OverlayTrigger placement="bottom" delay={{ show: 50, hide: 100 }} overlay={deleteTooltip}>
-                            <Button
-                              size="sm"
-                              onClick={() => {
-                                handleDeleteButton(item.slug, `Are you sure you want to delete the product ${item.title}`, deleteAd);
-                              }}
-                              variant="light"
-                            >
-                              <IoMdTrash style={{ color: "red" }} />
                             </Button>
                           </OverlayTrigger>
                         </div>
@@ -303,12 +351,8 @@ export default function ExpiredAdTable() {
                       <ul uk-lightbox="animation: slide" class="uk-slideshow-items">
                         {ad.images.map((item, index) => (
                           <li>
-                            <a
-                              class="uk-cover-container uk-inline"
-                              href={`https://bellefu.com/images/products/${ad.slug}/` + item}
-                              data-caption={"Caption " + index}
-                            >
-                              <img src={`https://bellefu.com/images/products/${ad.slug}/` + item} alt="" uk-cover />
+                            <a class="uk-cover-container uk-inline" href={"https://bellefu.com/images/products/" + item} data-caption={"Caption " + index}>
+                              <img src={"https://bellefu.com/images/product/" + ad.slug + "/" + item} alt="" uk-cover />
                             </a>
                           </li>
                         ))}
@@ -346,6 +390,10 @@ export default function ExpiredAdTable() {
         text={action.message}
         handleYes={() => {
           action.action(action.id);
+          setAction((prev) => ({
+            ...prev,
+            view: false,
+          }));
         }}
         handleNo={() => {
           setAction((prev) => ({

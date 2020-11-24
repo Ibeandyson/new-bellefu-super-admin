@@ -26,7 +26,7 @@ export default function MainCategory() {
     formData.append("cat_icon", cat.cat_icon);
     formData.append("cat_name", cat.cat_name);
 
-    Axios.post("https://dev.bellefu.com/api/admin/category/save", formData, {
+    Axios.post("https://bellefu.com/api/admin/category/save", formData, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",

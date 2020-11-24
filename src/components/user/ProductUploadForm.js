@@ -1,16 +1,6 @@
 import Axios from "axios";
 import React, { useEffect, useState } from "react";
-import {
-  Button,
-  Col,
-  Form,
-  FormControl,
-  InputGroup,
-  Nav,
-  Row,
-  Tab,
-  Tabs,
-} from "react-bootstrap";
+import { Button, Col, Form, FormControl, InputGroup, Nav, Row, Tab, Tabs } from "react-bootstrap";
 import { useSelector } from "react-redux";
 import CustomAlert from "../components/Alert";
 import loader from "../images/load.svg";
@@ -32,12 +22,59 @@ export default function ProductUploadForm() {
   });
 
   useEffect(() => {
-    setFormData((prev) => ({
-      featured: "",
-      urgent: "",
-      highlighted: "",
-      free: "",
-    }));
+    if (key === "duration") {
+      setFormData((prev) => ({
+        featured: "",
+        urgent: "",
+        highlighted: "",
+        free: "",
+      }));
+      Axios.get("https://bellefu.com/api/admin/config/plan/duration", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      }).then((res) => {
+        const data = res.data;
+
+        setFormData((prev) => ({
+          featured: data.featured_plan_duration === null ? "" : data.featured_plan_duration,
+          urgent: data.urgent_plan_duration === null ? "" : data.urgent_plan_duration,
+          highlighted: data.highlighted_plan_duration === null ? "" : data.highlighted_plan_duration,
+          free: data.free_plan_duration === null ? "" : data.free_plan_duration,
+        }));
+      });
+    }
+
+    if (key === "amount") {
+      setFormData((prev) => ({
+        featured: "",
+        urgent: "",
+        highlighted: "",
+        free: "",
+      }));
+      Axios.get("https://bellefu.com/api/admin/config/upgrade/fee", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      }).then((res) => {
+        const data = res.data;
+
+        setFormData((prev) => ({
+          featured: data.featured_upgrade_fee === null ? "" : data.featured_upgrade_fee,
+          urgent: data.urgent_upgrade_fee === null ? "" : data.urgent_upgrade_fee,
+          highlighted: data.highlighted_upgrade_fee === null ? "" : data.highlighted_upgrade_fee,
+          free: "",
+        }));
+      });
+    }
+
+    //     featured_plan_duration: "30"
+    // free_plan_duration: "30"
+    // highlighted_plan_duration: "30"
   }, [key]);
 
   const handleSubmit = (event) => {
@@ -54,14 +91,14 @@ export default function ProductUploadForm() {
       payload.append("featured", formData.featured);
       payload.append("highlighted", formData.highlighted);
       payload.append("urgent", formData.urgent);
-      url = "https://dev.bellefu.com/api/admin/config/ad/upgrade_fee/save";
+      url = "https://bellefu.com/api/admin/config/ad/upgrade_fee/save";
     }
     if (key === "duration") {
       payload.append("featured", formData.featured);
       payload.append("highlighted", formData.highlighted);
       payload.append("urgent", formData.urgent);
       payload.append("free", formData.free);
-      url = "https://dev.bellefu.com/api/admin/config/ad/duration/save";
+      url = "https://bellefu.com/api/admin/config/ad/duration/save";
     }
 
     Axios.post(url, payload, {
@@ -111,12 +148,7 @@ export default function ProductUploadForm() {
   return (
     <div>
       {load.alert && <CustomAlert type={load.type}>{load.message}</CustomAlert>}
-      <Tabs
-        id="controlled-tab-example"
-        activeKey={key}
-        onSelect={(k) => setKey(k)}
-        style={{ display: "flex", justifyContent: "center" }}
-      >
+      <Tabs id="controlled-tab-example" activeKey={key} onSelect={(k) => setKey(k)} style={{ display: "flex", justifyContent: "center" }}>
         <Tab eventKey="amount" title="Product Amount Update">
           <form style={{ marginTop: 50 }} onSubmit={handleSubmit}>
             <h4 className="_adUpdate-title" style={{ textAlign: "center" }}>
@@ -186,13 +218,7 @@ export default function ProductUploadForm() {
                 variant="warning"
                 disabled={load.view}
               >
-                {load.view && (
-                  <img
-                    src={loader}
-                    style={{ position: "absolute", width: "40px" }}
-                    alt=""
-                  />
-                )}
+                {load.view && <img src={loader} style={{ position: "absolute", width: "40px" }} alt="" />}
                 Submit
               </Button>
             </Col>
@@ -285,13 +311,7 @@ export default function ProductUploadForm() {
                 variant="warning"
                 disabled={load.view}
               >
-                {load.view && (
-                  <img
-                    src={loader}
-                    style={{ position: "absolute", width: "40px" }}
-                    alt=""
-                  />
-                )}
+                {load.view && <img src={loader} style={{ position: "absolute", width: "40px" }} alt="" />}
                 Submit
               </Button>
             </Col>

@@ -22,13 +22,6 @@ export default function HeaderNav() {
         <Navbar.Brand href="#home">
           <img src={logo} style={styles.logo} />
         </Navbar.Brand>
-        <Navbar.Brand href="#home">
-          <OverlayTrigger placement="right" delay={{ show: 250, hide: 400 }} overlay={renderTooltip}>
-            <Button variant="outline-warning" style={styles.contrey_btn}>
-              country
-            </Button>
-          </OverlayTrigger>
-        </Navbar.Brand>
 
         <Navbar.Collapse className="justify-content-end">
           <Navbar.Brand styles={styles.language}>
@@ -43,11 +36,6 @@ export default function HeaderNav() {
               <span style={styles.notfiCount} className="text-center ">
                 {count}
               </span>
-            </Button>
-          </Navbar.Brand>
-          <Navbar.Brand styles={styles.language}>
-            <Button variant="warning" style={styles.post_free_add_btn}>
-              EN
             </Button>
           </Navbar.Brand>
           <Navbar.Brand className="d-lg-none d-xs-block  d-sm-block d-md-block">

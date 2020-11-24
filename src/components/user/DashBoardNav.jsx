@@ -1,7 +1,7 @@
 import React from "react";
 import { Button, Card, Dropdown, Image } from "react-bootstrap";
 import { GoDashboard, GoReport } from "react-icons/go";
-import { AiOutlineUser, AiOutlineGift, AiOutlineMessage, AiOutlineAccountBook, AiOutlineSetting } from "react-icons/ai";
+import { AiOutlineUser, AiOutlineGift, AiOutlineMessage, AiOutlineAccountBook, AiOutlineSetting, AiOutlineOrderedList } from "react-icons/ai";
 import { TiGroupOutline, TiTicket } from "react-icons/ti";
 import { IoMdTime, IoIosLogIn } from "react-icons/io";
 import { MdDateRange, MdList, MdRateReview } from "react-icons/md";
@@ -15,7 +15,7 @@ import { useSelector } from "react-redux";
 export default function DashBoardNav() {
   const { token } = useSelector((state) => state.adminSignin);
   const handleLogOut = () => {
-    Axios.get("https://dev.bellefu.com/api/auth/logout", {
+    Axios.get("https://bellefu.com/api/auth/logout", {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
@@ -56,6 +56,12 @@ export default function DashBoardNav() {
               Ads
             </h6>
             <ul style={styles.list}>
+              <Link to="/ads" style={{ color: "inherit", textDecoration: "inherit" }}>
+                <li className="pb-3" onMouseOver={listHover} onMouseLeave={listHoverNone}>
+                  <AiOutlineOrderedList className="mr-3" style={styles.icon} />
+                  Ads List
+                </li>
+              </Link>
               <Link to="/active_ads" style={{ color: "inherit", textDecoration: "inherit" }}>
                 <li className="pb-3" onMouseOver={listHover} onMouseLeave={listHoverNone}>
                   <AiOutlineGift className="mr-3" style={styles.icon} />
@@ -167,11 +173,11 @@ export default function DashBoardNav() {
                   Users
                 </li>
               </Link>
-
+{/* 
               <li className="pb-3" onMouseOver={listHover} onMouseLeave={listHoverNone}>
                 <AiOutlineMessage className="mr-3" style={styles.icon} />
                 Message
-              </li>
+              </li> */}
               <Link to="/transactions">
                 <li className="pb-3" onMouseOver={listHover} onMouseLeave={listHoverNone}>
                   <AiOutlineAccountBook className="mr-3" style={styles.icon} />
@@ -193,7 +199,7 @@ export default function DashBoardNav() {
                       Country
                     </Dropdown.Item>
                     <Dropdown.Item style={{ fontSize: 13 }} href="/product-upload">
-                      Product Upload
+                      Advert Plan
                     </Dropdown.Item>
                   </Dropdown.Menu>
                 </Dropdown>

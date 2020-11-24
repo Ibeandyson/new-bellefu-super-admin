@@ -42,7 +42,7 @@ export default function SubCategory() {
     formData.append('cat_icon', subcat.subcat_icon)
     formData.append('subcat_name', subcat.subcat_name)
     formData.append('cat_id', subcat.cat_id)
-    Axios.post("https://dev.bellefu.com/api/admin/subcategory/save",formData, {
+    Axios.post("https://bellefu.com/api/admin/subcategory/save",formData, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
@@ -80,7 +80,7 @@ export default function SubCategory() {
   }
 
   useEffect(() => {
-    Axios.get("https://dev.bellefu.com/api/category/list").then((res) => {
+    Axios.get("https://bellefu.com/api/category/list").then((res) => {
       const data = res.data.categories;
       data.forEach((item) => {
         setCategory((prev) => [...prev, { id: item.id, name: item.name }]);

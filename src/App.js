@@ -30,6 +30,7 @@ import AddVoucher from "./components/app/AddVoucher";
 import Voucher from "./components/app/VoucherList";
 import IdVerification from "./components/app/IdVerification";
 import KYCVerification from "./components/app/KycVerification";
+import AdViewPage from "./components/app/AdView";
 function App() {
   return (
     <Provider store={store}>
@@ -38,6 +39,7 @@ function App() {
           <Route exact path="/" component={LogInFormPage} />
           <PrivateRoute exact path="/admin_dashboard" component={SuperAdminDashbordPage} />
           <PrivateRoute exact path="/admin_profile" component={AdminProfilePage} />
+          <PrivateRoute exact path="/ads" component={AdViewPage} />
           <PrivateRoute exact path="/pending_ads" component={PendingAdPage} />
           <PrivateRoute exact path="/active_ads" component={ActiveAdPage} />
           <PrivateRoute exact path="/expired_ads" component={ExpiredAdPage} />
