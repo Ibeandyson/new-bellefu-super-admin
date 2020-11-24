@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, Dropdown, Image } from "react-bootstrap";
+import { Button, Card, Dropdown, Image } from "react-bootstrap";
 import { GoDashboard, GoReport } from "react-icons/go";
 import { AiOutlineUser, AiOutlineGift, AiOutlineMessage, AiOutlineAccountBook, AiOutlineSetting } from "react-icons/ai";
 import { TiGroupOutline, TiTicket } from "react-icons/ti";
@@ -8,7 +8,25 @@ import { MdDateRange, MdList, MdRateReview } from "react-icons/md";
 import { FiList, FiUserPlus, FiUsers } from "react-icons/fi";
 import pic from "../images/pic.jpg";
 import { Link } from "react-router-dom";
+import Cookie from "js-cookie";
+import Axios from "axios";
+import { useSelector } from "react-redux";
+
 export default function DashBoardNav() {
+  const { token } = useSelector((state) => state.adminSignin);
+  const handleLogOut = () => {
+    Axios.get("https://dev.bellefu.com/api/auth/logout", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+    });
+
+    Cookie.remove("admin");
+    window.location.replace("/");
+  };
+
   return (
     <div>
       <Card className="border-0 ">
@@ -181,8 +199,10 @@ export default function DashBoardNav() {
                 </Dropdown>
               </li>
               <li className="pb-0" onMouseOver={listHover} onMouseLeave={listHoverNone}>
-                <IoIosLogIn className="mr-3" style={styles.icon} />
-                Logout
+                <Button variant="transparent" style={{ paddingLeft: 0 }} onClick={handleLogOut}>
+                  <IoIosLogIn className="mr-3" style={styles.icon} />
+                  Logout
+                </Button>
               </li>
             </ul>
           </div>
