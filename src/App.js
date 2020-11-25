@@ -31,6 +31,9 @@ import Voucher from "./components/app/VoucherList";
 import IdVerification from "./components/app/IdVerification";
 import KYCVerification from "./components/app/KycVerification";
 import AdViewPage from "./components/app/AdView";
+import ProductRoute from "./Routes/ProductRoute";
+import FianacialRoute from "./Routes/FinancialRoute";
+import SupportRoute from "./Routes/SupportRoute";
 function App() {
   return (
     <Provider store={store}>
@@ -39,10 +42,10 @@ function App() {
           <Route exact path="/" component={LogInFormPage} />
           <PrivateRoute exact path="/admin_dashboard" component={SuperAdminDashbordPage} />
           <PrivateRoute exact path="/admin_profile" component={AdminProfilePage} />
-          <PrivateRoute exact path="/ads" component={AdViewPage} />
-          <PrivateRoute exact path="/pending_ads" component={PendingAdPage} />
-          <PrivateRoute exact path="/active_ads" component={ActiveAdPage} />
-          <PrivateRoute exact path="/expired_ads" component={ExpiredAdPage} />
+          <ProductRoute exact path="/ads" component={AdViewPage} />
+          <ProductRoute exact path="/pending_ads" component={PendingAdPage} />
+          <ProductRoute exact path="/active_ads" component={ActiveAdPage} />
+          <ProductRoute exact path="/expired_ads" component={ExpiredAdPage} />
           <PrivateRoute exact path="/main_category" component={MainCategoryPage} />
           <PrivateRoute exact path="/sub_category" component={SubCategoryPage} />
           <PrivateRoute exact path="/user_list" component={UsersListPage} />
@@ -51,14 +54,14 @@ function App() {
           <PrivateRoute exact path="/country" component={Country} />
           <PrivateRoute exact path="/category-list" component={MainCategoryList} />
           <PrivateRoute exact path="/subcategory-list" component={SubCategoryList} />
-          <PrivateRoute exact path="/product-upload" component={ProductUpload} />
-          <PrivateRoute exact path="/reviews" component={Review} />
-          <PrivateRoute exact path="/reports" component={Report} />
-          <PrivateRoute exact path="/transactions" component={Transactions} />
+          <FianacialRoute exact path="/product-upload" component={ProductUpload} />
+          <SupportRoute exact path="/reviews" component={Review} />
+          <SupportRoute exact path="/reports" component={Report} />
+          <FianacialRoute exact path="/transactions" component={Transactions} />
           <PrivateRoute exact path="/vouchers/add" component={AddVoucher} />
           <PrivateRoute exact path="/vouchers" component={Voucher} />
-          <PrivateRoute exact path="/verification/id" component={IdVerification} />
-          <PrivateRoute exact path="/verification/kyc" component={KYCVerification} />
+          <SupportRoute exact path="/verification/id" component={IdVerification} />
+          <SupportRoute exact path="/verification/kyc" component={KYCVerification} />
         </Router>
       </div>
     </Provider>

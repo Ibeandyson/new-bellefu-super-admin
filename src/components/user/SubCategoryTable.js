@@ -29,6 +29,7 @@ const editTooltip = (props) => (
 
 const EditInput = ({ action, setAction, fetchSubcategories, initialData }) => {
   const { token } = useSelector((state) => state.adminSignin);
+  
   const [updateData, setUpdateData] = useState({
     icon: "",
     name: "",

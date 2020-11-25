@@ -135,6 +135,7 @@ const EditInput = ({ action, setAction, fetchCategories, initialData }) => {
 
 export default function CategoryTable() {
   const { token } = useSelector((state) => state.adminSignin);
+  
   const [load, setLoad] = useState(false);
   const [updateVal, setUpdateVal] = useState({
     name: "",

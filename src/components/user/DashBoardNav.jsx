@@ -11,9 +11,12 @@ import { Link } from "react-router-dom";
 import Cookie from "js-cookie";
 import Axios from "axios";
 import { useSelector } from "react-redux";
+import { adminValidation } from "../../Utils";
 
 export default function DashBoardNav() {
   const { token } = useSelector((state) => state.adminSignin);
+  const { role } = useSelector((state) => state.adminSignin);
+
   const handleLogOut = () => {
     Axios.get("https://bellefu.com/api/auth/logout", {
       headers: {
@@ -52,35 +55,39 @@ export default function DashBoardNav() {
                 </li>
               </Link>
             </ul>
-            <h6 className="p-3" style={styles.head}>
-              Ads
-            </h6>
-            <ul style={styles.list}>
-              <Link to="/ads" style={{ color: "inherit", textDecoration: "inherit" }}>
-                <li className="pb-3" onMouseOver={listHover} onMouseLeave={listHoverNone}>
-                  <AiOutlineOrderedList className="mr-3" style={styles.icon} />
-                  Ads List
-                </li>
-              </Link>
-              <Link to="/active_ads" style={{ color: "inherit", textDecoration: "inherit" }}>
-                <li className="pb-3" onMouseOver={listHover} onMouseLeave={listHoverNone}>
-                  <AiOutlineGift className="mr-3" style={styles.icon} />
-                  Active Ads
-                </li>
-              </Link>
-              <Link to="/pending_ads" style={{ color: "inherit", textDecoration: "inherit" }}>
-                <li className="pb-3" onMouseOver={listHover} onMouseLeave={listHoverNone}>
-                  <IoMdTime className="mr-3" style={styles.icon} />
-                  Pending Ads
-                </li>
-              </Link>
-              <Link to="/expired_ads" style={{ color: "inherit", textDecoration: "inherit" }}>
-                <li className="pb-3" onMouseOver={listHover} onMouseLeave={listHoverNone}>
-                  <MdDateRange className="mr-3" style={styles.icon} />
-                  Expired Ads
-                </li>
-              </Link>
-            </ul>
+            {adminValidation(role, "product_admin") && (
+              <>
+                <h6 className="p-3" style={styles.head}>
+                  Ads
+                </h6>
+                <ul style={styles.list}>
+                  <Link to="/ads" style={{ color: "inherit", textDecoration: "inherit" }}>
+                    <li className="pb-3" onMouseOver={listHover} onMouseLeave={listHoverNone}>
+                      <AiOutlineOrderedList className="mr-3" style={styles.icon} />
+                      Ads List
+                    </li>
+                  </Link>
+                  <Link to="/active_ads" style={{ color: "inherit", textDecoration: "inherit" }}>
+                    <li className="pb-3" onMouseOver={listHover} onMouseLeave={listHoverNone}>
+                      <AiOutlineGift className="mr-3" style={styles.icon} />
+                      Active Ads
+                    </li>
+                  </Link>
+                  <Link to="/pending_ads" style={{ color: "inherit", textDecoration: "inherit" }}>
+                    <li className="pb-3" onMouseOver={listHover} onMouseLeave={listHoverNone}>
+                      <IoMdTime className="mr-3" style={styles.icon} />
+                      Pending Ads
+                    </li>
+                  </Link>
+                  <Link to="/expired_ads" style={{ color: "inherit", textDecoration: "inherit" }}>
+                    <li className="pb-3" onMouseOver={listHover} onMouseLeave={listHoverNone}>
+                      <MdDateRange className="mr-3" style={styles.icon} />
+                      Expired Ads
+                    </li>
+                  </Link>
+                </ul>
+              </>
+            )}
             <h6 className="p-3" style={styles.head}>
               Vouchers
             </h6>
@@ -129,40 +136,45 @@ export default function DashBoardNav() {
                 </li>
               </Link>
             </ul>
-            <h6 className="p-3" style={styles.head}>
-              Verification
-            </h6>
-            <ul style={styles.list}>
-              <Link to="/verification/id" style={{ color: "inherit", textDecoration: "inherit" }}>
-                <li className="pb-3" onMouseOver={listHover} onMouseLeave={listHoverNone}>
-                  <TiTicket className="mr-3" style={styles.icon} />
-                  ID Verification
-                </li>
-              </Link>
-              <Link to="/verification/kyc" style={{ color: "inherit", textDecoration: "inherit" }}>
-                <li className="pb-3" onMouseOver={listHover} onMouseLeave={listHoverNone}>
-                  <MdList className="mr-3" style={styles.icon} />
-                  KYC Verification
-                </li>
-              </Link>
-            </ul>
-            <h6 className="p-3" style={styles.head}>
-              Reports & Reviews
-            </h6>
-            <ul style={styles.list}>
-              <Link to="/reports" style={{ color: "inherit", textDecoration: "inherit" }}>
-                <li className="pb-3" onMouseOver={listHover} onMouseLeave={listHoverNone}>
-                  <GoReport className="mr-3" style={styles.icon} />
-                  Reports
-                </li>
-              </Link>
-              <Link to="/reviews" style={{ color: "inherit", textDecoration: "inherit" }}>
-                <li className="pb-3" onMouseOver={listHover} onMouseLeave={listHoverNone}>
-                  <MdRateReview className="mr-3" style={styles.icon} />
-                  Reviews
-                </li>
-              </Link>
-            </ul>
+            {adminValidation(role, "support_admin") && (
+              <>
+                {" "}
+                <h6 className="p-3" style={styles.head}>
+                  Verification
+                </h6>
+                <ul style={styles.list}>
+                  <Link to="/verification/id" style={{ color: "inherit", textDecoration: "inherit" }}>
+                    <li className="pb-3" onMouseOver={listHover} onMouseLeave={listHoverNone}>
+                      <TiTicket className="mr-3" style={styles.icon} />
+                      ID Verification
+                    </li>
+                  </Link>
+                  <Link to="/verification/kyc" style={{ color: "inherit", textDecoration: "inherit" }}>
+                    <li className="pb-3" onMouseOver={listHover} onMouseLeave={listHoverNone}>
+                      <MdList className="mr-3" style={styles.icon} />
+                      KYC Verification
+                    </li>
+                  </Link>
+                </ul>
+                <h6 className="p-3" style={styles.head}>
+                  Reports & Reviews
+                </h6>
+                <ul style={styles.list}>
+                  <Link to="/reports" style={{ color: "inherit", textDecoration: "inherit" }}>
+                    <li className="pb-3" onMouseOver={listHover} onMouseLeave={listHoverNone}>
+                      <GoReport className="mr-3" style={styles.icon} />
+                      Reports
+                    </li>
+                  </Link>
+                  <Link to="/reviews" style={{ color: "inherit", textDecoration: "inherit" }}>
+                    <li className="pb-3" onMouseOver={listHover} onMouseLeave={listHoverNone}>
+                      <MdRateReview className="mr-3" style={styles.icon} />
+                      Reviews
+                    </li>
+                  </Link>
+                </ul>{" "}
+              </>
+            )}
             <h6 className="p-3" style={styles.head}>
               Account
             </h6>
@@ -173,17 +185,19 @@ export default function DashBoardNav() {
                   Users
                 </li>
               </Link>
-{/* 
+              {/* 
               <li className="pb-3" onMouseOver={listHover} onMouseLeave={listHoverNone}>
                 <AiOutlineMessage className="mr-3" style={styles.icon} />
                 Message
               </li> */}
-              <Link to="/transactions">
-                <li className="pb-3" onMouseOver={listHover} onMouseLeave={listHoverNone}>
-                  <AiOutlineAccountBook className="mr-3" style={styles.icon} />
-                  Transaction
-                </li>
-              </Link>
+              {adminValidation(role, "financial_admin") && (
+                <Link to="/transactions">
+                  <li className="pb-3" onMouseOver={listHover} onMouseLeave={listHoverNone}>
+                    <AiOutlineAccountBook className="mr-3" style={styles.icon} />
+                    Transaction
+                  </li>
+                </Link>
+              )}
               <li className="pb-3" onMouseOver={listHover} onMouseLeave={listHoverNone}>
                 <Dropdown>
                   <Dropdown.Toggle style={{ padding: 0, fontSize: 13 }} variant="transparent" id="dropdown-basic">
@@ -198,9 +212,11 @@ export default function DashBoardNav() {
                     <Dropdown.Item style={{ fontSize: 13 }} href="/country">
                       Country
                     </Dropdown.Item>
-                    <Dropdown.Item style={{ fontSize: 13 }} href="/product-upload">
-                      Advert Plan
-                    </Dropdown.Item>
+                    {adminValidation(role, "financial_admin") && (
+                      <Dropdown.Item style={{ fontSize: 13 }} href="/product-upload">
+                        Advert Plan
+                      </Dropdown.Item>
+                    )}
                   </Dropdown.Menu>
                 </Dropdown>
               </li>
