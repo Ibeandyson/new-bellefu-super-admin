@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { Navbar, Button, Tooltip, OverlayTrigger } from "react-bootstrap";
 import SideNav from "../navigations/SideNav";
 import NotificationSlide from "../navigations/NotificationSlide";
-import logo from "../images/logo.png";
 import { AiFillBell } from "react-icons/ai";
 
 //THIS IS FOR HOVER TOOLTIP TO SHOW A TEXT (CHANGE CONTRY)
@@ -20,7 +19,7 @@ export default function HeaderNav() {
     <div>
       <Navbar style={styles.head} className=" shadow-sm fixed-top">
         <Navbar.Brand href="#home">
-          <img src={logo} style={styles.logo} />
+          <img src={"https://bellefu.com/images/logo.png"} style={styles.logo} />
         </Navbar.Brand>
 
         <Navbar.Collapse className="justify-content-end">
@@ -38,9 +37,9 @@ export default function HeaderNav() {
               </span>
             </Button>
           </Navbar.Brand>
-          <Navbar.Brand className="d-lg-none d-xs-block  d-sm-block d-md-block">
+          {/* <Navbar.Brand className="d-lg-none d-xs-block  d-sm-block d-md-block">
             <SideNav />
-          </Navbar.Brand>
+          </Navbar.Brand> */}
         </Navbar.Collapse>
       </Navbar>
       <NotificationSlide setCount={setCount} notif={toggleNotification} setNotif={setTogglenotification} />

@@ -46,14 +46,14 @@ function App() {
           <ProductRoute exact path="/pending_ads" component={PendingAdPage} />
           <ProductRoute exact path="/active_ads" component={ActiveAdPage} />
           <ProductRoute exact path="/expired_ads" component={ExpiredAdPage} />
-          <PrivateRoute exact path="/main_category" component={MainCategoryPage} />
-          <PrivateRoute exact path="/sub_category" component={SubCategoryPage} />
+          <ProductRoute exact path="/main_category" component={MainCategoryPage} />
+          <ProductRoute exact path="/sub_category" component={SubCategoryPage} />
           <PrivateRoute exact path="/user_list" component={UsersListPage} />
           <PrivateRoute exact path="/chat" component={MessageChatPage} />
           <PrivateRoute exact path="/home-page-slider" component={HomePageSlider} />
           <PrivateRoute exact path="/country" component={Country} />
-          <PrivateRoute exact path="/category-list" component={MainCategoryList} />
-          <PrivateRoute exact path="/subcategory-list" component={SubCategoryList} />
+          <ProductRoute exact path="/category-list" component={MainCategoryList} />
+          <ProductRoute exact path="/subcategory-list" component={SubCategoryList} />
           <FianacialRoute exact path="/product-upload" component={ProductUpload} />
           <SupportRoute exact path="/reviews" component={Review} />
           <SupportRoute exact path="/reports" component={Report} />

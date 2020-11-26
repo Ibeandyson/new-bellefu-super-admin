@@ -214,7 +214,7 @@ function SliderTable() {
           {images.map((item) => (
             <tr>
               <td>
-                <img src={item} alt="" />
+                <img src={"https://bellefu.com/images/home_slider"+item} alt="" />
               </td>
               <td>{item.split(".")[0]}</td>
               <td col={2}>

@@ -88,54 +88,62 @@ export default function DashBoardNav() {
                 </ul>
               </>
             )}
-            <h6 className="p-3" style={styles.head}>
-              Vouchers
-            </h6>
-            <ul style={styles.list}>
-              <Link to="/vouchers/add" style={{ color: "inherit", textDecoration: "inherit" }}>
-                <li className="pb-3" onMouseOver={listHover} onMouseLeave={listHoverNone}>
-                  <TiTicket className="mr-3" style={styles.icon} />
-                  Create Voucher
-                </li>
-              </Link>
-              <Link to="/vouchers" style={{ color: "inherit", textDecoration: "inherit" }}>
-                <li className="pb-3" onMouseOver={listHover} onMouseLeave={listHoverNone}>
-                  <MdList className="mr-3" style={styles.icon} />
-                  View Voucher
-                </li>
-              </Link>
-            </ul>
-            <h6 className="p-3" style={styles.head}>
-              Category
-            </h6>
-            <ul style={styles.list}>
-              <Link to="/category-list" style={{ color: "inherit", textDecoration: "inherit" }}>
-                <li className="pb-3" onMouseOver={listHover} onMouseLeave={listHoverNone}>
-                  <FiList className="mr-3" style={styles.icon} />
-                  Category List
-                </li>
-              </Link>
+            {adminValidation(role, "financial_admin") && (
+              <>
+                <h6 className="p-3" style={styles.head}>
+                  Vouchers
+                </h6>
+                <ul style={styles.list}>
+                  <Link to="/vouchers/add" style={{ color: "inherit", textDecoration: "inherit" }}>
+                    <li className="pb-3" onMouseOver={listHover} onMouseLeave={listHoverNone}>
+                      <TiTicket className="mr-3" style={styles.icon} />
+                      Create Voucher
+                    </li>
+                  </Link>
+                  <Link to="/vouchers" style={{ color: "inherit", textDecoration: "inherit" }}>
+                    <li className="pb-3" onMouseOver={listHover} onMouseLeave={listHoverNone}>
+                      <MdList className="mr-3" style={styles.icon} />
+                      View Voucher
+                    </li>
+                  </Link>
+                </ul>
+              </>
+            )}
+            {adminValidation(role, "product_admin") && (
+              <>
+                <h6 className="p-3" style={styles.head}>
+                  Category
+                </h6>
+                <ul style={styles.list}>
+                  <Link to="/category-list" style={{ color: "inherit", textDecoration: "inherit" }}>
+                    <li className="pb-3" onMouseOver={listHover} onMouseLeave={listHoverNone}>
+                      <FiList className="mr-3" style={styles.icon} />
+                      Category List
+                    </li>
+                  </Link>
 
-              <Link to="/subcategory-list" style={{ color: "inherit", textDecoration: "inherit" }}>
-                <li className="pb-3" onMouseOver={listHover} onMouseLeave={listHoverNone}>
-                  <FiList className="mr-3" style={styles.icon} />
-                  Subcategory List
-                </li>
-              </Link>
+                  <Link to="/subcategory-list" style={{ color: "inherit", textDecoration: "inherit" }}>
+                    <li className="pb-3" onMouseOver={listHover} onMouseLeave={listHoverNone}>
+                      <FiList className="mr-3" style={styles.icon} />
+                      Subcategory List
+                    </li>
+                  </Link>
 
-              <Link to="/main_category" style={{ color: "inherit", textDecoration: "inherit" }}>
-                <li className="pb-3" onMouseOver={listHover} onMouseLeave={listHoverNone}>
-                  <FiUserPlus className="mr-3" style={styles.icon} />
-                  Create Category
-                </li>
-              </Link>
-              <Link to="/sub_category" style={{ color: "inherit", textDecoration: "inherit" }}>
-                <li className="pb-3" onMouseOver={listHover} onMouseLeave={listHoverNone}>
-                  <FiUsers className="mr-3" style={styles.icon} />
-                  Create Sub Category
-                </li>
-              </Link>
-            </ul>
+                  <Link to="/main_category" style={{ color: "inherit", textDecoration: "inherit" }}>
+                    <li className="pb-3" onMouseOver={listHover} onMouseLeave={listHoverNone}>
+                      <FiUserPlus className="mr-3" style={styles.icon} />
+                      Create Category
+                    </li>
+                  </Link>
+                  <Link to="/sub_category" style={{ color: "inherit", textDecoration: "inherit" }}>
+                    <li className="pb-3" onMouseOver={listHover} onMouseLeave={listHoverNone}>
+                      <FiUsers className="mr-3" style={styles.icon} />
+                      Create Sub Category
+                    </li>
+                  </Link>
+                </ul>
+              </>
+            )}
             {adminValidation(role, "support_admin") && (
               <>
                 {" "}
@@ -198,28 +206,28 @@ export default function DashBoardNav() {
                   </li>
                 </Link>
               )}
-              <li className="pb-3" onMouseOver={listHover} onMouseLeave={listHoverNone}>
-                <Dropdown>
-                  <Dropdown.Toggle style={{ padding: 0, fontSize: 13 }} variant="transparent" id="dropdown-basic">
-                    <AiOutlineSetting className="mr-3" style={styles.icon} />
-                    Settings
-                  </Dropdown.Toggle>
+              {adminValidation(role, "financial_admin") && (
+                <li className="pb-3" onMouseOver={listHover} onMouseLeave={listHoverNone}>
+                  <Dropdown>
+                    <Dropdown.Toggle style={{ padding: 0, fontSize: 13 }} variant="transparent" id="dropdown-basic">
+                      <AiOutlineSetting className="mr-3" style={styles.icon} />
+                      Settings
+                    </Dropdown.Toggle>
 
-                  <Dropdown.Menu>
-                    <Dropdown.Item style={{ fontSize: 13 }} href="/home-page-slider">
-                      Home Page Slider
-                    </Dropdown.Item>
-                    <Dropdown.Item style={{ fontSize: 13 }} href="/country">
-                      Country
-                    </Dropdown.Item>
-                    {adminValidation(role, "financial_admin") && (
+                    <Dropdown.Menu>
+                      <Dropdown.Item style={{ fontSize: 13 }} href="/home-page-slider">
+                        Home Page Slider
+                      </Dropdown.Item>
+                      <Dropdown.Item style={{ fontSize: 13 }} href="/country">
+                        Country
+                      </Dropdown.Item>
                       <Dropdown.Item style={{ fontSize: 13 }} href="/product-upload">
                         Advert Plan
                       </Dropdown.Item>
-                    )}
-                  </Dropdown.Menu>
-                </Dropdown>
-              </li>
+                    </Dropdown.Menu>
+                  </Dropdown>
+                </li>
+              )}
               <li className="pb-0" onMouseOver={listHover} onMouseLeave={listHoverNone}>
                 <Button variant="transparent" style={{ paddingLeft: 0 }} onClick={handleLogOut}>
                   <IoIosLogIn className="mr-3" style={styles.icon} />
