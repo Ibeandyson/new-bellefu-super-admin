@@ -19,3 +19,11 @@ export const splitCamelCase = (value) => {
       })
   );
 };
+
+export const adminValidation = (role, condition) => {
+  let valid = false;
+  if (role === condition || role === "super_admin") {
+    valid = true;
+  }
+  return valid;
+};

@@ -53,10 +53,10 @@ const EditInput = ({ action, setAction, fetchData }) => {
 
     if (action.message === "Process") {
       payload.append("message", updateData.message);
-      url = "https://dev.bellefu.com/api/admin/verification/process/kyc";
+      url = "https://bellefu.com/api/admin/verification/process/kyc";
     } else {
       payload.append("decline_reason", updateData.message);
-      url = "https://dev.bellefu.com/api/admin/verification/decline/kyc";
+      url = "https://bellefu.com/api/admin/verification/decline/kyc";
     }
 
     Axios.post(url, payload, {
@@ -139,7 +139,7 @@ export default function KycVerify() {
 
   function fetchData() {
     setLoad(true);
-    Axios.get("https://dev.bellefu.com/api/admin/verification/list/kyc", {
+    Axios.get("https://bellefu.com/api/admin/verification/list/kyc", {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
@@ -209,7 +209,7 @@ export default function KycVerify() {
   };
 
   const approveId = (_id) => {
-    Axios.get("https://dev.bellefu.com/api/admin/verification/approve/kyc/" + _id, {
+    Axios.get("https://bellefu.com/api/admin/verification/approve/kyc/" + _id, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",

@@ -17,7 +17,7 @@ export default function ProfileInfo() {
     avatar: '',
   });
 
-  let url = 'https://dev.bellefu.com/api/user/profile/details'
+  let url = 'https://bellefu.com/api/user/profile/details'
 
   useEffect(() => {
     Axios.get(url, {

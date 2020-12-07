@@ -1,14 +1,13 @@
 import React from "react";
 import { Col, Row, Accordion, Container, Card } from "react-bootstrap";
 import DashBoardNav from "../user/DashBoardNav";
+import ActiveAdTable from "../user/ActiveAdTable";
 import HeaderNav from "../navigations/HeaderNav";
 import { AiOutlineMenu } from "react-icons/ai";
 import { IoMdArrowDropdown } from "react-icons/io";
-import MainCategory from "../user/MainCategory";
-import CategoryTable from "../user/CategoryTable";
-import ProductUploadForm from "../user/ProductUploadForm";
+import AdViewTable from "../user/AdViewTable";
 
-export default function ProductUpload() {
+export default function AdViewPage() {
   return (
     <div>
       <HeaderNav />
@@ -28,10 +27,7 @@ export default function ProductUpload() {
               <DashBoardNav />
             </div>
             {/* ======FOR MOBILE DASHBOARDNAV====== */}
-            <div
-              className=" d-lg-none  d-xs-block d-sm-block d-md-block "
-              style={{ marginTop: "100px" }}
-            >
+            <div className=" d-lg-none  d-xs-block d-sm-block d-md-block " style={{ marginTop: "100px" }}>
               <Container>
                 <h3
                   style={{
@@ -41,21 +37,14 @@ export default function ProductUpload() {
                     fontSize: "20px",
                   }}
                 >
-                  Category
+                  <b>Ads</b>
                 </h3>
               </Container>
-
               <Accordion>
-                <Accordion.Toggle
-                  as={Card.Header}
-                  style={{ backgroundColor: "white", marginLeft: "0px" }}
-                  eventKey="0"
-                >
+                <Accordion.Toggle as={Card.Header} style={{ backgroundColor: "white", marginLeft: "0px" }} eventKey="0">
                   <Row type="button">
                     <Col xs={2} sm={2}>
-                      <AiOutlineMenu
-                        style={{ color: "#ffa500", fontSize: "30px" }}
-                      />
+                      <AiOutlineMenu style={{ color: "#ffa500", fontSize: "30px" }} />
                     </Col>
                     <Col xs={8} sm={8}>
                       <label className="mr-1" style={{ fontSize: "0.9em" }}>
@@ -63,9 +52,7 @@ export default function ProductUpload() {
                       </label>
                     </Col>
                     <Col xs={2} sm={2}>
-                      <IoMdArrowDropdown
-                        style={{ color: "#ffa500", fontSize: "30px" }}
-                      />
+                      <IoMdArrowDropdown style={{ color: "#ffa500", fontSize: "30px" }} />
                     </Col>
                   </Row>
                 </Accordion.Toggle>
@@ -79,15 +66,7 @@ export default function ProductUpload() {
           </Col>
 
           {/* ======FOR  DESKTOP VIEW====== */}
-          <Col
-            xs={12}
-            sm={12}
-            md={12}
-            lg={9}
-            xl={9}
-            style={{ marginLeft: "22%" }}
-            className="mt-4 d-none d-lg-block  d-md-none"
-          >
+          <Col xs={12} sm={12} md={12} lg={9} xl={9} style={{ marginLeft: "22%" }} className="mt-4 d-none d-lg-block  d-md-none">
             <h3
               style={{
                 marginTop: "6%",
@@ -95,24 +74,16 @@ export default function ProductUpload() {
                 fontSize: "15px",
               }}
             >
-              <b>Advert Plans</b>
+              <b>Ads</b>
             </h3>
             <div style={{ marginTop: "2%" }}>
-              <ProductUploadForm />
+              <AdViewTable />
             </div>
           </Col>
 
           {/* ======FOR MOBILE VIEW======== */}
-          <Col
-            xs={12}
-            sm={12}
-            md={12}
-            lg={9}
-            xl={9}
-            style={{ padding: "30px" }}
-            className=" d-lg-none  d-xs-block d-sm-block d-md-block "
-          >
-            <ProductUploadForm />
+          <Col xs={12} sm={12} md={12} lg={9} xl={9} style={{ padding: "30px" }} className=" d-lg-none  d-xs-block d-sm-block d-md-block ">
+            <AdViewTable />
           </Col>
         </Row>
       </div>

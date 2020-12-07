@@ -1,15 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  Card,
-  Badge,
-  Image,
-  Button,
-  Tooltip,
-  OverlayTrigger,
-  Row,
-  Col,
-  Container,
-} from "react-bootstrap";
+import { Card, Badge, Image, Button, Tooltip, OverlayTrigger, Row, Col, Container, Form } from "react-bootstrap";
 import { AiOutlineTag, AiOutlineEye } from "react-icons/ai";
 import { GoLocation } from "react-icons/go";
 import { MdDateRange, MdCancel, MdLocationOn } from "react-icons/md";
@@ -64,7 +54,7 @@ export default function CountryList() {
 
   function fetchCountry() {
     setLoad(true);
-    Axios.get("https://dev.bellefu.com/api/admin/country/list", {
+    Axios.get("https://bellefu.com/api/admin/country/list", {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
@@ -137,7 +127,7 @@ export default function CountryList() {
   };
 
   const disableCountry = (title) => {
-    Axios.get("https://dev.bellefu.com/api/admin/country/disable/" + title, {
+    Axios.get("https://bellefu.com/api/admin/country/disable/" + title, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
@@ -153,7 +143,7 @@ export default function CountryList() {
   };
 
   const enableCountry = (title) => {
-    Axios.get("https://dev.bellefu.com/api/admin/country/enable/" + title, {
+    Axios.get("https://bellefu.com/api/admin/country/enable/" + title, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
@@ -168,6 +158,14 @@ export default function CountryList() {
       });
   };
 
+  const handleCountryToggle = (event, slug, name) => {
+    if (event.checked) {
+      handleEnableButton(slug, `Are you sure you want to enable ${name} ?`, enableCountry);
+    } else {
+      handleDisableButton(slug, `Are you sure you want to disable ${name} ?`, disableCountry);
+    }
+  };
+
   return (
     <div>
       <Card className="border-0">
@@ -178,36 +176,19 @@ export default function CountryList() {
             <InfiniteScroll
               dataLength={loadCountries.data.length}
               next={nextData}
-              hasMore={
-                countries.length === loadCountries.data.length ? false : true
-              }
+              hasMore={countries.length === loadCountries.data.length ? false : true}
               loader={<CustomSpinner />}
-              endMessage={
-                <p style={{ textAlign: "center" }}>Nothing else to see !</p>
-              }
+              endMessage={<p style={{ textAlign: "center" }}>Nothing else to see !</p>}
             >
               <table class="uk-table uk-table-responsive uk-table-divider">
                 <thead style={{ backgroundColor: "#76ba1b", color: "white" }}>
                   <tr>
-                    <th
-                      style={{ color: "white", fontWeight: "bold" }}
-                      className="uk-table-expand"
-                    >
+                    <th style={{ color: "white", fontWeight: "bold" }} className="uk-table-expand">
                       Code
                     </th>
-                    <th style={{ color: "white", fontWeight: "bold" }}>
-                      Local Name
-                    </th>
-                    <th style={{ color: "white", fontWeight: "bold" }}>
-                      Country Name
-                    </th>
-                    <th style={{ color: "white", fontWeight: "bold" }}>
-                      Status
-                    </th>
-                    <th
-                      className="uk-table-expand"
-                      style={{ color: "white", fontWeight: "bold" }}
-                    >
+                    <th style={{ color: "white", fontWeight: "bold" }}>Country Name</th>
+                    <th style={{ color: "white", fontWeight: "bold" }}>Status</th>
+                    <th className="uk-table-expand" style={{ color: "white", fontWeight: "bold" }}>
                       Action
                     </th>
                   </tr>
@@ -222,16 +203,23 @@ export default function CountryList() {
                         </p>
                       </td>
                       <td>
-                        <p style={styles.titel}>{item.native}</p>
-                      </td>
-
-                      <td>
                         <p style={styles.titel}>{item.name}</p>
                       </td>
-                      <td>active</td>
+                      <td>{item.enabled ? <Badge variant="success">enabled</Badge> : <Badge variant="danger">disabled</Badge>}</td>
                       <td>
                         <div className="btn-group" role="group">
-                          <OverlayTrigger
+                          <Form>
+                            <Form.Check
+                              type="switch"
+                              id={"custom-switch" + key}
+                              label="switch"
+                              checked={item.enabled}
+                              onChange={(e) => {
+                                handleCountryToggle(e.target, item.slug, item.name);
+                              }}
+                            />
+                          </Form>
+                          {/* <OverlayTrigger
                             placement="bottom"
                             delay={{ show: 50, hide: 100 }}
                             overlay={editTooltip}
@@ -239,12 +227,7 @@ export default function CountryList() {
                             <Button
                               size="sm"
                               onClick={() => {
-                                handleEnableButton(
-                                  item.slug,
-                                  `Are you sure you want to enable ${item.name} ?`,
-                                  enableCountry
-                                );
-                              }}
+                                
                               variant="light"
                             >
                               <Button variant="light">
@@ -280,7 +263,7 @@ export default function CountryList() {
                                 />
                               </Button>
                             </Button>
-                          </OverlayTrigger>
+                          </OverlayTrigger> */}
                         </div>
                       </td>
                     </tr>
@@ -339,7 +322,7 @@ const styles = {
   titel: {
     opacity: "0.9",
     fontSize: "20px",
-    width: "300px",
+    maxWidth: "300px",
     whiteSpace: "nowrap",
     overflow: "hidden",
     textOverflow: "ellipsis",

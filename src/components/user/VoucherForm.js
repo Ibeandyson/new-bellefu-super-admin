@@ -31,7 +31,7 @@ export default function VoucherForm() {
     const payload = new FormData();
     payload.append("voucher_amount", formData.amount);
     payload.append("voucher_quantity", formData.quantity);
-    Axios.post("https://dev.bellefu.com/api/admin/voucher/save", payload, {
+    Axios.post("https://bellefu.com/api/admin/voucher/save", payload, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",

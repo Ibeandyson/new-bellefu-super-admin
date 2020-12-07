@@ -37,7 +37,7 @@ export default function PendingAdPage() {
 									opacity: "0.5",
 									fontSize: "20px"
 								}}>
-								Users List
+								Pending Ad
 							</h3>
 							</Container>
 							
@@ -88,7 +88,7 @@ export default function PendingAdPage() {
 								opacity: "0.5",
 								fontSize: "15px"
 							}}>
-							<b>Users List</b>
+							<b>Pending Ad</b>
 						</h3>
 							<div 	style={{ marginTop: "2%" }}>
 							<PendingAdTable />

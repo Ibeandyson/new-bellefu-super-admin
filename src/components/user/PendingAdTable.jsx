@@ -1,31 +1,10 @@
 import React, { useEffect, useState } from "react";
-import {
-  Card,
-  Badge,
-  Image,
-  Button,
-  Tooltip,
-  OverlayTrigger,
-  Row,
-  Col,
-  Container,
-} from "react-bootstrap";
-import {
-  AiOutlineTag,
-  AiOutlineEye,
-  AiFillPhone,
-  AiFillEye,
-} from "react-icons/ai";
+import { Card, Badge, Image, Button, Tooltip, OverlayTrigger, Row, Col, Container, InputGroup } from "react-bootstrap";
+import { AiOutlineTag, AiOutlineEye, AiFillPhone, AiFillEye, AiFillEdit } from "react-icons/ai";
 import { GoLocation } from "react-icons/go";
 import { MdDateRange, MdCancel, MdLocationOn } from "react-icons/md";
-import {
-  IoMdTrash,
-  IoIosArrowDroprightCircle,
-  IoIosTime,
-  IoIosArrowDropleftCircle,
-  IoMdMailOpen,
-} from "react-icons/io";
-import { FcCheckmark } from "react-icons/fc";
+import { IoMdTrash, IoIosArrowDroprightCircle, IoIosTime, IoIosArrowDropleftCircle, IoMdMailOpen } from "react-icons/io";
+import { FcCancel, FcCheckmark } from "react-icons/fc";
 import { GiReceiveMoney } from "react-icons/gi";
 import { FaSlackHash } from "react-icons/fa";
 import pic from "../images/pic.jpg";
@@ -36,6 +15,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import ActionModal from "../components/ActionModal";
 import CustomSpinner from "../Spinner/Spinner";
 import { nullCheck } from "../../Utils";
+import UpdateModal from "../components/UpdateModal";
 
 //THIS IS FOR HOVER TOOLTIP TO SHOW A TEXT (delete)
 const deleteTooltip = (props) => (
@@ -58,8 +38,99 @@ const editTooltip = (props) => (
   </Tooltip>
 );
 
+// /THIS IS FOR HOVER TOOLTIP TO SHOW A TEXT (Update)
+const updateTooltip = (props) => (
+  <Tooltip id="button-tooltip" {...props}>
+    Update Ad
+  </Tooltip>
+);
+
+const EditInput = ({ action, setAction, fetchData }) => {
+  const { token } = useSelector((state) => state.adminSignin);
+  const [updateData, setUpdateData] = useState({
+    message: "",
+    error: "",
+  });
+
+  const handleNameChange = (event) => {
+    const { value, name } = event.target;
+
+    setUpdateData({ ...updateData, [name]: value });
+  };
+  const declineAd = (_id) => {
+    const payload = new FormData();
+
+    payload.append("product_slug", action.id);
+    payload.append("rejection_reason", updateData.message);
+
+    Axios.post("https://bellefu.com/api/admin/product/decline", payload, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+    })
+      .then(() => {
+        fetchData();
+        setAction((prev) => ({
+          ...prev,
+          view: false,
+        }));
+      })
+      .catch((err) => {
+        setUpdateData((prev) => ({
+          ...prev,
+          error: "Opps, looks like there was an error!",
+        }));
+      });
+  };
+  return (
+    <ActionModal
+      show={action.view}
+      handleYes={() => {
+        declineAd(action.id);
+      }}
+      handleNo={() => {
+        setAction((prev) => ({
+          ...prev,
+          view: false,
+        }));
+      }}
+    >
+      <p className="text-center">Are you sure you want to decline the Product with id {action.id} ?</p>
+      <InputGroup>
+        <textarea
+          style={{ marginTop: 5, width: "100%", padding: "10px" }}
+          rows={4}
+          aria-label="Large"
+          aria-describedby="inputGroup-sizing-sm"
+          placeholder="Enter reason ..."
+          name="message"
+          value={updateData.message}
+          onChange={handleNameChange}
+        ></textarea>
+      </InputGroup>
+      <small className="text-danger">{updateData.error}</small>
+    </ActionModal>
+  );
+};
+
 export default function PendingdAdTable() {
   const { token } = useSelector((state) => state.adminSignin);
+  const [updateData, setUpdateData] = useState({
+    view: false,
+    id: "",
+    data: {
+      title: "",
+      category: "",
+      subcategory: "",
+      address: "",
+    },
+    preLoad: {
+      categories: [],
+      subcategories: [],
+    },
+  });
   const [load, setLoad] = useState(false);
   const [ads, setads] = useState([]);
   const [ad, setad] = useState({
@@ -76,7 +147,7 @@ export default function PendingdAdTable() {
     city: "",
     country: "",
     views: 0,
-    slug: ""
+    slug: "",
   });
   const [action, setAction] = useState({
     view: false,
@@ -101,7 +172,7 @@ export default function PendingdAdTable() {
 
   function fetchAds() {
     setLoad(true);
-    Axios.get("https://dev.bellefu.com/api/admin/product/list/pending", {
+    Axios.get("https://bellefu.com/api/admin/product/list/pending", {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
@@ -132,6 +203,34 @@ export default function PendingdAdTable() {
     fetchAds();
   }, []);
 
+  //fetching categories
+
+  useEffect(() => {
+    Axios.get("https://bellefu.com/api/category/list", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+    }).then((res) => {
+      const data = res.data.categories;
+      setUpdateData((prev) => ({ ...prev, preLoad: { subcategories: [], categories: data } }));
+    });
+  }, []);
+
+  useEffect(() => {
+    Axios.get("https://bellefu.com/api/admin/subcategory/listfor/" + updateData.data.category, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+    }).then((res) => {
+      const data = res.data.subcategories;
+      setUpdateData((prev) => ({ ...prev, preLoad: { ...updateData.preLoad, subcategories: data } }));
+    });
+  }, [updateData.data.category]);
+
   const nextData = () => {
     Axios.get(next, {
       headers: {
@@ -158,6 +257,15 @@ export default function PendingdAdTable() {
     });
   };
 
+  const handleDeclineButton = (id, message, action) => {
+    setAction({
+      view: true,
+      id,
+      message,
+      action: action,
+    });
+  };
+
   const handleConfirmButton = (id, message, action) => {
     setAction({
       view: true,
@@ -168,7 +276,7 @@ export default function PendingdAdTable() {
   };
 
   const deleteAd = (title) => {
-    Axios.get("https://dev.bellefu.com/api/admin/product/delete/" + title, {
+    Axios.get("https://bellefu.com/api/admin/product/delete/" + title, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
@@ -184,7 +292,7 @@ export default function PendingdAdTable() {
   };
 
   const confirmAd = (title) => {
-    Axios.get("https://dev.bellefu.com/api/admin/product/approve/" + title, {
+    Axios.get("https://bellefu.com/api/admin/product/approve/" + title, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
@@ -199,6 +307,29 @@ export default function PendingdAdTable() {
       });
   };
 
+  const handleDataUpdate = () => {
+    Axios.post("https://bellefu.com/api/admin/product/update/" + updateData.id, updateData.data, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+    }).then(() => {
+      fetchAds();
+      setUpdateData((prev) => ({ ...prev, view: false }));
+    });
+  };
+
+  const handleUpdateChange = (event) => {
+    const { value, name } = event.target;
+    setUpdateData((prev) => ({
+      ...prev,
+      data: {
+        ...updateData.data,
+        [name]: value,
+      },
+    }));
+  };
   return (
     <div>
       <Card className="border-0">
@@ -216,28 +347,15 @@ export default function PendingdAdTable() {
               <table class="uk-table uk-table-responsive uk-table-divider">
                 <thead style={{ backgroundColor: "#76ba1b", color: "white" }}>
                   <tr>
-                    <th
-                      style={{ color: "white", fontWeight: "bold" }}
-                      className="uk-table-expand"
-                    >
+                    <th style={{ color: "white", fontWeight: "bold" }} className="uk-table-expand">
                       Ads
                     </th>
-                    <th
-                      style={{ color: "white", fontWeight: "bold" }}
-                      className="uk-width-*"
-                    >
+                    <th style={{ color: "white", fontWeight: "bold" }} className="uk-width-*">
                       {" "}
                     </th>
-                    <th style={{ color: "white", fontWeight: "bold" }}>
-                      Username
-                    </th>
-                    <th style={{ color: "white", fontWeight: "bold" }}>
-                      Status
-                    </th>
-                    <th
-                      className="uk-table-expand"
-                      style={{ color: "white", fontWeight: "bold" }}
-                    >
+                    <th style={{ color: "white", fontWeight: "bold" }}>Username</th>
+                    <th style={{ color: "white", fontWeight: "bold" }}>Status</th>
+                    <th className="uk-table-expand" style={{ color: "white", fontWeight: "bold" }}>
                       Action
                     </th>
                   </tr>
@@ -246,13 +364,7 @@ export default function PendingdAdTable() {
                   {ads.map((item, key) => (
                     <tr key={key}>
                       <td className="uk-text-center">
-                        <Image
-                          src={
-                            `https://dev.bellefu.com/images/product/${item.slug}/` +
-                            item.images[0]
-                          }
-                          style={styles.image}
-                        />
+                        <Image src={`https://bellefu.com/images/products/${item.slug}/` + item.images[0]} style={styles.image} />
                       </td>
                       <td>
                         <p style={styles.titel}>{item.title}</p>
@@ -260,20 +372,12 @@ export default function PendingdAdTable() {
                         {/* <Badge variant="danger" className="ml-2">
                       Ugent
                     </Badge> */}
-                        <Badge
-                          variant="success"
-                          style={{ padding: "5px 10px" }}
-                          className="ml-2"
-                        >
+                        <Badge variant="success" style={{ padding: "5px 10px" }} className="ml-2">
                           {item.plan}
                         </Badge>
 
                         {item.is_user_favourite && (
-                          <Badge
-                            style={{ padding: "5px 10px" }}
-                            variant="info"
-                            className="ml-2"
-                          >
+                          <Badge style={{ padding: "5px 10px" }} variant="info" className="ml-2">
                             user favourite
                           </Badge>
                         )}
@@ -282,10 +386,7 @@ export default function PendingdAdTable() {
                           <span style={styles.category} className="ml-2 mt-3">
                             {nullCheck(item.category).name}
                           </span>
-                          <span
-                            style={styles.subCategory}
-                            className="ml-2 mt-5"
-                          >
+                          <span style={styles.subCategory} className="ml-2 mt-5">
                             {nullCheck(item.subcategory).name}
                           </span>
                         </div>
@@ -294,33 +395,22 @@ export default function PendingdAdTable() {
                           <span style={styles.location} className="ml-1 ">
                             {nullCheck(item.country).native}
                           </span>
-                          <MdDateRange
-                            style={styles.icon}
-                            className="mr-1 ml-1"
-                          />
+                          <MdDateRange style={styles.icon} className="mr-1 ml-1" />
                           <span style={styles.date} className="ml-1 ">
-                            Post Date:{" "}
-                            {format(new Date(item.created_at), "dd-MMM-yyyy")}
+                            Post Date: {format(new Date(item.created_at), "dd-MMM-yyyy")}
                           </span>
                           <span className="ml-2" style={styles.price}></span>
                         </div>
                       </td>
                       <td>{"N/A"}</td>
                       <td>
-                        <Badge
-                          style={{ backgroundColor: "green", color: "white" }}
-                          className="ml-2"
-                        >
+                        <Badge style={{ backgroundColor: "green", color: "white" }} className="ml-2">
                           {item.status}
                         </Badge>
                       </td>
                       <td>
                         <div className="btn-group" role="group">
-                          <OverlayTrigger
-                            placement="bottom"
-                            delay={{ show: 50, hide: 100 }}
-                            overlay={viewTooltip}
-                          >
+                          <OverlayTrigger placement="bottom" delay={{ show: 50, hide: 100 }} overlay={viewTooltip}>
                             <Button
                               class="uk-button uk-button-default"
                               type="button"
@@ -328,9 +418,7 @@ export default function PendingdAdTable() {
                               size="sm"
                               variant="light"
                               onClick={() => {
-                                const obj = ads.find(
-                                  (o, index) => index === key
-                                );
+                                const obj = ads.find((o, index) => index === key);
                                 setad({
                                   name: "",
                                   price: obj.currency_symbol + obj.price,
@@ -338,10 +426,7 @@ export default function PendingdAdTable() {
                                   phone: obj.phone,
                                   description: obj.description,
                                   images: obj.images,
-                                  created: format(
-                                    new Date(item.created_at),
-                                    "dd-MMM-yyyy"
-                                  ),
+                                  created: format(new Date(item.created_at), "dd-MMM-yyyy"),
                                   email: "",
                                   id: obj.id,
                                   city: obj.city,
@@ -357,40 +442,54 @@ export default function PendingdAdTable() {
                               <AiOutlineEye style={{ color: "#ffa500" }} />
                             </Button>
                           </OverlayTrigger>
-
-                          <OverlayTrigger
-                            placement="bottom"
-                            delay={{ show: 50, hide: 100 }}
-                            overlay={editTooltip}
-                          >
+                          <OverlayTrigger placement="bottom" delay={{ show: 50, hide: 100 }} overlay={updateTooltip}>
                             <Button
                               size="sm"
                               onClick={() => {
-                                handleConfirmButton(
-                                  item.slug,
-                                  `Are you sure you want to Confim the product \n ${item.title} ?`,
-                                  confirmAd
-                                );
+                                const obj = ads.find((o, index) => index === key);
+                                setUpdateData((prev) => ({
+                                  ...prev,
+                                  id: obj.slug,
+                                  view: true,
+                                  data: {
+                                    title: obj.title,
+                                    category: nullCheck(item.category).slug,
+                                    subcategory: nullCheck(item.subcategory).slug,
+                                    address: obj.address,
+                                  },
+                                }));
+                              }}
+                              variant="light"
+                            >
+                              <AiFillEdit style={{ color: "purple" }} />
+                            </Button>
+                          </OverlayTrigger>
+                          <OverlayTrigger placement="bottom" delay={{ show: 50, hide: 100 }} overlay={editTooltip}>
+                            <Button
+                              size="sm"
+                              onClick={() => {
+                                handleConfirmButton(item.slug, `Are you sure you want to Confim the product \n ${item.title} ?`, confirmAd);
                               }}
                               variant="light"
                             >
                               <FcCheckmark style={{ color: "red" }} />
                             </Button>
                           </OverlayTrigger>
-
-                          <OverlayTrigger
-                            placement="bottom"
-                            delay={{ show: 50, hide: 100 }}
-                            overlay={deleteTooltip}
+                          <Button
+                            size="sm"
+                            onClick={() => {
+                              handleDeclineButton(item.slug, "decline");
+                            }}
+                            variant="light"
                           >
+                            <FcCancel style={{ color: "red" }} />
+                          </Button>
+
+                          <OverlayTrigger placement="bottom" delay={{ show: 50, hide: 100 }} overlay={deleteTooltip}>
                             <Button
                               size="sm"
                               onClick={() => {
-                                handleDeleteButton(
-                                  item.slug,
-                                  `Are you sure you want to delete the product \n ${item.title} ?`,
-                                  deleteAd
-                                );
+                                handleDeleteButton(item.slug, `Are you sure you want to delete the product \n ${item.title} ?`, deleteAd);
                               }}
                               variant="light"
                             >
@@ -409,18 +508,9 @@ export default function PendingdAdTable() {
       </Card>
 
       {/* ============OFFCANVA FOR VIEW AD========== */}
-      <div
-        id="offcanvas-flip"
-        uk-offcanvas="flip: true; overlay: true"
-        style={{ marginTop: "4%" }}
-      >
+      <div id="offcanvas-flip" uk-offcanvas="flip: true; overlay: true" style={{ marginTop: "4%" }}>
         <div class="uk-offcanvas-bar" style={{ width: "80%" }}>
-          <MdCancel
-            style={styles.close_icon}
-            className="uk-offcanvas-close"
-            uk-close
-            type="button"
-          />
+          <MdCancel style={styles.close_icon} className="uk-offcanvas-close" uk-close type="button" />
           <Container>
             <Row>
               <Col xs={12} sm={12} md={12} lg={12} xl={12}>
@@ -436,28 +526,15 @@ export default function PendingdAdTable() {
                       uk-slideshow="animation: pull"
                       uk-slideshow="min-height: 100; max-height: 400"
                     >
-                      <ul
-                        uk-lightbox="animation: slide"
-                        class="uk-slideshow-items"
-                      >
+                      <ul uk-lightbox="animation: slide" class="uk-slideshow-items">
                         {ad.images.map((item, index) => (
                           <li>
                             <a
                               class="uk-cover-container uk-inline"
-                              href={
-                                `https://dev.bellefu.com/images/product/${ad.slug}/` +
-                                item
-                              }
+                              href={`https://bellefu.com/images/product/${ad.slug}/` + item}
                               data-caption={"Caption " + index}
                             >
-                              <img
-                                src={
-                                  `https://dev.bellefu.com/images/product/${ad.slug}/` +
-                                  item
-                                }
-                                alt=""
-                                uk-cover
-                              />
+                              <img src={`https://bellefu.com/images/product/${ad.slug}/` + item} alt="" uk-cover />
                             </a>
                           </li>
                         ))}
@@ -469,9 +546,7 @@ export default function PendingdAdTable() {
                         uk-slidenav-previous
                         uk-slideshow-item="previous"
                       >
-                        <IoIosArrowDropleftCircle
-                          style={{ fontSize: "2em", color: "#ffa500" }}
-                        />
+                        <IoIosArrowDropleftCircle style={{ fontSize: "2em", color: "#ffa500" }} />
                       </button>
                       <button
                         class="uk-border-pill uk-button uk-border-remove uk-button-default uk-button-small  uk-position-center-right  "
@@ -479,9 +554,7 @@ export default function PendingdAdTable() {
                         uk-slidenav-next
                         uk-slideshow-item="next"
                       >
-                        <IoIosArrowDroprightCircle
-                          style={{ fontSize: "2em", color: "#ffa500" }}
-                        />
+                        <IoIosArrowDroprightCircle style={{ fontSize: "2em", color: "#ffa500" }} />
                       </button>
                     </div>
                   </Card.Body>
@@ -494,23 +567,81 @@ export default function PendingdAdTable() {
           </Container>
         </div>
       </div>
-      <ActionModal
-        show={action.view}
-        text={action.message}
-        handleYes={() => {
-          action.action(action.id);
-          setAction((prev) => ({
-            ...prev,
-            view: false,
-          }));
+      {action.message === "decline" ? (
+        <EditInput action={action} setAction={setAction} fetchData={fetchAds} />
+      ) : (
+        <ActionModal
+          show={action.view}
+          text={action.message}
+          handleYes={() => {
+            action.action(action.id);
+            setAction((prev) => ({
+              ...prev,
+              view: false,
+            }));
+          }}
+          handleNo={() => {
+            setAction((prev) => ({
+              ...prev,
+              view: false,
+            }));
+          }}
+        />
+      )}
+
+      <UpdateModal
+        show={updateData.view}
+        text={`Update ${updateData.data.title}`}
+        handleClose={() => {
+          setUpdateData((prev) => ({ ...prev, view: false }));
         }}
-        handleNo={() => {
-          setAction((prev) => ({
-            ...prev,
-            view: false,
-          }));
-        }}
-      />
+        handleUpdate={handleDataUpdate}
+      >
+        <div>
+          <label style={{ width: "100%", marginTop: 12 }}>Title</label>
+          <input
+            name="title"
+            type="text"
+            className="form-control"
+            style={{ width: "100%", marginTop: 5 }}
+            onChange={handleUpdateChange}
+            value={updateData.data.title}
+          />
+          <label style={{ width: "100%", marginTop: 12 }}>Address</label>
+          <input
+            name="address"
+            type="text"
+            className="form-control"
+            style={{ width: "100%", marginTop: 5 }}
+            onChange={handleUpdateChange}
+            value={updateData.data.address}
+          />
+
+          <label style={{ width: "100%", marginTop: 12 }}>Categories</label>
+          <select
+            name="category"
+            className="custom-select"
+            style={{ width: "100%", marginTop: 5 }}
+            onChange={handleUpdateChange}
+            value={updateData.data.category}
+          >
+            {updateData.preLoad.categories !== undefined && updateData.preLoad.categories.map((item, key) => <option value={item.slug}>{item.name}</option>)}
+          </select>
+
+          <label style={{ width: "100%", marginTop: 12 }}>Subtegories</label>
+          <select
+            name="subcategory"
+            className="custom-select"
+            style={{ width: "100%", marginTop: 5 }}
+            onChange={handleUpdateChange}
+            value={updateData.data.subcategory}
+          >
+            {updateData.preLoad.subcategories.map((item, key) => (
+              <option value={item.slug}>{item.name}</option>
+            ))}
+          </select>
+        </div>
+      </UpdateModal>
     </div>
   );
 }
@@ -519,10 +650,7 @@ function ProductTitle({ ad }) {
   return (
     <div>
       {/* ===FOR DESKTOP VIEW=== */}
-      <div
-        className="d-none d-lg-block  d-md-none"
-        style={{ marginBottom: "15px" }}
-      >
+      <div className="d-none d-lg-block  d-md-none" style={{ marginBottom: "15px" }}>
         <span
           className="mb-5"
           style={{
@@ -533,30 +661,19 @@ function ProductTitle({ ad }) {
         >
           <b>{ad.title}</b>
         </span>
-        <Badge
-          variant="success"
-          style={{ padding: "5px 10px" }}
-          className="ml-2"
-        >
+        <Badge variant="success" style={{ padding: "5px 10px" }} className="ml-2">
           {ad.plan}
         </Badge>
 
         {ad.isFave && (
-          <Badge
-            style={{ padding: "5px 10px" }}
-            variant="info"
-            className="ml-2"
-          >
+          <Badge style={{ padding: "5px 10px" }} variant="info" className="ml-2">
             user favourite
           </Badge>
         )}
       </div>
 
       {/* ===FOR MOBILE VIEW=== */}
-      <div
-        className=" d-lg-none  d-xs-block d-sm-block d-md-block "
-        style={{ marginBottom: "15px" }}
-      >
+      <div className=" d-lg-none  d-xs-block d-sm-block d-md-block " style={{ marginBottom: "15px" }}>
         <span
           className="mb-5"
           style={{
@@ -565,20 +682,12 @@ function ProductTitle({ ad }) {
         >
           <b>{ad.title}</b>
         </span>
-        <Badge
-          variant="success"
-          style={{ padding: "5px 10px" }}
-          className="ml-2"
-        >
+        <Badge variant="success" style={{ padding: "5px 10px" }} className="ml-2">
           {ad.plan}
         </Badge>
 
         {ad.isFave && (
-          <Badge
-            style={{ padding: "5px 10px" }}
-            variant="info"
-            className="ml-2"
-          >
+          <Badge style={{ padding: "5px 10px" }} variant="info" className="ml-2">
             user favourite
           </Badge>
         )}
@@ -594,10 +703,7 @@ function AdDetails({ ad }) {
       <Row>
         <Col>
           <Card className="border-0">
-            <Card.Header
-              className="border-0"
-              style={{ backgroundColor: "#76ba1b" }}
-            >
+            <Card.Header className="border-0" style={{ backgroundColor: "#76ba1b" }}>
               <b style={{ color: "white" }}> Details</b>
             </Card.Header>
             <Card.Body>
@@ -675,19 +781,13 @@ function AdDetails({ ad }) {
           <Row>
             <Col xm={12} sm={12} md={12} lg={6} xl={6}>
               <Card className="border-0 mt-4">
-                <Card.Header
-                  className="border-0"
-                  style={{ backgroundColor: "#76ba1b" }}
-                >
+                <Card.Header className="border-0" style={{ backgroundColor: "#76ba1b" }}>
                   <b style={{ color: "white" }}>Ad Discription</b>
                 </Card.Header>
                 <Card.Body>
                   <Row>
                     <Col xm={12} sm={12} md={12} lg={12} xl={12}>
-                      <span
-                        style={styles.text}
-                        dangerouslySetInnerHTML={{ __html: ad.description }}
-                      ></span>
+                      <span style={styles.text} dangerouslySetInnerHTML={{ __html: ad.description }}></span>
                     </Col>
                   </Row>
                 </Card.Body>
@@ -708,44 +808,20 @@ function UserAdInfo({ ad }) {
   return (
     <div>
       <Card className="border-0 ">
-        <Card.Header
-          className="border-0"
-          style={{ backgroundColor: "#76ba1b" }}
-        >
+        <Card.Header className="border-0" style={{ backgroundColor: "#76ba1b" }}>
           <b style={{ color: "white" }}>Advertiser Info</b>
         </Card.Header>
         <Card.Body>
           <Row>
-            <Col
-              xm={12}
-              sm={12}
-              md={12}
-              lg={12}
-              xl={12}
-              className="text-center"
-            >
+            <Col xm={12} sm={12} md={12} lg={12} xl={12} className="text-center">
               <Image src={pic} style={styles.avater} roundedCircle />
             </Col>
-            <Col
-              xm={12}
-              sm={12}
-              md={12}
-              lg={6}
-              xl={6}
-              className="text-center mt-2"
-            >
+            <Col xm={12} sm={12} md={12} lg={6} xl={6} className="text-center mt-2">
               <p style={styles.text}>
                 <b>{ad.name}</b>
               </p>
             </Col>
-            <Col
-              xm={12}
-              sm={12}
-              md={12}
-              lg={6}
-              xl={6}
-              className="text-center mt-2"
-            >
+            <Col xm={12} sm={12} md={12} lg={6} xl={6} className="text-center mt-2">
               <div>
                 <IoIosTime style={styles.icon} className="mr-3" />{" "}
                 <span style={styles.text}>
@@ -753,14 +829,7 @@ function UserAdInfo({ ad }) {
                 </span>
               </div>
             </Col>
-            <Col
-              xm={12}
-              sm={12}
-              md={12}
-              lg={6}
-              xl={6}
-              className="text-center mt-2"
-            >
+            <Col xm={12} sm={12} md={12} lg={6} xl={6} className="text-center mt-2">
               <div>
                 <AiFillPhone style={styles.icon} className="mr-3" />{" "}
                 <span style={styles.text}>
@@ -768,14 +837,7 @@ function UserAdInfo({ ad }) {
                 </span>
               </div>
             </Col>
-            <Col
-              xm={12}
-              sm={12}
-              md={12}
-              lg={6}
-              xl={6}
-              className="text-center mt-2"
-            >
+            <Col xm={12} sm={12} md={12} lg={6} xl={6} className="text-center mt-2">
               <div>
                 <IoMdMailOpen style={styles.icon} className="mr-3" />{" "}
                 <a href={`mailto:${ad.email}?subject=subject text`}>

@@ -15,7 +15,7 @@ import axios from "axios";
 const blockUserAction = (token, username) => (dispatch) => {
   dispatch({ type: ADMIN_BLOCK_USER });
   axios
-    .get("https://dev.bellefu.com/api/admin/customer/block/" + username, {
+    .get("https://bellefu.com/api/admin/customer/block/" + username, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
@@ -39,7 +39,7 @@ const blockUserAction = (token, username) => (dispatch) => {
 const unblockUserAction = (token, username) => (dispatch) => {
   dispatch({ type: ADMIN_UNBLOCK_USER });
   axios
-    .get("https://dev.bellefu.com/api/admin/customer/unblock/" + username, {
+    .get("https://bellefu.com/api/admin/customer/unblock/" + username, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
@@ -63,7 +63,7 @@ const unblockUserAction = (token, username) => (dispatch) => {
 const deleteUserAction = (token, username) => (dispatch) => {
   dispatch({ type: ADMIN_DELETE_USER });
   axios
-    .get("https://dev.bellefu.com/api/admin/customer/delete/" + username, {
+    .get("https://bellefu.com/api/admin/customer/delete/" + username, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",

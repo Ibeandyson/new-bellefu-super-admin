@@ -5,7 +5,7 @@ import { Badge, Card } from "react-bootstrap";
 import { AiOutlineArrowUp } from "react-icons/ai";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { useSelector } from "react-redux";
-import { splitCamelCase } from "../../Utils";
+import { nullCheck, splitCamelCase } from "../../Utils";
 import CustomSpinner from "../Spinner/Spinner";
 
 export default function TransactionsTable() {
@@ -21,7 +21,7 @@ export default function TransactionsTable() {
 
   useEffect(() => {
     setLoad(true);
-    Axios.get("https://dev.bellefu.com/" + url, {
+    Axios.get("https://bellefu.com/" + url, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
@@ -139,7 +139,7 @@ export default function TransactionsTable() {
                         <td style={{ textTransform: "capitalize" }}>{item.type.split("_").join(" ")}</td>
                         <td>{splitCamelCase(item.method_type.split("\\")[1])} </td>
                         <td>
-                          {item.payable.currency_symbol}
+                          {nullCheck(item.payable).currency_symbol}
                           {item.total_amount}
                         </td>
                         <td>{item.user.username}</td>
@@ -152,7 +152,7 @@ export default function TransactionsTable() {
                       </tr>
                       <tr>
                         <td colSpan="7">
-                          <b>Product: </b> {item.payable.title}
+                          <b>Product: </b> {nullCheck(item.payable).title}
                         </td>
                       </tr>
                     </Fragment>

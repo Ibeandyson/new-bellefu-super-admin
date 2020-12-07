@@ -27,13 +27,18 @@ const editTooltip = (props) => (
   </Tooltip>
 );
 
-const EditInput = ({ action, setAction, fetchSubcategories  }) => {
+const EditInput = ({ action, setAction, fetchSubcategories, initialData }) => {
   const { token } = useSelector((state) => state.adminSignin);
+  
   const [updateData, setUpdateData] = useState({
     icon: "",
     name: "",
     error: "",
   });
+
+  useEffect(() => {
+    setUpdateData((prev) => ({ ...prev, icon: initialData.icon, name: initialData.name }));
+  }, [initialData]);
 
   const handleNameChange = (event) => {
     const { value, files, name } = event.target;
@@ -55,7 +60,7 @@ const EditInput = ({ action, setAction, fetchSubcategories  }) => {
       payload.append("subcat_name", updateData.name);
       payload.append("subcat_icon", updateData.icon);
     }
-    Axios.post("https://dev.bellefu.com/api/admin/subcategory/update/" + _id, payload, {
+    Axios.post("https://bellefu.com/api/admin/subcategory/update/" + _id, payload, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
@@ -131,7 +136,10 @@ const EditInput = ({ action, setAction, fetchSubcategories  }) => {
 export default function SubCategoryTable() {
   const { token } = useSelector((state) => state.adminSignin);
   const [load, setLoad] = useState(false);
-
+  const [initialState, setinitialState] = useState({
+    name: "",
+    icon: "",
+  });
   const [categories, setCategories] = useState([]);
   const [action, setAction] = useState({
     view: false,
@@ -156,7 +164,7 @@ export default function SubCategoryTable() {
 
   function fetchSubcategories() {
     setLoad(true);
-    Axios.get("https://dev.bellefu.com/api/admin/subcategory/list", {
+    Axios.get("https://bellefu.com/api/admin/subcategory/list", {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
@@ -217,7 +225,7 @@ export default function SubCategoryTable() {
   };
 
   const deleteSubcategory = (title) => {
-    Axios.get("https://dev.bellefu.com/api/admin/subcategory/delete/" + title, {
+    Axios.get("https://bellefu.com/api/admin/subcategory/delete/" + title, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
@@ -260,8 +268,8 @@ export default function SubCategoryTable() {
                       >
                         #ID
                       </th>
-
-                      <th style={{ color: "white", fontWeight: "bold" }}>Icon</th>
+                      <th style={{ color: "white", fontWeight: "bold" }}>Category</th>
+                      <th style={{ color: "white", fontWeight: "bold", maxWidth: 120 }}>Icon</th>
                       <th style={{ color: "white", fontWeight: "bold" }}>Name</th>
 
                       <th style={{ color: "white", fontWeight: "bold" }}>Product Count</th>
@@ -284,10 +292,10 @@ export default function SubCategoryTable() {
                         <td>
                           <p style={styles.titel}>{item.id}</p>
                         </td>
-
+                        <td>{item.category.name}</td>
                         <td>
                           <p style={styles.titel}>
-                            <img style={{ maxWidth: 100 }} src={"https://dev.bellefu.com/images/categories/" + item.images} alt="" />
+                            <img style={{ maxWidth: 100 }} src={"https://bellefu.com/images/categories/" + item.images} alt="" />
                           </p>
                         </td>
 
@@ -303,6 +311,8 @@ export default function SubCategoryTable() {
                                 size="sm"
                                 variant="success"
                                 onClick={() => {
+                                  const obj = categories.find((o, indx) => indx === key);
+                                  setinitialState((prev) => ({ ...prev, name: obj.name }));
                                   handleEditButton(item.slug, "EDIT");
                                   // setUpdateData((prev) => ({ ...prev, name: item.name }));
                                 }}
@@ -350,7 +360,7 @@ export default function SubCategoryTable() {
           }}
         />
       )}
-      {action.message === "EDIT" && <EditInput action={action} setAction={setAction} fetchSubcategories={fetchSubcategories} />}
+      {action.message === "EDIT" && <EditInput initialData={initialState} action={action} setAction={setAction} fetchSubcategories={fetchSubcategories} />}
     </div>
   );
 }
@@ -381,7 +391,6 @@ const styles = {
   titel: {
     opacity: "0.9",
     fontSize: "20px",
-    width: "300px",
     whiteSpace: "nowrap",
     overflow: "hidden",
     textOverflow: "ellipsis",

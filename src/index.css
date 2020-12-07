@@ -9,6 +9,10 @@ html {
   overflow-x: hidden;
 }
 
+.btn-group{
+  min-width: max-content;
+}
+
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
 }

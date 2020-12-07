@@ -1,50 +1,52 @@
 import React, { useState } from "react";
-import { Button } from "react-bootstrap";
+import { Button, Carousel } from "react-bootstrap";
 import { AiOutlineClose } from "react-icons/ai";
-function ImageModal({ src, alt }) {
-  const [close, setClose] = useState(false);
+function ImageModal({ data, url, id, close }) {
   return (
     <>
-      <img
-        src={src}
-        alt={alt}
-        onClick={() => {
-          setClose(true);
+      <div
+        id={id}
+        onClick={(e) => {
+          if (e.target.id === id) {
+            close();
+          }
         }}
-        style={{ cursor: "pointer", maxWidth: 100 }}
-        alt=""
-      />
-      {close && (
-        <div
-          className="imageModal"
-          style={{
-            position: "fixed",
-            zIndex: 10000,
-            background: "rgba(0,0,0,0.3)",
-            left: 0,
-            right: 0,
-            top: 0,
-            bottom: 0,
-            padding: "70px 40px",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <div style={{ position: "relative" }}>
-            <Button
-              onClick={() => {
-                setClose(false);
-              }}
-              style={{ position: "absolute", top: 0, right: 0, width: 50, height: 50, padding: 5 }}
-              variant="danger"
-            >
+        className="imageModal"
+        style={{
+          position: "fixed",
+          zIndex: 10000,
+          background: "rgba(0,0,0,0.6)",
+          left: 0,
+          right: 0,
+          top: 0,
+          bottom: 0,
+          padding: "70px 40px",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <div>
+          <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "center" }}>
+            <Button onClick={close} style={{ width: 40, height: 40, padding: 5, margin: 10 }} variant="danger">
               <AiOutlineClose style={{ fontSize: 48, color: "#fff" }} />
             </Button>
-            <img src={src} alt={alt} className="_mod-image" />
+          </div>
+          <div style={{ maxWidth: 620, maxHeight: "65vh", minWidth: 300, minHeight: "50vh", display: "flex", justifyContent: "center", alignItems: "center" }}>
+            {data !== undefined && data !== null ? (
+              <Carousel>
+                {data.map((item) => (
+                  <Carousel.Item>
+                    <img className="d-block w-100" src={url + item} alt={item} />
+                  </Carousel.Item>
+                ))}
+              </Carousel>
+            ) : (
+              <h1 style={{ color: "#fff", margin: 40 }}>No Image To Display </h1>
+            )}
           </div>
         </div>
-      )}
+      </div>
     </>
   );
 }

@@ -58,7 +58,7 @@ export default function UserDashbordPage() {
   };
 
   useEffect(() => {
-    Axios.get("https://dev.bellefu.com/api/admin/data/summary/graph/for/7/days", {
+    Axios.get("https://bellefu.com/api/admin/data/summary/graph/for/7/days", {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
